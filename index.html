@@ -89,6 +89,43 @@
     /* Modal de Edición */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
     .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  <!-- Modal de Registro/Ingreso de Comprador -->
+<div id="modalAuthComprador" class="modal-overlay">
+  <div class="modal-content" style="max-width: 380px;">
+    <h2 id="modalAuthTitle" style="margin-bottom: 12px; text-align: center;">Acceso Comprador</h2>
+    
+    <form id="formComprador" onsubmit="procesarAuthComprador(event)">
+      <div class="form-group">
+        <label>Correo Electrónico</label>
+        <input type="email" id="authEmail" required placeholder="tu@email.com">
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="authPassword" required minlength="6" placeholder="******">
+      </div>
+
+      <div id="camposRegistro">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="authNombre" placeholder="Juan">
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" id="authApellido" placeholder="Pérez">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="btnAuthSubmit" style="margin-top: 12px;">Registrarse e Ingresar</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 15px; font-size: 13px;">
+      <a href="#" id="toggleAuthMode" onclick="alternarModoAuth(event)" style="color: var(--primary);">¿Ya tenés cuenta? Iniciar Sesión</a>
+    </div>
+
+    <button onclick="cerrarModalComprador()" class="btn btn-outline" style="margin-top: 10px; border: none; color: #64748b;">Cancelar</button>
+  </div>
+</div>
   </style>
 </head>
 <body>
@@ -476,29 +513,35 @@ function actualizarInterfaz(session) {
   }
 }
   
-// 2. MANTENER seleccionarRol (actualizada para usar los IDs correctos)
-function seleccionarRol(rol) {
+// Funciones de Selección de Rol y Autenticación de Comprador
+let esModoRegistro = true;
+
+async function seleccionarRol(rol) {
   rolActivo = rol;
   
+  if (rol === 'comprador') {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      // Si no ha iniciado sesión, abrimos el modal de registro/ingreso
+      abrirModalComprador();
+      return;
+    }
+    // Si ya inició sesión, cargamos sus datos de perfil (Nombre y Apellido)
+    await cargarPerfilUsuario(session.user.id);
+  }
+
+  // Ocultar pantalla de selección y mostrar contenido principal
   const roleSection = document.getElementById('roleSelectionSection');
   const mainContent = document.getElementById('mainContent');
   
   if (roleSection) roleSection.style.display = 'none';
   if (mainContent) mainContent.style.display = 'block';
 
-  // Actualizar el estado visual del perfil en el header
-  supabaseClient.auth.getSession().then(({ data: { session } }) => {
-    const userStatus = document.getElementById('lblPerfil');
-    if (session && userStatus) {
-      userStatus.textContent = `Sesión: ${session.user.email} (${rol.toUpperCase()})`;
-    }
-  });
-
+  // Configurar la visibilidad de los menús según el rol
   configurarMenuPorRol(rol);
 }
-  
+
 function configurarMenuPorRol(rol) {
-  // Ejemplo: ocultar o mostrar pestañas según la elección
   const elementosVendedor = document.querySelectorAll('.modo-vendedor');
   const elementosComprador = document.querySelectorAll('.modo-comprador');
 
@@ -788,41 +831,46 @@ function crearTarjetaHTML(item) {
 
   return `
     <div class="card">
-      <button class="btn-fav" onclick="toggleFavorito(${item.id})">${esFav ? '❤️' : '🤍'}</button>
-      <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
-      <div class="card-body">
-        <div class="card-title">
-          <span>${item.titulo}</span>
-        </div>
-        <div style="margin-bottom:6px;">
-          <span class="price">$${item.precio}</span> | 
-          <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
-        </div>
-        <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-        
-        <div style="border-top:1px solid #f1f5f9; padding-top:8px; font-size:12px;">
-          <strong>🏬 ${item.comercio}</strong><br>
-          <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
-          <span class="stars">★ ${item.estrellas || 5}.0</span> | 
-          <span class="badge badge-delivery">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
-        </div>
+  <!-- 1. Favorito corregido con Supabase -->
+  <button class="btn-fav" onclick="alternarFavorito('${item.id}', 'producto')">${esFav ? '❤️' : '🤍'}</button>
 
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
-          <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
-        </div>
-
-        ${puedeModificar ? `
-          <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
-            <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
-            <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
-          </div>
-        ` : ''}
-      </div>
+  <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
+  
+  <div class="card-body">
+    <div class="card-title">
+      <span>${item.titulo}</span>     </div>     <div style="margin-bottom:6px;">       <span class="price">$${item.precio}</span> | 
+      <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
     </div>
-  `;
-}
+    <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
+    
+    <div style="border-top:1px solid #f1f5f9; padding-top:8px; font-size:12px;">
+      <strong>🏬 ${item.comercio}</strong><br>
+      <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
+      
+      <!-- Muestra de Promedio + BOTÓN PARA CALIFICAR -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+        <span class="stars">★ ${item.estrellas || 5}.0</span>
+        <button onclick="abrirModalCalificar('${item.id}')" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer; font-weight:bold;">
+          ✍️ Calificar
+        </button>
+      </div>
+      
+      <span class="badge badge-delivery" style="margin-top: 4px;">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
+    </div>
 
+    <div style="display:flex; gap:6px; margin-top:8px;">
+      <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
+      <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
+    </div>
+
+    ${puedeModificar ? `
+      <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
+        <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
+        <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
+      </div>
+    ` : ''}
+  </div>
+</div>
 function renderizarProductos(lista) {
   const grid = document.getElementById('gridProductos');
   if (!grid) return;
@@ -1090,6 +1138,72 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Activar el botón correspondiente si existe el evento
   if (window.event && window.event.currentTarget) {
     window.event.currentTarget.classList.add('active');
+  }
+}
+async function cargarPerfilUsuario(userId) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('perfiles')
+      .select('nombre, apellido')
+      .eq('id', userId)
+      .maybeSingle();
+
+    const lblPerfil = document.getElementById('lblPerfil');
+
+    if (error) {
+      console.error('Error al obtener perfil:', error);
+      return;
+    }
+
+    if (data && lblPerfil) {
+      lblPerfil.textContent = `👤 ${data.nombre} ${data.apellido}`;
+    } else if (lblPerfil) {
+      lblPerfil.textContent = '👤 Comprador';
+    }
+  } catch (err) {
+    console.error('Error en cargarPerfilUsuario:', err);
+  }
+}
+  // Marcar / Desmarcar Favoritos
+async function alternarFavorito(itemId, tipo) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return alert('Iniciá sesión para guardar favoritos');
+
+  const userId = session.user.id;
+
+  // Verificar si ya está en favoritos
+  const { data } = await supabaseClient
+    .from('favoritos')
+    .select('id')
+    .eq('usuario_id', userId)
+    .eq('item_id', itemId)
+    .single();
+
+  if (data) {
+    await supabaseClient.from('favoritos').delete().eq('id', data.id);
+    alert('Quitado de favoritos');
+  } else {
+    await supabaseClient.from('favoritos').insert([{ usuario_id: userId, item_id: itemId, tipo }]);
+    alert('Añadido a favoritos');
+  }
+}
+
+// Enviar Reseña y Calificación (Estrellas)
+async function enviarCalificacion(itemId, estrellas, comentario) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return alert('Iniciá sesión para opinar');
+
+  const { error } = await supabaseClient.from('resenas').insert([{
+    usuario_id: session.user.id,
+    item_id: itemId,
+    estrellas: estrellas,
+    comentario: comentario
+  }]);
+
+  if (error) {
+    alert('Error al enviar opinión: ' + error.message);
+  } else {
+    alert('¡Gracias por tu opinión!');
   }
 }
 </script>
