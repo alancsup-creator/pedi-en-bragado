@@ -105,6 +105,24 @@
 
 <main class="container">
 
+  <!-- Pantalla de Selección de Rol (Inicial tras Iniciar Sesión) -->
+<section class="login-container" id="roleSelectionSection" style="display: none;">
+  <div class="login-card" style="text-align: center;">
+    <h2>¿Cómo querés ingresar hoy?</h2>
+    <p style="font-size: 14px; color: var(--text); margin-bottom: 20px;">
+      Seleccioná el perfil con el que vas a operar en la plataforma.
+    </p>
+
+    <button onclick="seleccionarRol('vendedor')" class="btn-submit" style="margin-bottom: 12px; background: var(--primary);">
+      🏬 Acceder como Vendedor (Mi Negocio)
+    </button>
+
+    <button onclick="seleccionarRol('comprador')" class="btn-submit" style="background: var(--accent);">
+      🛒 Acceder como Comprador
+    </button>
+  </div>
+</section>
+  
   <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
   <section id="secComprador" class="tab-content active">
     
@@ -430,6 +448,88 @@
 </nav>
 
 <script>
+  // Variable global para almacenar el perfil activo en la sesión actual
+let rolActivo = null; 
+
+function actualizarInterfaz(session) {
+  const mainContent = document.getElementById('mainContent');
+  const loginSection = document.getElementById('loginSection');
+  const roleSection = document.getElementById('roleSelectionSection');
+  const userStatus = document.getElementById('userStatus');
+
+  if (session) {
+    if (loginSection) loginSection.style.display = 'none';
+    
+    // Si no ha elegido rol, se le muestra la pantalla de selección
+    if (!rolActivo) {
+      if (roleSection) roleSection.style.display = 'flex';
+      if (mainContent) mainContent.style.display = 'none';
+    } else {
+      if (roleSection) roleSection.style.display = 'none';
+      if (mainContent) {
+        mainContent.style.display = 'block';
+        mainContent.classList.add('authenticated');
+      }
+    }
+    
+    if (userStatus) {
+      userStatus.textContent = `${session.user.email} (${rolActivo || 'Sin Rol'})`;
+    }
+  } else {
+    // Si no hay sesión, reiniciar estados
+    rolActivo = null;
+    if (loginSection) loginSection.style.display = 'flex';
+    if (roleSection) roleSection.style.display = 'none';
+    if (mainContent) {
+      mainContent.style.display = 'none';
+      mainContent.classList.remove('authenticated');
+    }
+    if (userStatus) userStatus.textContent = 'Invitado';
+  }
+}
+
+// Función para manejar la elección del rol
+function seleccionarRol(rol) {
+  rolActivo = rol;
+  
+  // Ocultar pantalla de selección y mostrar el panel principal
+  document.getElementById('roleSelectionSection').style.display = 'none';
+  const mainContent = document.getElementById('mainContent');
+  mainContent.style.display = 'block';
+  mainContent.classList.add('authenticated');
+
+  // Ajustar la visibilidad de opciones del menú lateral según el rol seleccionado
+  configurarMenuPorRol(rol);
+}
+
+function configurarMenuPorRol(rol) {
+  // Ejemplo: ocultar o mostrar pestañas según la elección
+  const elementosVendedor = document.querySelectorAll('.modo-vendedor');
+  const elementosComprador = document.querySelectorAll('.modo-comprador');
+
+  if (rol === 'vendedor') {
+    elementosVendedor.forEach(el => el.style.display = 'block');
+    elementosComprador.forEach(el => el.style.display = 'none');
+  } else {
+    elementosVendedor.forEach(el => el.style.display = 'none');
+    elementosComprador.forEach(el => el.style.display = 'block');
+  }
+}
+  async function logout() {
+  await supabaseClient.auth.signOut();
+  rolActivo = null; // Reiniciar selección de rol
+  
+  document.getElementById('loginSection').style.display = 'flex';
+  document.getElementById('roleSelectionSection').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('mainContent').classList.remove('authenticated');
+  
+  const userStatus = document.getElementById('userStatus');
+  if (userStatus) userStatus.innerText = 'Invitado';
+
+  if (typeof closeMenu === 'function') closeMenu();
+}
+  
 // 1. CONFIGURACIÓN DE SUPABASE
 const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
