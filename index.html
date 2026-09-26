@@ -355,7 +355,7 @@ const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ADMIN_EMAIL = 'acsup@ep7.com';
+const ADMIN_EMAIL = 'alan.csup@gmail.com';
 
 let productosGlobales = [];
 let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
@@ -378,20 +378,28 @@ async function verificarSesion() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (user) {
-    const email = user.email.toLowerCase();
-    document.getElementById('lblPerfil').innerText = `Sesión: ${email}`;
+    const emailUsuario = user.email.toLowerCase();
+    
+    // Mostrar en la interfaz quién inició sesión
+    document.getElementById('lblPerfil').innerText = `Sesión: ${emailUsuario}`;
     document.getElementById('btnCerrarSesion').style.display = 'inline';
 
+    // Ocultar recuadro de login y mostrar panel
     document.getElementById('boxLoginVendedor').style.display = 'none';
     document.getElementById('boxPanelVendedor').style.display = 'block';
 
-    if (email === ADMIN_EMAIL.toLowerCase()) {
+    // VERIFICACIÓN DE ADMINISTRADOR
+    if (emailUsuario === ADMIN_EMAIL.toLowerCase()) {
+      // Mostrar el botón "Admin" en la barra de navegación inferior
       document.getElementById('btnNavAdmin').style.display = 'flex';
-      document.getElementById('lblPerfil').innerText = `Admin: ${email}`;
+      document.getElementById('lblPerfil').innerText = `Admin: ${emailUsuario}`;
+    } else {
+      // Asegurar que usuarios normales no vean la opción de admin
+      document.getElementById('btnNavAdmin').style.display = 'none';
     }
   }
 }
-
+  
 async function cerrarSesion() {
   await supabaseClient.auth.signOut();
   alert("Sesión cerrada.");
