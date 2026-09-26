@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#d97706">
-<title>SaborLocal - Promo Gastronómica</title>
+<title>Pedí en Bragado - Promo Gastronómica</title>
 
 <!-- Manifest básico PWA integrador -->
 <link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22SaborLocal%20Gastronomia%22,
-  %22short_name%22:%22SaborLocal%22,
+  %22name%22:%22Pedienbragado%20Gastronomia%22,
+  %22short_name%22:%22Pedienbragado%22,
   %22start_url%22:%22.%22,
   %22display%22:%22standalone%22,
   %22background_color%22:%22#ffffff%22,
@@ -91,7 +91,7 @@
 <body>
 
 <header>
-  <h1>🍔 SaborLocal</h1>
+  <h1>🍔 Pedienbragado</h1>
   <div class="user-badge">
     <span id="lblPerfil">Modo: Comprador</span>
     <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
@@ -190,7 +190,7 @@
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
-      <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a SaborLocal</h2>
+      <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a Pedienbragado</h2>
       <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
       
       <!-- Botón de Inicio de Sesión con Gmail -->
@@ -466,7 +466,7 @@ function crearTarjetaHTML(item) {
   const esGuardado = idsGuardados.includes(item.id);
 
   const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
-  const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en SaborLocal de: ' + item.titulo)}`;
+  const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
 
   return `
     <div class="card">
