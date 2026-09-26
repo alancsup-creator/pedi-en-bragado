@@ -366,13 +366,14 @@ async function iniciarSesionConGoogle() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin
+      // Usamos href para que incluya "/pedi-en-bragado/"
+      redirectTo: window.location.href 
     }
   });
 
   if (error) alert("Error al conectar con Google: " + error.message);
 }
-
+  
 async function verificarSesion() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
