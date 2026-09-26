@@ -103,21 +103,21 @@
   </div>
 </header>
 
-<main class="container">
+<main class="container" id="mainContent" style="display: none;">
 
-  <!-- Pantalla de Selección de Rol (Inicial tras Iniciar Sesión) -->
-<section class="login-container" id="roleSelectionSection" style="display: none;">
-  <div class="login-card" style="text-align: center;">
+  <!-- Pantalla de Selección de Rol -->
+<section id="roleSelectionSection" style="display: none; text-align: center; padding: 40px 20px;">
+  <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
     <h2>¿Cómo querés ingresar hoy?</h2>
-    <p style="font-size: 14px; color: var(--text); margin-bottom: 20px;">
+    <p style="font-size: 14px; color: var(--text); margin: 12px 0 20px;">
       Seleccioná el perfil con el que vas a operar en la plataforma.
     </p>
 
-    <button onclick="seleccionarRol('vendedor')" class="btn-submit" style="margin-bottom: 12px; background: var(--primary);">
+    <button onclick="seleccionarRol('vendedor')" class="btn btn-primary" style="margin-bottom: 12px;">
       🏬 Acceder como Vendedor (Mi Negocio)
     </button>
 
-    <button onclick="seleccionarRol('comprador')" class="btn-submit" style="background: var(--accent);">
+    <button onclick="seleccionarRol('comprador')" class="btn btn-outline">
       🛒 Acceder como Comprador
     </button>
   </div>
@@ -451,68 +451,55 @@
   // Variable global para almacenar el perfil activo en la sesión actual
 let rolActivo = null; 
 
+// 1. Reemplazar actualizarInterfaz por esta versión corregida
 function actualizarInterfaz(session) {
   const mainContent = document.getElementById('mainContent');
-  const loginSection = document.getElementById('loginSection');
   const roleSection = document.getElementById('roleSelectionSection');
-  const userStatus = document.getElementById('userStatus');
+  const userStatus = document.getElementById('lblPerfil');
 
   if (session) {
-    if (loginSection) loginSection.style.display = 'none';
-    
-    // Si no ha elegido rol, se le muestra la pantalla de selección
+    const emailUsuario = session.user.email;
+    usuarioActualEmail = emailUsuario;
+
+    // Si no se ha elegido rol todavía, mostramos el selector
     if (!rolActivo) {
-      if (roleSection) roleSection.style.display = 'flex';
+      if (roleSection) roleSection.style.display = 'block';
       if (mainContent) mainContent.style.display = 'none';
     } else {
       if (roleSection) roleSection.style.display = 'none';
-      if (mainContent) {
-        mainContent.style.display = 'block';
-        mainContent.classList.add('authenticated');
-      }
+      if (mainContent) mainContent.style.display = 'block';
     }
     
     if (userStatus) {
-      userStatus.textContent = `Sesión: ${emailUsuario} (${rolActivo || 'Sin Rol'})`;
+      userStatus.textContent = `Sesión: ${emailUsuario} (${rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
     }
   } else {
-    // Si no hay sesión, reiniciar estados
+    // Si no hay sesión iniciada (modo visitante/comprador público)
     rolActivo = null;
-    if (loginSection) loginSection.style.display = 'flex';
     if (roleSection) roleSection.style.display = 'none';
-    if (mainContent) {
-      mainContent.style.display = 'none';
-      mainContent.classList.remove('authenticated');
-    }
-    if (userStatus) userStatus.textContent = 'Invitado';
+    if (mainContent) mainContent.style.display = 'block';
+    if (userStatus) userStatus.textContent = 'Modo: Comprador';
   }
 }
 
-// Función para manejar la elección del rol
+// 2. MANTENER seleccionarRol (actualizada para usar los IDs correctos)
 function seleccionarRol(rol) {
   rolActivo = rol;
   
-  // Ocultar selección y mostrar panel principal
   const roleSection = document.getElementById('roleSelectionSection');
   const mainContent = document.getElementById('mainContent');
   
   if (roleSection) roleSection.style.display = 'none';
-  if (mainContent) {
-    mainContent.style.display = 'block';
-    mainContent.classList.add('authenticated');
-  }
+  if (mainContent) mainContent.style.display = 'block';
 
-  // Actualizar el texto del usuario con el nuevo rol
+  // Actualizar el estado visual del perfil en el header
   supabaseClient.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
-      const userStatus = document.getElementById('userStatus');
-      if (userStatus) {
-        userStatus.textContent = `${session.user.email} (${rol.toUpperCase()})`;
-      }
+    const userStatus = document.getElementById('lblPerfil');
+    if (session && userStatus) {
+      userStatus.textContent = `Sesión: ${session.user.email} (${rol.toUpperCase()})`;
     }
   });
 
-  // Mostrar u ocultar menú según el rol
   configurarMenuPorRol(rol);
 }
   
@@ -1076,13 +1063,14 @@ function guardarConfigAdmin() {
 
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Obtener sesión actual
+  // 1. Cargar el catálogo de Supabase en la interfaz
+  await cargarProductosSupabase();
+
+  // 2. Verificar la sesión activa al recargar la página
   const { data: { session } } = await supabaseClient.auth.getSession();
-  
-  // 2. Disparar actualización de interfaz
   actualizarInterfaz(session);
 
-  // 3. Escuchar cambios de autenticación
+  // 3. Escuchar los cambios de estado (Login / Logout / Registro)
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     actualizarInterfaz(session);
   });
