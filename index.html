@@ -37,7 +37,7 @@
   /* Encabezado Principal */
   header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   header h1 { font-size: 18px; font-weight: bold; }
-  .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; }
+  .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
 
   /* Contenedores y Navegación */
   .container { max-width: 800px; margin: 0 auto; padding: 16px; }
@@ -70,6 +70,7 @@
   .btn-primary { background: var(--primary); color: white; }
   .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
   .btn-danger { background: var(--danger); color: white; }
+  .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
   .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
@@ -91,7 +92,10 @@
 
 <header>
   <h1>🍔 SaborLocal</h1>
-  <span id="lblPerfil" class="user-badge">Modo: Comprador</span>
+  <div class="user-badge">
+    <span id="lblPerfil">Modo: Comprador</span>
+    <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
+  </div>
 </header>
 
 <main class="container">
@@ -185,18 +189,26 @@
 
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
-    <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto;">
-      <h2 style="text-align:center; margin-bottom:12px; color:var(--primary);">Acceso Vendedores</h2>
-      <form onsubmit="autenticarVendedor(event)">
-        <div class="form-group">
+    <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
+      <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a SaborLocal</h2>
+      <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
+      
+      <!-- Botón de Inicio de Sesión con Gmail -->
+      <button onclick="iniciarSesionConGoogle()" class="btn btn-google">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        Continuar con Google (Gmail)
+      </button>
+
+      <div style="margin: 16px 0; border-top: 1px solid var(--border); position: relative;">
+        <span style="position: absolute; top: -10px; background: white; padding: 0 8px; font-size: 11px; color: #94a3b8; left: 50%; transform: translateX(-50%);">O acceso manual</span>
+      </div>
+
+      <form onsubmit="autenticarVendedorManual(event)">
+        <div class="form-group" style="text-align:left;">
           <label>Correo Electrónico:</label>
-          <input type="email" id="authEmail" required placeholder="comercio@ep7.com">
+          <input type="email" id="authEmail" required placeholder="comercio@ejemplo.com">
         </div>
-        <div class="form-group">
-          <label>Contraseña:</label>
-          <input type="password" id="authPass" required placeholder="••••••••">
-        </div>
-        <button type="submit" class="btn btn-primary">Ingresar / Registrar Comercio</button>
+        <button type="submit" class="btn btn-outline">Ingresar por correo</button>
       </form>
     </div>
 
@@ -349,7 +361,59 @@ let productosGlobales = [];
 let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
 let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
 
-// OBTENER PRODUCTOS DESDE SUPABASE
+// 2. AUTENTICACIÓN CON GMAIL (GOOGLE OAUTH)
+async function iniciarSesionConGoogle() {
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+
+  if (error) alert("Error al conectar con Google: " + error.message);
+}
+
+async function verificarSesion() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (user) {
+    const email = user.email.toLowerCase();
+    document.getElementById('lblPerfil').innerText = `Sesión: ${email}`;
+    document.getElementById('btnCerrarSesion').style.display = 'inline';
+
+    document.getElementById('boxLoginVendedor').style.display = 'none';
+    document.getElementById('boxPanelVendedor').style.display = 'block';
+
+    if (email === ADMIN_EMAIL.toLowerCase()) {
+      document.getElementById('btnNavAdmin').style.display = 'flex';
+      document.getElementById('lblPerfil').innerText = `Admin: ${email}`;
+    }
+  }
+}
+
+async function cerrarSesion() {
+  await supabaseClient.auth.signOut();
+  alert("Sesión cerrada.");
+  location.reload();
+}
+
+function autenticarVendedorManual(e) {
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+
+  document.getElementById('lblPerfil').innerText = `Usuario: ${email}`;
+  document.getElementById('btnCerrarSesion').style.display = 'inline';
+  document.getElementById('boxLoginVendedor').style.display = 'none';
+  document.getElementById('boxPanelVendedor').style.display = 'block';
+
+  if (email === ADMIN_EMAIL.toLowerCase()) {
+    document.getElementById('btnNavAdmin').style.display = 'flex';
+    document.getElementById('lblPerfil').innerText = `Admin: ${email}`;
+    navegarA('secAdmin', document.getElementById('btnNavAdmin'));
+  }
+}
+
+// 3. OBTENER PRODUCTOS DESDE SUPABASE
 async function cargarProductosSupabase() {
   const { data, error } = await supabaseClient
     .from('productos')
@@ -365,7 +429,7 @@ async function cargarProductosSupabase() {
   renderizarProductos(productosGlobales);
 }
 
-// NAVEGACIÓN
+// 4. NAVEGACIÓN
 function navegarA(tabId, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -387,7 +451,7 @@ function cambiarSubtab(subtabId, btn) {
   btn.classList.add('active');
 }
 
-// RENDERIZADO DE TARJETA INDIVIDUAL
+// 5. RENDERIZADO DE TARJETA INDIVIDUAL
 function crearTarjetaHTML(item) {
   const esFav = idsFavoritos.includes(item.id);
   const esGuardado = idsGuardados.includes(item.id);
@@ -437,7 +501,7 @@ function renderizarProductos(lista) {
   grid.innerHTML = lista.map(crearTarjetaHTML).join('');
 }
 
-// FAVORITOS Y GUARDADOS
+// 6. FAVORITOS Y GUARDADOS
 function toggleFavorito(id) {
   if (idsFavoritos.includes(id)) {
     idsFavoritos = idsFavoritos.filter(item => item !== id);
@@ -468,7 +532,7 @@ function renderizarFavoritosYGuardados() {
   document.getElementById('gridGuardados').innerHTML = guards.length ? guards.map(crearTarjetaHTML).join('') : '<p style="padding:10px; color:#64748b;">No tenés productos guardados.</p>';
 }
 
-// ENVIAR Y LEER OPINIONES EN SUPABASE
+// 7. OPINIONES EN SUPABASE
 async function enviarOpinionSupabase(e) {
   e.preventDefault();
   
@@ -509,7 +573,7 @@ async function cargarOpinionesSupabase() {
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// FILTRAR CONTENIDO
+// 8. FILTRAR CONTENIDO
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
@@ -523,27 +587,7 @@ function filtrarContenido() {
   renderizarProductos(filtrados);
 }
 
-// AUTENTICACIÓN
-async function autenticarVendedor(e) {
-  e.preventDefault();
-  const email = document.getElementById('authEmail').value.trim().toLowerCase();
-
-  if (email === ADMIN_EMAIL) {
-    document.getElementById('lblPerfil').innerText = 'Modo: Administrador';
-    document.getElementById('btnNavAdmin').style.display = 'flex';
-    document.getElementById('boxLoginVendedor').style.display = 'none';
-    document.getElementById('boxPanelVendedor').style.display = 'block';
-    alert("⚡ Bienvenido Administrador. Panel de control activado.");
-    navegarA('secAdmin', document.getElementById('btnNavAdmin'));
-    return;
-  }
-
-  document.getElementById('lblPerfil').innerText = `Comercio: ${email}`;
-  document.getElementById('boxLoginVendedor').style.display = 'none';
-  document.getElementById('boxPanelVendedor').style.display = 'block';
-}
-
-// PUBLICAR PRODUCTO Y GUARDAR EN SUPABASE
+// 9. PUBLICAR PRODUCTO
 function publicarProducto(e) {
   e.preventDefault();
 
@@ -590,7 +634,7 @@ function publicarProducto(e) {
   reader.readAsDataURL(archivo);
 }
 
-// GUARDAR CONFIGURACIÓN ADMIN
+// 10. CONFIGURACIÓN ADMIN
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
@@ -603,6 +647,7 @@ function guardarConfigAdmin() {
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', () => {
   cargarProductosSupabase();
+  verificarSesion();
 });
 </script>
 </body>
