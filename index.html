@@ -278,7 +278,7 @@
             <label>Descripción Corta:</label>
             <input type="text" id="prodDesc" placeholder="Incluye papas fritas individuales">
           </div>
-          <button type="submit" class="btn btn-primary">Publicar en la Plataforma</button>
+          <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
         </form>
       </div>
     </div>
@@ -350,7 +350,7 @@
 </nav>
 
 <script>
-// 1. CONFIGURACIÓN DEL NUEVO PROYECTO SUPABASE
+// 1. CONFIGURACIÓN DE SUPABASE
 const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -360,46 +360,47 @@ const ADMIN_EMAIL = 'alan.csup@gmail.com';
 let productosGlobales = [];
 let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
 let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
+let usuarioActualEmail = null;
 
-// 2. AUTENTICACIÓN CON GMAIL (GOOGLE OAUTH)
+// 2. AUTENTICACIÓN
 async function iniciarSesionConGoogle() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // Especificamos la ruta exacta a tu repositorio de GitHub Pages
       redirectTo: 'https://alancsup-creator.github.io/pedi-en-bragado/'
     }
   });
 
   if (error) alert("Error al conectar con Google: " + error.message);
 }
-  
+
 async function verificarSesion() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (user) {
-    const emailUsuario = user.email.toLowerCase();
-    
-    // Mostrar en la interfaz quién inició sesión
-    document.getElementById('lblPerfil').innerText = `Sesión: ${emailUsuario}`;
-    document.getElementById('btnCerrarSesion').style.display = 'inline';
-
-    // Ocultar recuadro de login y mostrar panel
-    document.getElementById('boxLoginVendedor').style.display = 'none';
-    document.getElementById('boxPanelVendedor').style.display = 'block';
-
-    // VERIFICACIÓN DE ADMINISTRADOR
-    if (emailUsuario === ADMIN_EMAIL.toLowerCase()) {
-      // Mostrar el botón "Admin" en la barra de navegación inferior
-      document.getElementById('btnNavAdmin').style.display = 'flex';
-      document.getElementById('lblPerfil').innerText = `Admin: ${emailUsuario}`;
-    } else {
-      // Asegurar que usuarios normales no vean la opción de admin
-      document.getElementById('btnNavAdmin').style.display = 'none';
-    }
+    usuarioActualEmail = user.email.toLowerCase();
+    activarInterfazUsuario(usuarioActualEmail);
   }
 }
-  
+
+function activarInterfazUsuario(emailUsuario) {
+  usuarioActualEmail = emailUsuario;
+  document.getElementById('lblPerfil').innerText = `Sesión: ${emailUsuario}`;
+  document.getElementById('btnCerrarSesion').style.display = 'inline';
+
+  document.getElementById('boxLoginVendedor').style.display = 'none';
+  document.getElementById('boxPanelVendedor').style.display = 'block';
+
+  if (emailUsuario === ADMIN_EMAIL.toLowerCase()) {
+    document.getElementById('btnNavAdmin').style.display = 'flex';
+    document.getElementById('lblPerfil').innerText = `Admin: ${emailUsuario}`;
+  } else {
+    document.getElementById('btnNavAdmin').style.display = 'none';
+  }
+
+  cargarPerfilComercio(emailUsuario);
+}
+
 async function cerrarSesion() {
   await supabaseClient.auth.signOut();
   alert("Sesión cerrada.");
@@ -409,20 +410,58 @@ async function cerrarSesion() {
 function autenticarVendedorManual(e) {
   e.preventDefault();
   const email = document.getElementById('authEmail').value.trim().toLowerCase();
-
-  document.getElementById('lblPerfil').innerText = `Usuario: ${email}`;
-  document.getElementById('btnCerrarSesion').style.display = 'inline';
-  document.getElementById('boxLoginVendedor').style.display = 'none';
-  document.getElementById('boxPanelVendedor').style.display = 'block';
+  activarInterfazUsuario(email);
 
   if (email === ADMIN_EMAIL.toLowerCase()) {
-    document.getElementById('btnNavAdmin').style.display = 'flex';
-    document.getElementById('lblPerfil').innerText = `Admin: ${email}`;
     navegarA('secAdmin', document.getElementById('btnNavAdmin'));
   }
 }
 
-// 3. OBTENER PRODUCTOS DESDE SUPABASE
+// 3. GESTIÓN DEL PERFIL DE COMERCIO
+async function cargarPerfilComercio(email) {
+  const { data, error } = await supabaseClient
+    .from('comercios')
+    .select('*')
+    .eq('email', email)
+    .single();
+
+  if (data) {
+    document.getElementById('vendNombre').value = data.nombre || '';
+    document.getElementById('vendResena').value = data.resena || '';
+    document.getElementById('vendDireccion').value = data.direccion || '';
+    document.getElementById('vendTelefono').value = data.telefono || '';
+    document.getElementById('vendDelivery').value = data.delivery || 'si';
+  }
+}
+
+async function guardarPerfilComercio(e) {
+  e.preventDefault();
+  if (!usuarioActualEmail) {
+    alert("Debes iniciar sesión primero.");
+    return;
+  }
+
+  const payload = {
+    email: usuarioActualEmail,
+    nombre: document.getElementById('vendNombre').value,
+    resena: document.getElementById('vendResena').value,
+    direccion: document.getElementById('vendDireccion').value,
+    telefono: document.getElementById('vendTelefono').value,
+    delivery: document.getElementById('vendDelivery').value
+  };
+
+  const { error } = await supabaseClient
+    .from('comercios')
+    .upsert([payload], { onConflict: 'email' });
+
+  if (error) {
+    alert("Error al guardar perfil: " + error.message);
+  } else {
+    alert("✅ Datos del comercio actualizados.");
+  }
+}
+
+// 4. OBTENER PRODUCTOS DESDE SUPABASE
 async function cargarProductosSupabase() {
   const { data, error } = await supabaseClient
     .from('productos')
@@ -438,7 +477,79 @@ async function cargarProductosSupabase() {
   renderizarProductos(productosGlobales);
 }
 
-// 4. NAVEGACIÓN
+// 5. SUBIDA DE IMÁGENES A SUPABASE STORAGE Y PUBLICACIÓN
+async function publicarProducto(e) {
+  e.preventDefault();
+
+  const btnSubmit = document.getElementById('btnPublicarProd');
+  const fileInput = document.getElementById('prodImagenFile');
+  const archivo = fileInput?.files[0];
+
+  if (!archivo) {
+    alert("Por favor, seleccioná una imagen para el producto.");
+    return;
+  }
+
+  try {
+    btnSubmit.disabled = true;
+    btnSubmit.innerText = "Subiendo imagen...";
+
+    // Generar un nombre único para el archivo
+    const fileExt = archivo.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+
+    // 1. Subir imagen al Bucket 'productos'
+    const { data: uploadData, error: uploadError } = await supabaseClient
+      .storage
+      .from('productos')
+      .upload(fileName, archivo);
+
+    if (uploadError) throw uploadError;
+
+    // 2. Obtener URL pública
+    const { data: publicUrlData } = supabaseClient
+      .storage
+      .from('productos')
+      .getPublicUrl(fileName);
+
+    const imageUrl = publicUrlData.publicUrl;
+
+    btnSubmit.innerText = "Guardando producto...";
+
+    // 3. Insertar el registro en la base de datos
+    const nuevo = {
+      comercio: document.getElementById('vendNombre').value || "Mi Comercio Gastronómico",
+      titulo: document.getElementById('prodTitulo').value,
+      categoria: document.getElementById('prodCategoria').value,
+      precio: parseFloat(document.getElementById('prodPrecio').value),
+      imagen: imageUrl,
+      descripcion: document.getElementById('prodDesc').value,
+      direccion: document.getElementById('vendDireccion').value || "Bragado Centro",
+      telefono: document.getElementById('vendTelefono').value || "2342000000",
+      delivery: document.getElementById('vendDelivery').value,
+      estrellas: 5
+    };
+
+    const { error: insertError } = await supabaseClient
+      .from('productos')
+      .insert([nuevo]);
+
+    if (insertError) throw insertError;
+
+    alert("✅ Producto publicado con éxito.");
+    e.target.reset();
+    cargarProductosSupabase();
+    navegarA('secComprador');
+
+  } catch (err) {
+    alert("Error al publicar el producto: " + err.message);
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.innerText = "Publicar en la Plataforma";
+  }
+}
+
+// 6. NAVEGACIÓN
 function navegarA(tabId, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -460,7 +571,7 @@ function cambiarSubtab(subtabId, btn) {
   btn.classList.add('active');
 }
 
-// 5. RENDERIZADO DE TARJETA INDIVIDUAL
+// 7. RENDERIZADO DE TARJETAS
 function crearTarjetaHTML(item) {
   const esFav = idsFavoritos.includes(item.id);
   const esGuardado = idsGuardados.includes(item.id);
@@ -478,7 +589,7 @@ function crearTarjetaHTML(item) {
         </div>
         <div style="margin-bottom:6px;">
           <span class="price">$${item.precio}</span> | 
-          <span class="badge badge-category">${item.categoria.toUpperCase()}</span>
+          <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
         </div>
         <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
         
@@ -510,7 +621,7 @@ function renderizarProductos(lista) {
   grid.innerHTML = lista.map(crearTarjetaHTML).join('');
 }
 
-// 6. FAVORITOS Y GUARDADOS
+// 8. FAVORITOS Y GUARDADOS
 function toggleFavorito(id) {
   if (idsFavoritos.includes(id)) {
     idsFavoritos = idsFavoritos.filter(item => item !== id);
@@ -541,7 +652,7 @@ function renderizarFavoritosYGuardados() {
   document.getElementById('gridGuardados').innerHTML = guards.length ? guards.map(crearTarjetaHTML).join('') : '<p style="padding:10px; color:#64748b;">No tenés productos guardados.</p>';
 }
 
-// 7. OPINIONES EN SUPABASE
+// 9. OPINIONES EN SUPABASE
 async function enviarOpinionSupabase(e) {
   e.preventDefault();
   
@@ -577,12 +688,12 @@ async function cargarOpinionesSupabase() {
     <div class="card" style="padding:10px; margin-bottom:8px; font-size:13px;">
       <strong>${o.comercio}</strong> - <span style="color:#f59e0b;">★ ${o.estrellas}/5</span>
       <p style="color:#475569;">"${o.comentario}"</p>
-      <span class="badge" style="background:#fef3c7; color:#b45309; font-size:10px; margin-top:4px;">${o.estado.toUpperCase()}</span>
+      <span class="badge" style="background:#fef3c7; color:#b45309; font-size:10px; margin-top:4px;">${(o.estado || 'PENDIENTE').toUpperCase()}</span>
     </div>
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// 8. FILTRAR CONTENIDO
+// 10. FILTRAR CONTENIDO
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
@@ -596,54 +707,7 @@ function filtrarContenido() {
   renderizarProductos(filtrados);
 }
 
-// 9. PUBLICAR PRODUCTO
-function publicarProducto(e) {
-  e.preventDefault();
-
-  const fileInput = document.getElementById('prodImagenFile');
-  const archivo = fileInput?.files[0];
-
-  if (!archivo) {
-    alert("Por favor, seleccioná una imagen para el producto.");
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = async function(event) {
-    const imagenBase64 = event.target.result;
-
-    const nuevo = {
-      comercio: document.getElementById('vendNombre').value || "Mi Comercio Gastronómico",
-      titulo: document.getElementById('prodTitulo').value,
-      categoria: document.getElementById('prodCategoria').value,
-      precio: parseFloat(document.getElementById('prodPrecio').value),
-      imagen: imagenBase64,
-      descripcion: document.getElementById('prodDesc').value,
-      direccion: document.getElementById('vendDireccion').value || "Bragado Centro",
-      telefono: document.getElementById('vendTelefono').value || "2342000000",
-      delivery: document.getElementById('vendDelivery').value,
-      estrellas: 5
-    };
-
-    const { error } = await supabaseClient
-      .from('productos')
-      .insert([nuevo]);
-
-    if (error) {
-      alert("Error al publicar en Supabase: " + error.message);
-    } else {
-      alert("✅ Producto publicado con éxito.");
-      e.target.reset();
-      cargarProductosSupabase();
-      navegarA('secComprador');
-    }
-  };
-
-  reader.readAsDataURL(archivo);
-}
-
-// 10. CONFIGURACIÓN ADMIN
+// 11. CONFIGURACIÓN ADMIN
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
