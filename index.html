@@ -473,7 +473,7 @@ function actualizarInterfaz(session) {
     }
     
     if (userStatus) {
-      userStatus.textContent = `${session.user.email} (${rolActivo || 'Sin Rol'})`;
+      userStatus.textContent = `Sesión: ${emailUsuario} (${rolActivo || 'Sin Rol'})`;
     }
   } else {
     // Si no hay sesión, reiniciar estados
@@ -794,7 +794,7 @@ function crearTarjetaHTML(item) {
   return `
     <div class="card">
       <button class="btn-fav" onclick="toggleFavorito(${item.id})">${esFav ? '❤️' : '🤍'}</button>
-      <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'">
+      <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
       <div class="card-body">
         <div class="card-title">
           <span>${item.titulo}</span>
@@ -1068,3 +1068,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
