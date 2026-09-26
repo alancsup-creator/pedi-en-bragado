@@ -8,7 +8,7 @@
 
 <!-- Manifest básico PWA integrador -->
 <link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22Pedienbragado%20Gastronomia%22,
+  %22name%22:%22Pedienbragado%22,
   %22short_name%22:%22Pedienbragado%22,
   %22start_url%22:%22.%22,
   %22display%22:%22standalone%22,
@@ -80,9 +80,9 @@
   .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
   .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
   
-  /* Sub-navegación para Mi Cuenta */
-  .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-  .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; }
+  /* Sub-navegación general */
+  .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
+  .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
   .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
 
   /* Puntuación con Estrellas */
@@ -194,11 +194,12 @@
 
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
+    
+    <!-- ACCESO Y LOGIN -->
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
       <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a Pedienbragado</h2>
       <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
       
-      <!-- Botón de Inicio de Sesión con Gmail -->
       <button onclick="iniciarSesionConGoogle()" class="btn btn-google">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
         Continuar con Google (Gmail)
@@ -217,75 +218,103 @@
       </form>
     </div>
 
+    <!-- PANEL DE CONTROL DEL VENDEDOR CON PESTAÑAS -->
     <div id="boxPanelVendedor" style="display:none;">
-      <div class="card" style="padding:16px; margin-bottom:20px;">
-        <h3>🏪 Mi Comercio</h3>
-        <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Estado de Cuenta: <span class="badge badge-delivery">HABILITADO</span></p>
-        
-        <form onsubmit="guardarPerfilComercio(event)">
-          <div class="form-group">
-            <label>Nombre del Negocio:</label>
-            <input type="text" id="vendNombre" required>
-          </div>
-          <div class="form-group">
-            <label>Breve Reseña / Especialidad:</label>
-            <textarea id="vendResena" rows="2"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Dirección Física:</label>
-            <input type="text" id="vendDireccion" placeholder="Ej: Calle Saavedra 123, Bragado" required>
-          </div>
-          <div class="form-group">
-            <label>Teléfono WhatsApp:</label>
-            <input type="text" id="vendTelefono" placeholder="2342..." required>
-          </div>
-          <div class="form-group">
-            <label>¿Cuenta con Delivery?:</label>
-            <select id="vendDelivery">
-              <option value="si">Sí, cuenta con delivery</option>
-              <option value="no">No, solo retiro en local</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-outline">Actualizar Datos del Comercio</button>
-        </form>
+      
+      <!-- Navegación de Subsecciones para Mi Negocio -->
+      <div class="subnav">
+        <button class="subnav-btn active" onclick="cambiarSubtabNegocio('subMiComercio', this)">🏪 Mi Comercio</button>
+        <button class="subnav-btn" onclick="cambiarSubtabNegocio('subPublicarProducto', this)">➕ Publicar Producto / Oferta</button>
+        <button class="subnav-btn" onclick="cambiarSubtabNegocio('subMisProductos', this)">📋 Mis Productos Publicados</button>
       </div>
 
-      <!-- Publicar Producto -->
-      <div class="card" style="padding:16px;">
-        <h3>➕ Publicar Producto / Oferta</h3>
-        <form onsubmit="publicarProducto(event)">
-          <div class="form-group">
-            <label>Título del Producto:</label>
-            <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
-          </div>
-          <div class="form-group">
-            <label>Categoría:</label>
-            <select id="prodCategoria" required>
-              <option value="plato_dia">Plato del día</option>
-              <option value="al_plato">Al plato</option>
-              <option value="sandwiches">Sándwiches</option>
-              <option value="postre">Postre</option>
-              <option value="bebida">Bebida</option>
-              <option value="combos">Combos</option>
-              <option value="promo">Promo</option>
-              <option value="fingerfood">Fingerfood</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Precio ($):</label>
-            <input type="number" id="prodPrecio" required placeholder="8500">
-          </div>
-          <div class="form-group">
-            <label>Imagen del Producto (Subir desde dispositivo):</label>
-            <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
-          </div>
-          <div class="form-group">
-            <label>Descripción Corta:</label>
-            <input type="text" id="prodDesc" placeholder="Incluye papas fritas individuales">
-          </div>
-          <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
-        </form>
+      <!-- PESTAÑA 1: MI COMERCIO -->
+      <div id="subMiComercio" class="subtab-negocio-content">
+        <div class="card" style="padding:16px;">
+          <h3>🏪 Configuración de Mi Comercio</h3>
+          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Estado de Cuenta: <span class="badge badge-delivery">HABILITADO</span></p>
+          
+          <form onsubmit="guardarPerfilComercio(event)">
+            <div class="form-group">
+              <label>Nombre del Negocio:</label>
+              <input type="text" id="vendNombre" required placeholder="Ej: Rotisería El Buen Gusto">
+            </div>
+            <div class="form-group">
+              <label>Breve Reseña / Especialidad:</label>
+              <textarea id="vendResena" rows="2" placeholder="Ej: Especialistas en empanadas y minutas..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Dirección Física:</label>
+              <input type="text" id="vendDireccion" placeholder="Ej: Calle Saavedra 123, Bragado" required>
+            </div>
+            <div class="form-group">
+              <label>Teléfono WhatsApp (Sin 0 ni 15):</label>
+              <input type="text" id="vendTelefono" placeholder="2342..." required>
+            </div>
+            <div class="form-group">
+              <label>¿Cuenta con Delivery?:</label>
+              <select id="vendDelivery">
+                <option value="si">Sí, cuenta con delivery</option>
+                <option value="no">No, solo retiro en local</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-outline">Actualizar Datos del Comercio</button>
+          </form>
+        </div>
       </div>
+
+      <!-- PESTAÑA 2: PUBLICAR PRODUCTO / OFERTA -->
+      <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
+        <div class="card" style="padding:16px;">
+          <h3>➕ Publicar Nuevo Producto / Oferta</h3>
+          <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Los datos del comercio y contacto se adjuntarán automáticamente a esta publicación.</p>
+          
+          <form onsubmit="publicarProducto(event)">
+            <div class="form-group">
+              <label>Título del Producto:</label>
+              <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
+            </div>
+            <div class="form-group">
+              <label>Categoría:</label>
+              <select id="prodCategoria" required>
+                <option value="plato_dia">Plato del día</option>
+                <option value="al_plato">Al plato</option>
+                <option value="sandwiches">Sándwiches</option>
+                <option value="postre">Postre</option>
+                <option value="bebida">Bebida</option>
+                <option value="combos">Combos</option>
+                <option value="promo">Promo</option>
+                <option value="fingerfood">Fingerfood</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Precio ($):</label>
+              <input type="number" id="prodPrecio" required placeholder="8500">
+            </div>
+            <div class="form-group">
+              <label>Imagen del Producto (Subir archivo):</label>
+              <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
+            </div>
+            <div class="form-group">
+              <label>Descripción Corta:</label>
+              <input type="text" id="prodDesc" placeholder="Ej: Incluye papas fritas individuales">
+            </div>
+            <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS (PANEL DE CONTROL DE GESTIÓN) -->
+      <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3>📋 Control de Mis Publicaciones</h3>
+          <button onclick="cargarProductosSupabase()" class="btn btn-outline" style="width:auto; padding:4px 10px; font-size:12px; margin:0;">🔄 Refrescar</button>
+        </div>
+        <p style="font-size:12px; color:#64748b; margin-bottom:12px;">A continuación puedes revisar, modificar precios/fotos o dar de baja tus artículos activos.</p>
+        
+        <div class="grid" id="gridMisProductos"></div>
+      </div>
+
     </div>
   </section>
 
@@ -485,8 +514,9 @@ async function cargarPerfilComercio(email) {
     document.getElementById('vendTelefono').value = data.telefono || '';
     document.getElementById('vendDelivery').value = data.delivery || 'si';
     
-    // Re-renderizamos productos para mostrar los botones de edicion/eliminacion si corresponde
+    // Re-renderizamos para reflejar los cambios
     renderizarProductos(productosGlobales);
+    renderizarMisProductos();
   }
 }
 
@@ -514,8 +544,9 @@ async function guardarPerfilComercio(e) {
     alert("Error al guardar perfil: " + error.message);
   } else {
     miComercioNombre = payload.nombre;
-    alert("✅ Datos del comercio actualizados.");
+    alert("✅ Datos del comercio actualizados correctamente.");
     renderizarProductos(productosGlobales);
+    renderizarMisProductos();
   }
 }
 
@@ -533,6 +564,7 @@ async function cargarProductosSupabase() {
 
   productosGlobales = data || [];
   renderizarProductos(productosGlobales);
+  renderizarMisProductos();
 }
 
 // 5. SUBIDA DE IMÁGENES A SUPABASE STORAGE Y PUBLICACIÓN
@@ -552,7 +584,6 @@ async function publicarProducto(e) {
     btnSubmit.disabled = true;
     btnSubmit.innerText = "Subiendo imagen...";
 
-    // Generar un nombre único para el archivo
     const fileExt = archivo.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
@@ -596,8 +627,12 @@ async function publicarProducto(e) {
 
     alert("✅ Producto publicado con éxito.");
     e.target.reset();
-    cargarProductosSupabase();
-    navegarA('secComprador');
+    await cargarProductosSupabase();
+
+    // Redirigir a la pestaña de "Mis Productos Publicados"
+    const btnMisProd = document.querySelectorAll('.subtab-negocio-content')[2];
+    const btnNavSub = document.querySelectorAll('#secVendedor .subnav-btn')[2];
+    cambiarSubtabNegocio('subMisProductos', btnNavSub);
 
   } catch (err) {
     alert("Error al publicar el producto: " + err.message);
@@ -607,7 +642,7 @@ async function publicarProducto(e) {
   }
 }
 
-// 6. NAVEGACIÓN
+// 6. NAVEGACIÓN PRINCIPAL Y SUBPESTAÑAS
 function navegarA(tabId, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -618,15 +653,29 @@ function navegarA(tabId, btn) {
   if (tabId === 'secMiCuenta') {
     renderizarFavoritosYGuardados();
     cargarOpinionesSupabase();
+  } else if (tabId === 'secVendedor') {
+    renderizarMisProductos();
   }
 }
 
 function cambiarSubtab(subtabId, btn) {
   document.querySelectorAll('.subtab-content').forEach(s => s.style.display = 'none');
-  document.querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#secMiCuenta .subnav-btn').forEach(b => b.classList.remove('active'));
 
   document.getElementById(subtabId).style.display = 'block';
   btn.classList.add('active');
+}
+
+function cambiarSubtabNegocio(subtabId, btn) {
+  document.querySelectorAll('.subtab-negocio-content').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('#secVendedor .subnav-btn').forEach(b => b.classList.remove('active'));
+
+  document.getElementById(subtabId).style.display = 'block';
+  if (btn) btn.classList.add('active');
+
+  if (subtabId === 'subMisProductos') {
+    renderizarMisProductos();
+  }
 }
 
 // 7. RENDERIZADO DE TARJETAS
@@ -691,6 +740,34 @@ function renderizarProductos(lista) {
   grid.innerHTML = lista.map(crearTarjetaHTML).join('');
 }
 
+// RENDERIZADO EXCLUSIVO PARA "MIS PRODUCTOS PUBLICADOS"
+function renderizarMisProductos() {
+  const grid = document.getElementById('gridMisProductos');
+  if (!grid) return;
+
+  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+
+  // Si es admin muestra todo, sino filtra por el nombre del comercio actual
+  const misProds = esAdmin 
+    ? productosGlobales 
+    : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
+
+  if (misProds.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
+        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
+        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
+        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
+          ➕ Publicar Producto Ahora
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
+}
+
 // 8. ACCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
 function abrirModalEditar(id) {
   const prod = productosGlobales.find(p => p.id === id);
@@ -724,7 +801,6 @@ async function guardarEdicionProducto(e) {
 
     let imageUrl = document.getElementById('editProdImagenActual').value;
 
-    // Si seleccionó una nueva imagen, la subimos
     if (archivo) {
       const fileExt = archivo.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
@@ -860,7 +936,7 @@ async function cargarOpinionesSupabase() {
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// 11. FILTRAR CONTENIDO
+// 11. FILTRAR CONTENIDO DE LA TIENDA
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
