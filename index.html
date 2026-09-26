@@ -366,8 +366,8 @@ async function iniciarSesionConGoogle() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // Usamos href para que incluya "/pedi-en-bragado/"
-      redirectTo: window.location.href 
+      // Especificamos la ruta exacta a tu repositorio de GitHub Pages
+      redirectTo: 'https://alancsup-creator.github.io/pedi-en-bragado/'
     }
   });
 
