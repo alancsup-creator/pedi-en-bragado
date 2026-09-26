@@ -492,16 +492,30 @@ function actualizarInterfaz(session) {
 function seleccionarRol(rol) {
   rolActivo = rol;
   
-  // Ocultar pantalla de selección y mostrar el panel principal
-  document.getElementById('roleSelectionSection').style.display = 'none';
+  // Ocultar selección y mostrar panel principal
+  const roleSection = document.getElementById('roleSelectionSection');
   const mainContent = document.getElementById('mainContent');
-  mainContent.style.display = 'block';
-  mainContent.classList.add('authenticated');
+  
+  if (roleSection) roleSection.style.display = 'none';
+  if (mainContent) {
+    mainContent.style.display = 'block';
+    mainContent.classList.add('authenticated');
+  }
 
-  // Ajustar la visibilidad de opciones del menú lateral según el rol seleccionado
+  // Actualizar el texto del usuario con el nuevo rol
+  supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      const userStatus = document.getElementById('userStatus');
+      if (userStatus) {
+        userStatus.textContent = `${session.user.email} (${rol.toUpperCase()})`;
+      }
+    }
+  });
+
+  // Mostrar u ocultar menú según el rol
   configurarMenuPorRol(rol);
 }
-
+  
 function configurarMenuPorRol(rol) {
   // Ejemplo: ocultar o mostrar pestañas según la elección
   const elementosVendedor = document.querySelectorAll('.modo-vendedor');
@@ -1061,9 +1075,17 @@ function guardarConfigAdmin() {
 }
 
 // INICIALIZACIÓN
-document.addEventListener('DOMContentLoaded', () => {
-  cargarProductosSupabase();
-  verificarSesion();
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1. Obtener sesión actual
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  
+  // 2. Disparar actualización de interfaz
+  actualizarInterfaz(session);
+
+  // 3. Escuchar cambios de autenticación
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    actualizarInterfaz(session);
+  });
 });
 </script>
 </body>
