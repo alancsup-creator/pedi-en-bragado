@@ -70,6 +70,7 @@
   .btn-primary { background: var(--primary); color: white; }
   .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
   .btn-danger { background: var(--danger); color: white; }
+  .btn-warning { background: #f59e0b; color: white; }
   .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
   .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
@@ -86,6 +87,10 @@
 
   /* Puntuación con Estrellas */
   .stars { color: #f59e0b; font-size: 14px; }
+
+  /* Modal de Edición */
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+  .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -329,6 +334,52 @@
 
 </main>
 
+<!-- MODAL PARA EDITAR PRODUCTO -->
+<div id="modalEditarProducto" class="modal-overlay">
+  <div class="modal-content">
+    <h3 style="margin-bottom: 12px; color: var(--primary);">✏️ Editar Producto</h3>
+    <form onsubmit="guardarEdicionProducto(event)">
+      <input type="hidden" id="editProdId">
+      <input type="hidden" id="editProdImagenActual">
+      
+      <div class="form-group">
+        <label>Título:</label>
+        <input type="text" id="editProdTitulo" required>
+      </div>
+      <div class="form-group">
+        <label>Categoría:</label>
+        <select id="editProdCategoria" required>
+          <option value="plato_dia">Plato del día</option>
+          <option value="al_plato">Al plato</option>
+          <option value="sandwiches">Sándwiches</option>
+          <option value="postre">Postre</option>
+          <option value="bebida">Bebida</option>
+          <option value="combos">Combos</option>
+          <option value="promo">Promo</option>
+          <option value="fingerfood">Fingerfood</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Precio ($):</label>
+        <input type="number" id="editProdPrecio" required>
+      </div>
+      <div class="form-group">
+        <label>Cambiar Imagen (Opcional):</label>
+        <input type="file" id="editProdImagenFile" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Descripción:</label>
+        <input type="text" id="editProdDesc">
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button type="submit" id="btnGuardarEdit" class="btn btn-primary" style="flex:1;">Guardar Cambios</button>
+        <button type="button" onclick="cerrarModalEditar()" class="btn btn-outline" style="flex:1;">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- Barra de Navegación Inferior -->
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="navegarA('secComprador', this)">
@@ -361,6 +412,7 @@ let productosGlobales = [];
 let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
 let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
 let usuarioActualEmail = null;
+let miComercioNombre = "";
 
 // 2. AUTENTICACIÓN
 async function iniciarSesionConGoogle() {
@@ -426,11 +478,15 @@ async function cargarPerfilComercio(email) {
     .single();
 
   if (data) {
+    miComercioNombre = data.nombre || '';
     document.getElementById('vendNombre').value = data.nombre || '';
     document.getElementById('vendResena').value = data.resena || '';
     document.getElementById('vendDireccion').value = data.direccion || '';
     document.getElementById('vendTelefono').value = data.telefono || '';
     document.getElementById('vendDelivery').value = data.delivery || 'si';
+    
+    // Re-renderizamos productos para mostrar los botones de edicion/eliminacion si corresponde
+    renderizarProductos(productosGlobales);
   }
 }
 
@@ -457,7 +513,9 @@ async function guardarPerfilComercio(e) {
   if (error) {
     alert("Error al guardar perfil: " + error.message);
   } else {
+    miComercioNombre = payload.nombre;
     alert("✅ Datos del comercio actualizados.");
+    renderizarProductos(productosGlobales);
   }
 }
 
@@ -579,6 +637,11 @@ function crearTarjetaHTML(item) {
   const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
   const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
 
+  // Verificar si el usuario actual es ADMIN o DUEÑO de esta publicación
+  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+  const esDuenio = miComercioNombre && item.comercio && (miComercioNombre.trim().toLowerCase() === item.comercio.trim().toLowerCase());
+  const puedeModificar = esAdmin || esDuenio;
+
   return `
     <div class="card">
       <button class="btn-fav" onclick="toggleFavorito(${item.id})">${esFav ? '❤️' : '🤍'}</button>
@@ -604,6 +667,13 @@ function crearTarjetaHTML(item) {
           <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
           <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
         </div>
+
+        ${puedeModificar ? `
+          <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
+            <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
+            <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
+          </div>
+        ` : ''}
       </div>
     </div>
   `;
@@ -621,7 +691,104 @@ function renderizarProductos(lista) {
   grid.innerHTML = lista.map(crearTarjetaHTML).join('');
 }
 
-// 8. FAVORITOS Y GUARDADOS
+// 8. ACCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
+function abrirModalEditar(id) {
+  const prod = productosGlobales.find(p => p.id === id);
+  if (!prod) return;
+
+  document.getElementById('editProdId').value = prod.id;
+  document.getElementById('editProdTitulo').value = prod.titulo || '';
+  document.getElementById('editProdCategoria').value = prod.categoria || 'plato_dia';
+  document.getElementById('editProdPrecio').value = prod.precio || 0;
+  document.getElementById('editProdDesc').value = prod.descripcion || '';
+  document.getElementById('editProdImagenActual').value = prod.imagen || '';
+  document.getElementById('editProdImagenFile').value = '';
+
+  document.getElementById('modalEditarProducto').style.display = 'flex';
+}
+
+function cerrarModalEditar() {
+  document.getElementById('modalEditarProducto').style.display = 'none';
+}
+
+async function guardarEdicionProducto(e) {
+  e.preventDefault();
+  const id = document.getElementById('editProdId').value;
+  const btnGuardar = document.getElementById('btnGuardarEdit');
+  const fileInput = document.getElementById('editProdImagenFile');
+  const archivo = fileInput?.files[0];
+
+  try {
+    btnGuardar.disabled = true;
+    btnGuardar.innerText = "Guardando...";
+
+    let imageUrl = document.getElementById('editProdImagenActual').value;
+
+    // Si seleccionó una nueva imagen, la subimos
+    if (archivo) {
+      const fileExt = archivo.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+
+      const { error: uploadError } = await supabaseClient
+        .storage
+        .from('productos')
+        .upload(fileName, archivo);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabaseClient
+        .storage
+        .from('productos')
+        .getPublicUrl(fileName);
+
+      imageUrl = publicUrlData.publicUrl;
+    }
+
+    const updates = {
+      titulo: document.getElementById('editProdTitulo').value,
+      categoria: document.getElementById('editProdCategoria').value,
+      precio: parseFloat(document.getElementById('editProdPrecio').value),
+      descripcion: document.getElementById('editProdDesc').value,
+      imagen: imageUrl
+    };
+
+    const { error } = await supabaseClient
+      .from('productos')
+      .update(updates)
+      .eq('id', id);
+
+    if (error) throw error;
+
+    alert("✅ Producto actualizado correctamente.");
+    cerrarModalEditar();
+    cargarProductosSupabase();
+
+  } catch (err) {
+    alert("Error al actualizar producto: " + err.message);
+  } finally {
+    btnGuardar.disabled = false;
+    btnGuardar.innerText = "Guardar Cambios";
+  }
+}
+
+async function eliminarProductoSupabase(id) {
+  const confirmacion = confirm("¿Estás seguro de que querés eliminar este producto de la plataforma?");
+  if (!confirmacion) return;
+
+  const { error } = await supabaseClient
+    .from('productos')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    alert("Error al eliminar producto: " + error.message);
+  } else {
+    alert("🗑️ Producto eliminado.");
+    cargarProductosSupabase();
+  }
+}
+
+// 9. FAVORITOS Y GUARDADOS
 function toggleFavorito(id) {
   if (idsFavoritos.includes(id)) {
     idsFavoritos = idsFavoritos.filter(item => item !== id);
@@ -652,7 +819,7 @@ function renderizarFavoritosYGuardados() {
   document.getElementById('gridGuardados').innerHTML = guards.length ? guards.map(crearTarjetaHTML).join('') : '<p style="padding:10px; color:#64748b;">No tenés productos guardados.</p>';
 }
 
-// 9. OPINIONES EN SUPABASE
+// 10. OPINIONES EN SUPABASE
 async function enviarOpinionSupabase(e) {
   e.preventDefault();
   
@@ -693,7 +860,7 @@ async function cargarOpinionesSupabase() {
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// 10. FILTRAR CONTENIDO
+// 11. FILTRAR CONTENIDO
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
@@ -707,7 +874,7 @@ function filtrarContenido() {
   renderizarProductos(filtrados);
 }
 
-// 11. CONFIGURACIÓN ADMIN
+// 12. CONFIGURACIÓN ADMIN
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
