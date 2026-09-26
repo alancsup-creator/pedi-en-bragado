@@ -1,97 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#d97706">
-<title>Pedí en Bragado - Promo Gastronómica</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d97706">
+  <title>Pedí en Bragado - Promo Gastronómica</title>
 
-<!-- Manifest básico PWA integrador -->
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22Pedienbragado%22,
-  %22short_name%22:%22Pedienbragado%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22background_color%22:%22#ffffff%22,
-  %22theme_color%22:%22#d97706%22
-}">
+  <!-- Manifest PWA corregido -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}'>
 
-<!-- SDK Oficial de Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SDK Oficial de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-  :root {
-    --primary: #d97706;
-    --primary-dark: #b45309;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --border: #e2e8f0;
-    --success: #16a34a;
-    --danger: #dc2626;
-  }
+  <style>
+    :root {
+      --primary: #d97706;
+      --primary-dark: #b45309;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-  body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
 
-  /* Encabezado Principal */
-  header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  header h1 { font-size: 18px; font-weight: bold; }
-  .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
+    /* Encabezado Principal */
+    header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    header h1 { font-size: 18px; font-weight: bold; }
+    .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
 
-  /* Contenedores y Navegación */
-  .container { max-width: 800px; margin: 0 auto; padding: 16px; }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
+    /* Contenedores y Navegación */
+    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+    
+    /* Control de pestañas interno */
+    .tab-content { display: none; }
+    #mainContent .tab-content.active { display: block; }
 
-  /* Barra de Navegación Inferior Móvil */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; }
-  .nav-btn { background: none; border: none; font-size: 11px; color: #64748b; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .nav-btn.active { color: var(--primary); font-weight: bold; }
+    /* Seccion de Seleccion de Rol */
+    #roleSelectionSection { display: block; text-align: center; }
 
-  /* Banner Promocional y Destacados */
-  .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
-  .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    /* Barra de Navegación Inferior Móvil */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; }
+    .nav-btn { background: none; border: none; font-size: 11px; color: #64748b; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .nav-btn.active { color: var(--primary); font-weight: bold; }
 
-  /* Tarjetas de Productos y Negocios */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
-  .card img { width: 100%; height: 140px; object-fit: cover; }
-  .card-body { padding: 12px; }
-  .card-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .price { color: var(--primary-dark); font-weight: bold; font-size: 15px; }
+    /* Banner Promocional y Destacados */
+    .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
+    .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
 
-  /* Badges y Botones */
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-  .badge-delivery { background: #dcfce7; color: #15803d; }
-  .badge-category { background: #e0f2fe; color: #0369a1; }
-  
-  .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; text-decoration: none; display: inline-block; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-  .btn-danger { background: var(--danger); color: white; }
-  .btn-warning { background: #f59e0b; color: white; }
-  .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    /* Tarjetas de Productos y Negocios */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
+    .card img { width: 100%; height: 140px; object-fit: cover; }
+    .card-body { padding: 12px; }
+    .card-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .price { color: var(--primary-dark); font-weight: bold; font-size: 15px; }
 
-  .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    /* Badges y Botones */
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badge-delivery { background: #dcfce7; color: #15803d; }
+    .badge-category { background: #e0f2fe; color: #0369a1; }
+    
+    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; text-decoration: none; display: inline-block; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-warning { background: #f59e0b; color: white; }
+    .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
-  /* Formulario y Filtros */
-  .form-group { margin-bottom: 12px; }
-  .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
-  
-  /* Sub-navegación general */
-  .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
-  .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
-  .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
+    .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-  /* Puntuación con Estrellas */
-  .stars { color: #f59e0b; font-size: 14px; }
+    /* Formulario y Filtros */
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
+    
+    /* Sub-navegación general */
+    .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
+    .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
+    .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
 
-  /* Modal de Edición */
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
-  .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-</style>
+    /* Puntuación con Estrellas */
+    .stars { color: #f59e0b; font-size: 14px; }
+
+    /* Modal de Edición */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+    .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  </style>
 </head>
 <body>
 
@@ -1058,9 +1056,6 @@ function guardarConfigAdmin() {
 }
 
 // INICIALIZACIÓN
-// Asegurate de que esta variable esté declarada arriba del DOMContentLoaded
-let rolActivo = null; 
-
 document.addEventListener('DOMContentLoaded', async () => {
   // 1. Cargar el catálogo de productos desde Supabase
   await cargarProductosSupabase();
@@ -1076,6 +1071,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     actualizarInterfaz(session);
   });
 });
+
+  function navegarA(idSeccion) {
+  // Ocultar todas las secciones de pestañas
+  const secciones = document.querySelectorAll('.tab-content');
+  secciones.forEach(sec => sec.style.display = 'none');
+
+  // Quitar la clase active de los botones de navegación
+  const botones = document.querySelectorAll('.nav-link, .tab-btn');
+  botones.forEach(btn => btn.classList.remove('active'));
+
+  // Mostrar la sección seleccionada
+  const seccionDestino = document.getElementById(idSeccion);
+  if (seccionDestino) {
+    seccionDestino.style.display = 'block';
+  }
+
+  // Activar el botón correspondiente si existe el evento
+  if (window.event && window.event.currentTarget) {
+    window.event.currentTarget.classList.add('active');
+  }
+}
 </script>
 </body>
 </html>
