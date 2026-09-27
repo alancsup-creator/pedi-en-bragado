@@ -7,8 +7,8 @@
   <title>Pedí en Bragado - Promo Gastronómica</title>
 
   <!-- Manifest PWA corregido -->
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}'>
-
+  <!-- En el <head> de tu HTML -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}'>
   <!-- SDK Oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -848,13 +848,14 @@ function crearTarjetaHTML(item) {
       <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
       
       <!-- Muestra de Promedio + BOTÓN PARA CALIFICAR -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-        <span class="stars">★ ${item.estrellas || 5}.0</span>
-        <button onclick="abrirModalCalificar('${item.id}')" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer; font-weight:bold;">
-          ✍️ Calificar
-        </button>
-      </div>
-      
+      `
+<div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+  <span class="stars">★ ${item.estrellas || 5}.0</span>
+  <button onclick="abrirModalCalificar('${item.id}')" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: bold;">
+    ✍️ Calificar
+  </button>
+</div>
+`      
       <span class="badge badge-delivery" style="margin-top: 4px;">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
     </div>
 
