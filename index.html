@@ -467,15 +467,18 @@ function activarInterfazUsuario(emailUsuario) {
   document.getElementById('boxPanelVendedor').style.display = 'block';
   
   if (usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
-    document.getElementById('btnNavAdmin').style.display = 'flex';
+    const btnAdmin = document.getElementById('btnNavAdmin');
+    if (btnAdmin) btnAdmin.style.display = 'flex';
     document.getElementById('lblPerfil').innerText = `Admin: ${usuarioActualEmail}`;
     cargarGestionVendedores();
+    // Cambia la vista a la sección del Administrador dentro de la misma SPA
+    navegarA('secAdmin', btnAdmin);
   } else {
     document.getElementById('btnNavAdmin').style.display = 'none';
   }
   cargarPerfilComercio(usuarioActualEmail);
 }
-
+  
 async function cerrarSesion() {
   await supabaseClient.auth.signOut();
   rolActivo = null;
@@ -483,15 +486,27 @@ async function cerrarSesion() {
   location.reload();
 }
 
+// ✅ CÓDIGO CORREGIDO
 function autenticarVendedorManual(e) {
   e.preventDefault();
-  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+  const emailInput = document.getElementById('authEmail');
+  if (!emailInput || !emailInput.value) return;
+
+  const email = emailInput.value.trim().toLowerCase();
+  
+  // 1. Activamos la interfaz del usuario en el cliente
   activarInterfazUsuario(email);
+
+  // 2. Si es el administrador, hacemos visible la pestaña y navegamos internamente
   if (email === ADMIN_EMAIL.toLowerCase()) {
-    navegarA('secAdmin', document.getElementById('btnNavAdmin'));
+    const btnAdmin = document.getElementById('btnNavAdmin');
+    if (btnAdmin) {
+      btnAdmin.style.display = 'flex';
+      navegarA('secAdmin', btnAdmin);
+    }
   }
 }
-
+  
 // 3. GESTIÓN DEL PERFIL DE COMERCIO
 async function cargarPerfilComercio(email) {
   const { data, error } = await supabaseClient
