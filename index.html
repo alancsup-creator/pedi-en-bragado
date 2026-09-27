@@ -1,135 +1,151 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#d97706">
-  <title>Pedí en Bragado - Promo Gastronómica</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d97706">
+<title>Pedí en Bragado - Promo Gastronómica</title>
 
-  <!-- Manifest PWA (Sintaxis de comillas corregida) -->
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}'>
+<!-- Manifest básico PWA integrador -->
+<link rel="manifest" href="data:application/manifest+json,{
+  %22name%22:%22Pedienbragado%22,
+  %22short_name%22:%22Pedienbragado%22,
+  %22start_url%22:%22.%22,
+  %22display%22:%22standalone%22,
+  %22background_color%22:%22#ffffff%22,
+  %22theme_color%22:%22#d97706%22
+}">
+
+<!-- SDK Oficial de Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  :root {
+    --primary: #d97706;
+    --primary-dark: #b45309;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --border: #e2e8f0;
+    --success: #16a34a;
+    --danger: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+  body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
+
+  /* Encabezado Principal */
+  header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  header h1 { font-size: 18px; font-weight: bold; }
+  .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
+
+  /* Contenedores y Navegación */
+  .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Barra de Navegación Inferior Móvil */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; }
+  .nav-btn { background: none; border: none; font-size: 11px; color: #64748b; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .nav-btn.active { color: var(--primary); font-weight: bold; }
+
+  /* Banner Promocional y Destacados */
+  .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
+  .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+
+  /* Tarjetas de Productos y Negocios */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
+  .card img { width: 100%; height: 140px; object-fit: cover; }
+  .card-body { padding: 12px; }
+  .card-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .price { color: var(--primary-dark); font-weight: bold; font-size: 15px; }
+
+  /* Badges y Botones */
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+  .badge-delivery { background: #dcfce7; color: #15803d; }
+  .badge-category { background: #e0f2fe; color: #0369a1; }
   
-  <!-- SDK Oficial de Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; text-decoration: none; display: inline-block; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-warning { background: #f59e0b; color: white; }
+  .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
-  <style>
-    :root {
-      --primary: #d97706;
-      --primary-dark: #b45309;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --border: #e2e8f0;
-      --success: #16a34a;
-      --danger: #dc2626;
-    }
+  .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
+  /* Formulario y Filtros */
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
+  
+  /* Sub-navegación general */
+  .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
+  .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
+  .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
 
-    /* Encabezado Principal */
-    header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    header h1 { font-size: 18px; font-weight: bold; }
-    .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
+  /* Puntuación con Estrellas */
+  .stars { color: #f59e0b; font-size: 14px; }
 
-    /* Contenedores y Navegación */
-    .container { max-width: 800px; margin: 0 auto; padding: 16px; }
-    
-    /* Control de pestañas interno */
-    .tab-content { display: none; }
-    #mainContent .tab-content.active { display: block; }
+  /* Modal de Edición */
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+  .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
 
-    /* Seccion de Seleccion de Rol */
-    #roleSelectionSection { display: block; text-align: center; }
-
-    /* Barra de Navegación Inferior Móvil */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; }
-    .nav-btn { background: none; border: none; font-size: 11px; color: #64748b; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .nav-btn.active { color: var(--primary); font-weight: bold; }
-
-    /* Banner Promocional y Destacados */
-    .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
-    .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-
-    /* Tarjetas de Productos y Negocios */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; }
-    .card img { width: 100%; height: 140px; object-fit: cover; }
-    .card-body { padding: 12px; }
-    .card-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .price { color: var(--primary-dark); font-weight: bold; font-size: 15px; }
-
-    /* Badges y Botones */
-    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-    .badge-delivery { background: #dcfce7; color: #15803d; }
-    .badge-category { background: #e0f2fe; color: #0369a1; }
-    
-    .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; text-align: center; text-decoration: none; display: inline-block; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-warning { background: #f59e0b; color: white; }
-    .btn-google { background: #ffffff; color: #374151; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-
-    .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-    /* Formulario y Filtros */
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
-    
-    /* Sub-navegación general */
-    .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
-    .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
-    .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
-
-    /* Puntuación con Estrellas */
-    .stars { color: #f59e0b; font-size: 14px; }
-
-    /* Modal de Edición */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
-    .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-  </style>
-</head>
-<body>
-
-<!-- Modal de Registro/Ingreso de Comprador -->
-<div id="modalAuthComprador" class="modal-overlay">
-  <div class="modal-content" style="max-width: 380px;">
-    <h2 id="modalAuthTitle" style="margin-bottom: 12px; text-align: center;">Acceso Comprador</h2>
-    
-    <form id="formComprador" onsubmit="procesarAuthComprador(event)">
-      <div class="form-group">
+  <!-- Modal de Registro e Inicio de Sesión para Compradores -->
+<div id="modalAuthComprador" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="cerrarModalComprador()">&times;</button>
+    <h3 id="authTitleComprador">Iniciar Sesión / Registrarse</h3>
+    <form id="formAuthComprador" onsubmit="procesarAuthComprador(event)">
+      <div id="grupoNombreComprador" class="input-group hidden">
+        <label>Nombre y Apellido</label>
+        <input type="text" id="nombreComprador" placeholder="Ej: María Pérez">
+      </div>
+      <div class="input-group">
         <label>Correo Electrónico</label>
-        <input type="email" id="authEmailComprador" required placeholder="tu@email.com">
+        <input type="email" id="emailComprador" required placeholder="tu@email.com">
       </div>
-
-      <div class="form-group">
+      <div class="input-group">
         <label>Contraseña</label>
-        <input type="password" id="authPasswordComprador" required minlength="6" placeholder="******">
+        <input type="password" id="passComprador" required placeholder="******">
       </div>
-
-      <div id="camposRegistro">
-        <div class="form-group">
-          <label>Nombre</label>
-          <input type="text" id="authNombre" placeholder="Juan">
-        </div>
-        <div class="form-group">
-          <label>Apellido</label>
-          <input type="text" id="authApellido" placeholder="Pérez">
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary" id="btnAuthSubmit" style="margin-top: 12px;">Registrarse e Ingresar</button>
+      <button type="submit" class="btn-primary" id="btnSubmitComprador">Ingresar</button>
     </form>
-
-    <div style="text-align: center; margin-top: 15px; font-size: 13px;">
-      <a href="#" id="toggleAuthMode" onclick="alternarModoAuth(event)" style="color: var(--primary);">¿Ya tenés cuenta? Iniciar Sesión</a>
-    </div>
-
-    <button onclick="cerrarModalComprador()" class="btn btn-outline" style="margin-top: 10px; border: none; color: #64748b;">Cancelar</button>
+    <p style="margin-top: 10px; text-align: center;">
+      <a href="#" id="toggleAuthComprador" onclick="alternarModoAuthComprador(event)">¿No tienes cuenta? Regístrate</a>
+    </p>
   </div>
 </div>
+  <!-- Modal de Registro de Vendedor -->
+<div id="modalAuthVendedor" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="cerrarModalVendedor()">&times;</button>
+    <h3 id="authTitleVendedor">Registro de Comercio / Vendedor</h3>
+    <form id="formAuthVendedor" onsubmit="procesarAuthVendedor(event)">
+      <div class="input-group">
+        <label>Nombre del Comercio o Nombre Comercial</label>
+        <input type="text" id="nombreComercio" required placeholder="Ej: Panadería El Sol">
+      </div>
+      <div class="input-group">
+        <label>Teléfono / WhatsApp</label>
+        <input type="tel" id="telefonoVendedor" required placeholder="Ej: 2342123456">
+      </div>
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <input type="email" id="emailVendedor" required placeholder="tu@comercio.com">
+      </div>
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" id="passVendedor" required placeholder="******">
+      </div>
+      <button type="submit" class="btn-primary" id="btnSubmitVendedor">Enviar Solicitud de Registro</button>
+    </form>
+  </div>
+</div>
+</style>
+</head>
+<body>
 
 <header>
   <h1>🍔 Pedienbragado</h1>
@@ -139,7 +155,9 @@
   </div>
 </header>
 
-<!-- Pantalla de Selección de Rol -->
+<main class="container" id="mainContent" style="display: none;">
+
+  <!-- Pantalla de Selección de Rol -->
 <section id="roleSelectionSection" style="display: none; text-align: center; padding: 40px 20px;">
   <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
     <h2>¿Cómo querés ingresar hoy?</h2>
@@ -157,21 +175,23 @@
   </div>
 </section>
   
-<main class="container" id="mainContent" style="display: none;">
-
   <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
   <section id="secComprador" class="tab-content active">
+    
+    <!-- Banner Principal -->
     <div class="hero-banner" id="heroBanner">
       <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
       <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
     </div>
 
+    <!-- Destacado de la Semana -->
     <div class="featured-card" id="boxDestacado">
       <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
       <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
       <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
     </div>
 
+    <!-- Buscador y Filtros -->
     <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
       <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
       
@@ -188,6 +208,7 @@
       </select>
     </div>
 
+    <!-- Listado de Productos / Locales -->
     <h3 style="margin-bottom:12px; font-size:16px;">Ofertas y Menú del Día</h3>
     <div class="grid" id="gridProductos"></div>
   </section>
@@ -243,6 +264,8 @@
 
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
+    
+    <!-- ACCESO Y LOGIN -->
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
       <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a Pedienbragado</h2>
       <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
@@ -259,19 +282,23 @@
       <form onsubmit="autenticarVendedorManual(event)">
         <div class="form-group" style="text-align:left;">
           <label>Correo Electrónico:</label>
-          <input type="email" id="authEmailVendedor" required placeholder="comercio@ejemplo.com">
+          <input type="email" id="authEmail" required placeholder="comercio@ejemplo.com">
         </div>
         <button type="submit" class="btn btn-outline">Ingresar por correo</button>
       </form>
     </div>
 
+    <!-- PANEL DE CONTROL DEL VENDEDOR CON PESTAÑAS -->
     <div id="boxPanelVendedor" style="display:none;">
+      
+      <!-- Navegación de Subsecciones para Mi Negocio -->
       <div class="subnav">
         <button class="subnav-btn active" onclick="cambiarSubtabNegocio('subMiComercio', this)">🏪 Mi Comercio</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subPublicarProducto', this)">➕ Publicar Producto / Oferta</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subMisProductos', this)">📋 Mis Productos Publicados</button>
       </div>
 
+      <!-- PESTAÑA 1: MI COMERCIO -->
       <div id="subMiComercio" class="subtab-negocio-content">
         <div class="card" style="padding:16px;">
           <h3>🏪 Configuración de Mi Comercio</h3>
@@ -306,6 +333,7 @@
         </div>
       </div>
 
+      <!-- PESTAÑA 2: PUBLICAR PRODUCTO / OFERTA -->
       <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
           <h3>➕ Publicar Nuevo Producto / Oferta</h3>
@@ -346,6 +374,7 @@
         </div>
       </div>
 
+      <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS (PANEL DE CONTROL DE GESTIÓN) -->
       <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3>📋 Control de Mis Publicaciones</h3>
@@ -355,13 +384,15 @@
         
         <div class="grid" id="gridMisProductos"></div>
       </div>
+
     </div>
   </section>
 
-  <!-- VISTA 4: ADMINISTRADOR -->
+ <!-- VISTA 4: ADMINISTRADOR (OCULTO) -->
   <section id="secAdmin" class="tab-content">
     <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel de Control Administrador</h2>
 
+    <!-- Configuración Visual -->
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🖼️ Banner y Destacados</h3>
       <div class="form-group">
@@ -375,6 +406,29 @@
       <button onclick="guardarConfigAdmin()" class="btn btn-primary">Guardar Cambios Visuales</button>
     </div>
 
+    <!-- Gestión y Aprobación de Vendedores -->
+    <div class="card" style="padding:16px; margin-bottom:20px;">
+      <h3>🏪 Gestión y Solicitudes de Vendedores</h3>
+      <div style="overflow-x: auto;">
+        <table class="admin-table" style="width:100%; border-collapse:collapse; margin-top:10px;">
+          <thead>
+            <tr style="text-align:left; border-bottom: 2px solid #ddd;">
+              <th>Comercio</th>
+              <th>Email</th>
+              <th>Estado</th>
+              <th>Vencimiento</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaVendedoresAdmin">
+            <!-- Se carga dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+    <!-- Moderación de Vendedores -->
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🏪 Moderación y Membresías de Vendedores</h3>
       <table style="width:100%; font-size:13px; margin-top:8px; border-collapse:collapse;">
@@ -468,66 +522,39 @@
 </nav>
 
 <script>
-// 1. CONFIGURACIÓN E INICIALIZACIÓN DE SUPABASE
-const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // Variable global para almacenar el perfil activo en la sesión actual
+let rolActivo = null; 
 
-const ADMIN_EMAIL = 'alan.csup@gmail.com';
+// 1. Reemplazar actualizarInterfaz por esta versión corregida
+async function actualizarInterfaz() {
+  const lblPerfil = document.getElementById('lblPerfil');
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-let rolActivo = null;
-let productosGlobales = [];
-let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
-let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
-let usuarioActualEmail = null;
-let miComercioNombre = "";
-
-// 2. GESTIÓN DE INTERFAZ Y SESIÓN
-function actualizarInterfaz(session) {
-  const mainContent = document.getElementById('mainContent');
-  const roleSection = document.getElementById('roleSelectionSection');
-  const userStatus = document.getElementById('lblPerfil');
-
-  if (!rolActivo) {
-    if (roleSection) roleSection.style.display = 'block';
-    if (mainContent) mainContent.style.display = 'none';
+  if (session) {
+    const emailUsuario = session.user.email;
+    lblPerfil.textContent = `${emailUsuario} (${rolActivo ? rolActivo.toUpperCase() : 'USUARIO'})`;
   } else {
-    if (roleSection) roleSection.style.display = 'none';
-    if (mainContent) mainContent.style.display = 'block';
-  }
-
-  if (userStatus) {
-    if (session) {
-      usuarioActualEmail = session.user.email.toLowerCase();
-      userStatus.textContent = `Sesión: ${usuarioActualEmail} (${rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
-    } else {
-      userStatus.textContent = rolActivo ? `Modo: ${rolActivo.toUpperCase()}` : 'Sin Selección';
-    }
+    lblPerfil.textContent = `Invitado (${rolActivo ? rolActivo.toUpperCase() : 'SIN ROL'})`;
   }
 }
-
+// 2. MANTENER seleccionarRol (actualizada para usar los IDs correctos)
 async function seleccionarRol(rol) {
   rolActivo = rol;
+  const { data: { session } } = await supabaseClient.auth.getSession();
   
   if (rol === 'comprador') {
-    const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
       abrirModalComprador();
       return;
     }
-    await cargarPerfilUsuario(session.user.id);
   }
-
-  const roleSection = document.getElementById('roleSelectionSection');
-  const mainContent = document.getElementById('mainContent');
   
-  if (roleSection) roleSection.style.display = 'none';
-  if (mainContent) mainContent.style.display = 'block';
-
-  configurarMenuPorRol(rol);
+  document.getElementById('roleSelector').classList.add('hidden');
+  document.getElementById('mainContent').classList.remove('hidden');
+  actualizarInterfaz();
 }
-
-function configurarMenuPorRol(rol) {
+  function configurarMenuPorRol(rol) {
+  // Ejemplo: ocultar o mostrar pestañas según la elección
   const elementosVendedor = document.querySelectorAll('.modo-vendedor');
   const elementosComprador = document.querySelectorAll('.modo-comprador');
 
@@ -539,16 +566,35 @@ function configurarMenuPorRol(rol) {
     elementosComprador.forEach(el => el.style.display = 'block');
   }
 }
+  async function logout() {
+  await supabaseClient.auth.signOut();
+  rolActivo = null; // Reiniciar selección de rol
+  
+  document.getElementById('loginSection').style.display = 'flex';
+  document.getElementById('roleSelectionSection').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('mainContent').classList.remove('authenticated');
+  
+  const userStatus = document.getElementById('userStatus');
+  if (userStatus) userStatus.innerText = 'Invitado';
 
-function abrirModalComprador() {
-  document.getElementById('modalAuthComprador').style.display = 'flex';
+  if (typeof closeMenu === 'function') closeMenu();
 }
+  
+// 1. CONFIGURACIÓN DE SUPABASE
+const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function cerrarModalComprador() {
-  document.getElementById('modalAuthComprador').style.display = 'none';
-}
+const ADMIN_EMAIL = 'alan.csup@gmail.com';
 
-// 3. AUTENTICACIÓN
+let productosGlobales = [];
+let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
+let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
+let usuarioActualEmail = null;
+let miComercioNombre = "";
+
+// 2. AUTENTICACIÓN
 async function iniciarSesionConGoogle() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
@@ -558,6 +604,15 @@ async function iniciarSesionConGoogle() {
   });
 
   if (error) alert("Error al conectar con Google: " + error.message);
+}
+
+async function verificarSesion() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (user) {
+    usuarioActualEmail = user.email.toLowerCase();
+    activarInterfazUsuario(usuarioActualEmail);
+  }
 }
 
 function activarInterfazUsuario(emailUsuario) {
@@ -580,14 +635,13 @@ function activarInterfazUsuario(emailUsuario) {
 
 async function cerrarSesion() {
   await supabaseClient.auth.signOut();
-  rolActivo = null;
   alert("Sesión cerrada.");
   location.reload();
 }
 
 function autenticarVendedorManual(e) {
   e.preventDefault();
-  const email = document.getElementById('authEmailVendedor').value.trim().toLowerCase();
+  const email = document.getElementById('authEmail').value.trim().toLowerCase();
   activarInterfazUsuario(email);
 
   if (email === ADMIN_EMAIL.toLowerCase()) {
@@ -595,34 +649,9 @@ function autenticarVendedorManual(e) {
   }
 }
 
-// 4. PERFILES Y COMERCIOS
-async function cargarPerfilUsuario(userId) {
-  try {
-    const { data, error } = await supabaseClient
-      .from('perfiles')
-      .select('nombre, apellido')
-      .eq('id', userId)
-      .maybeSingle();
-
-    const lblPerfil = document.getElementById('lblPerfil');
-
-    if (error) {
-      console.error('Error al obtener perfil:', error);
-      return;
-    }
-
-    if (data && lblPerfil) {
-      lblPerfil.textContent = `👤 ${data.nombre} ${data.apellido}`;
-    } else if (lblPerfil) {
-      lblPerfil.textContent = '👤 Comprador';
-    }
-  } catch (err) {
-    console.error('Error en cargarPerfilUsuario:', err);
-  }
-}
-
+// 3. GESTIÓN DEL PERFIL DE COMERCIO
 async function cargarPerfilComercio(email) {
-  const { data } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('comercios')
     .select('*')
     .eq('email', email)
@@ -636,6 +665,7 @@ async function cargarPerfilComercio(email) {
     document.getElementById('vendTelefono').value = data.telefono || '';
     document.getElementById('vendDelivery').value = data.delivery || 'si';
     
+    // Re-renderizamos para reflejar los cambios
     renderizarProductos(productosGlobales);
     renderizarMisProductos();
   }
@@ -671,23 +701,25 @@ async function guardarPerfilComercio(e) {
   }
 }
 
-// 5. PRODUCTOS (CARGA Y PUBLICACIÓN)
-async function cargarProductosSupabase() {
-  const { data, error } = await supabaseClient
+// 4. OBTENER PRODUCTOS DESDE SUPABASE
+// Ejemplo de consulta de productos para la vista de compradores
+async function cargarProductosCompradores() {
+  const ahora = new Date().toISOString();
+
+  const { data: productos, error } = await supabaseClient
     .from('productos')
-    .select('*')
-    .order('id', { ascending: false });
+    .select('*, perfiles!inner(*)')
+    .eq('perfiles.estado', 'aprobado')
+    .gt('perfiles.fecha_vencimiento', ahora);
 
   if (error) {
-    console.error("Error cargando productos de Supabase:", error);
+    console.error('Error al obtener productos:', error);
     return;
   }
 
-  productosGlobales = data || [];
-  renderizarProductos(productosGlobales);
-  renderizarMisProductos();
+  // Renderizar los productos...
 }
-
+  // 5. SUBIDA DE IMÁGENES A SUPABASE STORAGE Y PUBLICACIÓN
 async function publicarProducto(e) {
   e.preventDefault();
 
@@ -707,13 +739,15 @@ async function publicarProducto(e) {
     const fileExt = archivo.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
-    const { error: uploadError } = await supabaseClient
+    // 1. Subir imagen al Bucket 'productos'
+    const { data: uploadData, error: uploadError } = await supabaseClient
       .storage
       .from('productos')
       .upload(fileName, archivo);
 
     if (uploadError) throw uploadError;
 
+    // 2. Obtener URL pública
     const { data: publicUrlData } = supabaseClient
       .storage
       .from('productos')
@@ -723,6 +757,7 @@ async function publicarProducto(e) {
 
     btnSubmit.innerText = "Guardando producto...";
 
+    // 3. Insertar el registro en la base de datos
     const nuevo = {
       comercio: document.getElementById('vendNombre').value || "Mi Comercio Gastronómico",
       titulo: document.getElementById('prodTitulo').value,
@@ -746,6 +781,8 @@ async function publicarProducto(e) {
     e.target.reset();
     await cargarProductosSupabase();
 
+    // Redirigir a la pestaña de "Mis Productos Publicados"
+    const btnMisProd = document.querySelectorAll('.subtab-negocio-content')[2];
     const btnNavSub = document.querySelectorAll('#secVendedor .subnav-btn')[2];
     cambiarSubtabNegocio('subMisProductos', btnNavSub);
 
@@ -757,111 +794,12 @@ async function publicarProducto(e) {
   }
 }
 
-// 6. RENDERIZADO Y TARJETAS (SINTAXIS CORREGIDA)
-function crearTarjetaHTML(item) {
-  const esFav = idsFavoritos.includes(item.id);
-  const esGuardado = idsGuardados.includes(item.id);
-
-  const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
-  const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
-
-  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-  const esDuenio = miComercioNombre && item.comercio && (miComercioNombre.trim().toLowerCase() === item.comercio.trim().toLowerCase());
-  const puedeModificar = esAdmin || esDuenio;
-
-  return `
-    <div class="card">
-      <button class="btn-fav" onclick="alternarFavorito('${item.id}', 'producto')">${esFav ? '❤️' : '🤍'}</button>
-
-      <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
-      
-      <div class="card-body">
-        <div class="card-title">
-          <span>${item.titulo}</span>
-        </div>
-        
-        <div style="margin-bottom:6px;">
-          <span class="price">$${item.precio}</span> | 
-          <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
-        </div>
-        
-        <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-        
-        <div style="border-top:1px solid #f1f5f9; padding-top:8px; font-size:12px;">
-          <strong>🏬 ${item.comercio}</strong><br>
-          <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
-          
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-            <span class="stars">★ ${item.estrellas || 5}.0</span>
-            <button onclick="abrirModalCalificar('${item.id}')" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: bold;">
-              ✍️ Calificar
-            </button>
-          </div>
-
-          <span class="badge badge-delivery" style="margin-top: 4px;">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
-        </div>
-
-        <div style="display:flex; gap:6px; margin-top:8px;">
-          <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
-          <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
-        </div>
-
-        ${puedeModificar ? `
-          <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
-            <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
-            <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
-          </div>
-        ` : ''}
-      </div>
-    </div>
-  `;
-}
-
-function renderizarProductos(lista) {
-  const grid = document.getElementById('gridProductos');
-  if (!grid) return;
-
-  if (lista.length === 0) {
-    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron platos o negocios para esa búsqueda.</p>';
-    return;
-  }
-
-  grid.innerHTML = lista.map(crearTarjetaHTML).join('');
-}
-
-function renderizarMisProductos() {
-  const grid = document.getElementById('gridMisProductos');
-  if (!grid) return;
-
-  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-
-  const misProds = esAdmin 
-    ? productosGlobales 
-    : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
-
-  if (misProds.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
-        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
-        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
-        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
-          ➕ Publicar Producto Ahora
-        </button>
-      </div>
-    `;
-    return;
-  }
-
-  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
-}
-
-// 7. NAVEGACIÓN Y PESTAÑAS
+// 6. NAVEGACIÓN PRINCIPAL Y SUBPESTAÑAS
 function navegarA(tabId, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-  const destino = document.getElementById(tabId);
-  if (destino) destino.style.display = 'block';
+  document.getElementById(tabId).classList.add('active');
   if (btn) btn.classList.add('active');
 
   if (tabId === 'secMiCuenta') {
@@ -892,7 +830,68 @@ function cambiarSubtabNegocio(subtabId, btn) {
   }
 }
 
-// 8. EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
+// 7. RENDERIZADO DE TARJETAS
+function crearTarjetaHTML(item, tipo) {
+  const esProd = tipo === 'producto';
+  const imgUrl = item.imagen || 'https://via.placeholder.com/150';
+  const titulo = esProd ? item.titulo : item.nombre;
+  
+  return `
+    <div class="card">
+      <img src="${imgUrl}" alt="${titulo}" class="card-img">
+      <div class="card-body">
+        <h4>${titulo}</h4>
+        ${esProd ? `<p class="precio">$${item.precio}</p>` : `<p>${item.descripcion || ''}</p>`}
+        <div class="card-actions">
+          <button class="btn-fav" onclick="alternarFavorito('${item.id}', '${tipo}')">❤️</button>
+          <button class="btn-rate" onclick="abrirModalCalificar('${item.id}', '${tipo}')">✍️ Calificar</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+  
+function renderizarProductos(lista) {
+  const grid = document.getElementById('gridProductos');
+  if (!grid) return;
+
+  if (lista.length === 0) {
+    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron platos o negocios para esa búsqueda.</p>';
+    return;
+  }
+
+  grid.innerHTML = lista.map(crearTarjetaHTML).join('');
+}
+
+// RENDERIZADO EXCLUSIVO PARA "MIS PRODUCTOS PUBLICADOS"
+function renderizarMisProductos() {
+  const grid = document.getElementById('gridMisProductos');
+  if (!grid) return;
+
+  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+
+  // Si es admin muestra todo, sino filtra por el nombre del comercio actual
+  const misProds = esAdmin 
+    ? productosGlobales 
+    : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
+
+  if (misProds.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
+        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
+        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
+        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
+          ➕ Publicar Producto Ahora
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
+}
+
+// 8. ACCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
 function abrirModalEditar(id) {
   const prod = productosGlobales.find(p => p.id === id);
   if (!prod) return;
@@ -988,27 +987,16 @@ async function eliminarProductoSupabase(id) {
   }
 }
 
-// 9. FAVORITOS, GUARDADOS Y RESEÑAS
-async function alternarFavorito(itemId, tipo) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return alert('Iniciá sesión para guardar favoritos');
-
-  const userId = session.user.id;
-
-  const { data } = await supabaseClient
-    .from('favoritos')
-    .select('id')
-    .eq('usuario_id', userId)
-    .eq('item_id', itemId)
-    .single();
-
-  if (data) {
-    await supabaseClient.from('favoritos').delete().eq('id', data.id);
-    alert('Quitado de favoritos');
+// 9. FAVORITOS Y GUARDADOS
+function toggleFavorito(id) {
+  if (idsFavoritos.includes(id)) {
+    idsFavoritos = idsFavoritos.filter(item => item !== id);
   } else {
-    await supabaseClient.from('favoritos').insert([{ usuario_id: userId, item_id: itemId, tipo }]);
-    alert('Añadido a favoritos');
+    idsFavoritos.push(id);
   }
+  localStorage.setItem('sl_favoritos', JSON.stringify(idsFavoritos));
+  renderizarProductos(productosGlobales);
+  renderizarFavoritosYGuardados();
 }
 
 function toggleGuardado(id) {
@@ -1030,34 +1018,7 @@ function renderizarFavoritosYGuardados() {
   document.getElementById('gridGuardados').innerHTML = guards.length ? guards.map(crearTarjetaHTML).join('') : '<p style="padding:10px; color:#64748b;">No tenés productos guardados.</p>';
 }
 
-function abrirModalCalificar(itemId) {
-  const estrellas = prompt("Ingresá tu puntuación del 1 al 5:", "5");
-  if (!estrellas) return;
-  const comentario = prompt("Dejá un comentario sobre este producto:");
-  if (comentario !== null) {
-    enviarCalificacion(itemId, parseInt(estrellas), comentario);
-  }
-}
-
-async function enviarCalificacion(itemId, estrellas, comentario) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return alert('Iniciá sesión para opinar');
-
-  const { error } = await supabaseClient.from('resenas').insert([{
-    usuario_id: session.user.id,
-    item_id: itemId,
-    estrellas: estrellas,
-    comentario: comentario
-  }]);
-
-  if (error) {
-    alert('Error al enviar opinión: ' + error.message);
-  } else {
-    alert('¡Gracias por tu opinión!');
-  }
-}
-
-// 10. OPINIONES
+// 10. OPINIONES EN SUPABASE
 async function enviarOpinionSupabase(e) {
   e.preventDefault();
   
@@ -1098,7 +1059,7 @@ async function cargarOpinionesSupabase() {
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// 11. FILTROS Y CONFIGURACIÓN
+// 11. FILTRAR CONTENIDO DE LA TIENDA
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
@@ -1112,6 +1073,7 @@ function filtrarContenido() {
   renderizarProductos(filtrados);
 }
 
+// 12. CONFIGURACIÓN ADMIN
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
@@ -1121,17 +1083,299 @@ function guardarConfigAdmin() {
   alert("✅ Cambios visuales actualizados en la portada.");
 }
 
-// 12. INICIALIZACIÓN GENERAL AL Cargar DOM
+// INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', async () => {
+  // 1. Cargar el catálogo de Supabase en la interfaz
   await cargarProductosSupabase();
 
+  // 2. Verificar la sesión activa al recargar la página
   const { data: { session } } = await supabaseClient.auth.getSession();
   actualizarInterfaz(session);
 
+  // 3. Escuchar los cambios de estado (Login / Logout / Registro)
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     actualizarInterfaz(session);
   });
 });
+
+  let esModoRegistroComprador = false;
+
+function abrirModalComprador() {
+  document.getElementById('modalAuthComprador').classList.remove('hidden');
+}
+
+function cerrarModalComprador() {
+  document.getElementById('modalAuthComprador').classList.add('hidden');
+}
+
+function alternarModoAuthComprador(e) {
+  e.preventDefault();
+  esModoRegistroComprador = !esModoRegistroComprador;
+  const grupoNombre = document.getElementById('grupoNombreComprador');
+  const btnSubmit = document.getElementById('btnSubmitComprador');
+  const toggleLink = document.getElementById('toggleAuthComprador');
+  const authTitle = document.getElementById('authTitleComprador');
+
+  if (esModoRegistroComprador) {
+    grupoNombre.classList.remove('hidden');
+    btnSubmit.textContent = 'Registrarse';
+    toggleLink.textContent = '¿Ya tienes cuenta? Inicia sesión';
+    authTitle.textContent = 'Crear Cuenta de Comprador';
+  } else {
+    grupoNombre.classList.add('hidden');
+    btnSubmit.textContent = 'Ingresar';
+    toggleLink.textContent = '¿No tienes cuenta? Regístrate';
+    authTitle.textContent = 'Iniciar Sesión';
+  }
+}
+
+async function procesarAuthComprador(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailComprador').value;
+  const password = document.getElementById('passComprador').value;
+  const nombre = document.getElementById('nombreComprador').value;
+
+  try {
+    if (esModoRegistroComprador) {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { nombre_completo: nombre, rol: 'comprador' } }
+      });
+      if (error) throw error;
+      alert('Registro exitoso. Por favor, verifica tu correo o inicia sesión.');
+    } else {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    }
+    cerrarModalComprador();
+    seleccionarRol('comprador');
+  } catch (err) {
+    alert('Error de autenticación: ' + err.message);
+  }
+}
+
+  function abrirModalVendedor() {
+  document.getElementById('modalAuthVendedor').classList.remove('hidden');
+}
+
+function cerrarModalVendedor() {
+  document.getElementById('modalAuthVendedor').classList.add('hidden');
+}
+
+async function procesarAuthVendedor(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailVendedor').value;
+  const password = document.getElementById('passVendedor').value;
+  const nombreComercio = document.getElementById('nombreComercio').value;
+  const telefono = document.getElementById('telefonoVendedor').value;
+
+  try {
+    // 1. Crear el usuario en Supabase Auth
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: { 
+        data: { 
+          rol: 'vendedor', 
+          nombre_comercio: nombreComercio 
+        } 
+      }
+    });
+
+    if (authError) throw authError;
+
+    // 2. Insertar / Actualizar en tu tabla de perfiles existente
+    const { error: dbError } = await supabaseClient
+      .from('perfiles')
+      .upsert([
+        {
+          id: authData.user.id, // ID del usuario autenticado
+          email: email,
+          nombre_comercio: nombreComercio,
+          telefono: telefono,
+          rol: 'vendedor',
+          estado: 'pendiente', // Queda esperando aprobación del admin
+          fecha_vencimiento: null
+        }
+      ]);
+
+    if (dbError) throw dbError;
+
+    alert('Solicitud de vendedor enviada. Queda pendiente de aprobación por el administrador.');
+    cerrarModalVendedor();
+  } catch (err) {
+    alert('Error al registrar vendedor: ' + err.message);
+  }
+}
+  // Cargar la lista de vendedores en la tabla del Admin
+async function cargarGestionVendedores() {
+  const tbody = document.getElementById('tablaVendedoresAdmin');
+  tbody.innerHTML = 'Cargando...';
+
+  const { data: vendedores, error } = await supabaseClient
+    .from('vendedores')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    tbody.innerHTML = 'Error al obtener vendedores.';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  vendedores.forEach(v => {
+    const fechaVenc = v.fecha_vencimiento 
+      ? new Date(v.fecha_vencimiento).toLocaleDateString() 
+      : 'Sin activar';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.nombre_comercio}</td>
+      <td>${v.email}</td>
+      <td><span class="badge badge-${v.estado}">${v.estado.toUpperCase()}</span></td>
+      <td>${fechaVenc}</td>
+      <td>
+        <button class="btn-success" onclick="aprobarORenovarVendedor('${v.id}', '${v.fecha_vencimiento}')">
+          ${v.estado === 'pendiente' ? 'Aprobar (1 mes)' : 'Renovar +1 Mes'}
+        </button>
+        <button class="btn-danger" onclick="cambiarEstadoVendedor('${v.id}', 'suspendido')">
+          Bannear / Suspender
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Renovar o Aprobar Vendedor otorgando 30 días adicionales
+async function aprobarORenovarVendedor(idVendedor, fechaActual) {
+  let nuevaFecha = new Date();
+  
+  // Si ya tenía una fecha de vencimiento futura, sumamos un mes sobre esa fecha
+  if (fechaActual && new Date(fechaActual) > new Date()) {
+    nuevaFecha = new Date(fechaActual);
+  }
+  
+  // Sumar 30 días (1 mes)
+  nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+
+  const { error } = await supabaseClient
+    .from('vendedores')
+    .update({
+      estado: 'aprobado',
+      fecha_vencimiento: nuevaFecha.toISOString()
+    })
+    .eq('id', idVendedor);
+
+  if (error) {
+    alert('Error al renovar vendedor: ' + error.message);
+  } else {
+    alert('Vendedor aprobado/renovado con éxito hasta el: ' + nuevaFecha.toLocaleDateString());
+    cargarGestionVendedores();
+  }
+}
+
+// Cambiar estado a 'suspendido' o 'pendiente'
+async function cambiarEstadoVendedor(idVendedor, nuevoEstado) {
+  if (!confirm(`¿Estás seguro de cambiar el estado a: ${nuevoEstado}?`)) return;
+
+  const { error } = await supabaseClient
+    .from('vendedores')
+    .update({ estado: nuevoEstado })
+    .eq('id', idVendedor);
+
+  if (error) {
+    alert('Error al cambiar estado: ' + error.message);
+  } else {
+    alert('Estado actualizado a: ' + nuevoEstado);
+    cargarGestionVendedores();
+  }
+}
+  // Cargar la lista de vendedores desde la tabla 'perfiles'
+async function cargarGestionVendedores() {
+  const tbody = document.getElementById('tablaVendedoresAdmin');
+  tbody.innerHTML = 'Cargando...';
+
+  const { data: vendedores, error } = await supabaseClient
+    .from('perfiles')
+    .select('*')
+    .eq('rol', 'vendedor')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    tbody.innerHTML = 'Error al obtener los perfiles.';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  vendedores.forEach(v => {
+    const fechaVenc = v.fecha_vencimiento 
+      ? new Date(v.fecha_vencimiento).toLocaleDateString() 
+      : 'Sin activar';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.nombre_comercio || v.nombre || 'Sin nombre'}</td>
+      <td>${v.email}</td>
+      <td><span class="badge badge-${v.estado}">${v.estado.toUpperCase()}</span></td>
+      <td>${fechaVenc}</td>
+      <td>
+        <button class="btn-success" onclick="aprobarORenovarVendedor('${v.id}', '${v.fecha_vencimiento}')">
+          ${v.estado === 'pendiente' ? 'Aprobar (1 mes)' : 'Renovar +1 Mes'}
+        </button>
+        <button class="btn-danger" onclick="cambiarEstadoVendedor('${v.id}', 'suspendido')">
+          Bannear / Suspender
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Renovar o Aprobar Vendedor en la tabla 'perfiles'
+async function aprobarORenovarVendedor(idPerfil, fechaActual) {
+  let nuevaFecha = new Date();
+  
+  if (fechaActual && new Date(fechaActual) > new Date()) {
+    nuevaFecha = new Date(fechaActual);
+  }
+  
+  nuevaFecha.setDate(nuevaFecha.getDate() + 30); // Suma 30 días
+
+  const { error } = await supabaseClient
+    .from('perfiles')
+    .update({
+      estado: 'aprobado',
+      fecha_vencimiento: nuevaFecha.toISOString()
+    })
+    .eq('id', idPerfil);
+
+  if (error) {
+    alert('Error al renovar perfil: ' + error.message);
+  } else {
+    alert('Perfil renovado con éxito hasta el: ' + nuevaFecha.toLocaleDateString());
+    cargarGestionVendedores();
+  }
+}
+
+// Cambiar estado a 'suspendido' o 'pendiente'
+async function cambiarEstadoVendedor(idPerfil, nuevoEstado) {
+  if (!confirm(`¿Estás seguro de cambiar el estado del perfil a: ${nuevoEstado}?`)) return;
+
+  const { error } = await supabaseClient
+    .from('perfiles')
+    .update({ estado: nuevoEstado })
+    .eq('id', idPerfil);
+
+  if (error) {
+    alert('Error al cambiar estado: ' + error.message);
+  } else {
+    alert('Estado del perfil actualizado.');
+    cargarGestionVendedores();
+  }
+}
 </script>
 </body>
 </html>
+
