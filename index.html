@@ -201,57 +201,10 @@
     </div>
 
     <!-- Listado de Productos / Locales -->
-    <h3 style="margin-bottom:12px; font-size:16px;">Ofertas y Menú del Día</h3>
-    <div class="grid" id="gridProductos"></div>
-  </section>
-
-  <!-- VISTA 2: MI CUENTA COMPRADOR -->
-  <section id="secMiCuenta" class="tab-content">
-    <h2 style="margin-bottom:12px; font-size:18px;">👤 Mi Actividad</h2>
-    
-    <div class="subnav">
-      <button class="subnav-btn active" onclick="cambiarSubtab('subFavoritos', this)">❤️ Favoritos</button>
-      <button class="subnav-btn" onclick="cambiarSubtab('subGuardados', this)">🔖 Guardados</button>
-      <button class="subnav-btn" onclick="cambiarSubtab('subOpiniones', this)">💬 Mis Opiniones</button>
-    </div>
-
-    <div id="subFavoritos" class="subtab-content">
-      <div class="grid" id="gridFavoritos"></div>
-    </div>
-
-    <div id="subGuardados" class="subtab-content" style="display:none;">
-      <div class="grid" id="gridGuardados"></div>
-    </div>
-
-    <div id="subOpiniones" class="subtab-content" style="display:none;">
-      <div class="card" style="padding:16px; margin-bottom:16px;">
-        <h4>✍️ Dejar una opinión o reseña</h4>
-        <form onsubmit="enviarOpinionSupabase(event)">
-          <div class="form-group" style="margin-top:8px;">
-            <label>Nombre del Comercio:</label>
-            <input type="text" id="opComercio" placeholder="Ej: Rotisería El Buen Gusto" required>
-          </div>
-          <div class="form-group">
-            <label>Puntuación:</label>
-            <select id="opEstrellas">
-              <option value="5">⭐⭐⭐⭐⭐ (5/5 excelente)</option>
-              <option value="4">⭐⭐⭐⭐ (4/5 muy bueno)</option>
-              <option value="3">⭐⭐⭐ (3/5 bueno)</option>
-              <option value="2">⭐⭐ (2/5 regular)</option>
-              <option value="1">⭐ (1/5 malo)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Tu Comentario:</label>
-            <textarea id="opTexto" rows="2" placeholder="¿Qué tal estuvo la comida y la atención?" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Enviar Opinión a Moderación</button>
-        </form>
-      </div>
-
-      <h4>Mis opiniones enviadas:</h4>
-      <div id="listaMisOpiniones" style="margin-top:8px;"></div>
-    </div>
+    <main id="mainContent">
+      <h3 style="margin-bottom:12px; font-size:16px;">Ofertas y Menú del Día</h3>
+      <div class="grid" id="contenedorProductos"></div>
+    </main>
   </section>
 
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
@@ -1077,19 +1030,22 @@ function guardarConfigAdmin() {
 
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Cargar el catálogo de Supabase en la interfaz
-  await cargarProductosSupabase();
+  // Asegurar que la vista inicial sea visible
+  const roleSelector = document.getElementById('roleSelector');
+  const mainContent = document.getElementById('mainContent');
 
-  // 2. Verificar la sesión activa al recargar la página
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  actualizarInterfaz(session);
+  // Si no usas selector de rol al inicio, asegúrate de mostrar mainContent:
+  if (mainContent) {
+    mainContent.classList.remove('hidden');
+  }
 
-  // 3. Escuchar los cambios de estado (Login / Logout / Registro)
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    actualizarInterfaz(session);
-  });
+  // Cargar productos
+  if (typeof cargarProductos === 'function') {
+    cargarProductos();
+  } else if (typeof cargarProductosSupabase === 'function') {
+    cargarProductosSupabase();
+  }
 });
-
   let esModoRegistroComprador = false;
 
 function abrirModalComprador() {
@@ -1368,6 +1324,13 @@ async function cambiarEstadoVendedor(idPerfil, nuevoEstado) {
   }
 }
   async function cargarProductosSupabase() {
+  const container = document.getElementById('contenedorProductos');
+  
+  if (!container) {
+    console.warn("No se encontró el contenedor 'contenedorProductos' en el DOM.");
+    return;
+  }
+
   try {
     const { data: productos, error } = await supabaseClient
       .from('productos')
@@ -1375,13 +1338,15 @@ async function cambiarEstadoVendedor(idPerfil, nuevoEstado) {
 
     if (error) throw error;
 
-    // Lógica para renderizar las tarjetas en tu contenedor HTML
-    const container = document.getElementById('contenedorProductos'); // Ajustá el ID de tu contenedor
-    if (container && productos) {
-      container.innerHTML = productos.map(p => crearTarjetaHTML(p, 'producto')).join('');
+    if (!productos || productos.length === 0) {
+      container.innerHTML = '<p>No hay productos disponibles por el momento.</p>';
+      return;
     }
+
+    container.innerHTML = productos.map(p => crearTarjetaHTML(p, 'producto')).join('');
   } catch (err) {
-    console.error('Error cargando productos:', err.message);
+    console.error('Error al cargar productos:', err.message);
+    container.innerHTML = '<p>Ocurrió un error al cargar los productos.</p>';
   }
 }
 </script>
