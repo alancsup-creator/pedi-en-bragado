@@ -89,6 +89,9 @@
     /* Modal de Edición */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
     .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  </style>
+</head>
+<body>
   <!-- Modal de Registro/Ingreso de Comprador -->
 <div id="modalAuthComprador" class="modal-overlay">
   <div class="modal-content" style="max-width: 380px;">
@@ -126,9 +129,6 @@
     <button onclick="cerrarModalComprador()" class="btn btn-outline" style="margin-top: 10px; border: none; color: #64748b;">Cancelar</button>
   </div>
 </div>
-  </style>
-</head>
-<body>
 
 <header>
   <h1>🍔 Pedienbragado</h1>
@@ -506,7 +506,7 @@ function actualizarInterfaz(session) {
     if (session) {
       const emailUsuario = session.user.email;
       usuarioActualEmail = emailUsuario;
-      userStatus.textContent = `Sesión: ${emailUsuario} (${rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
+      userStatus.textContent = `Sesión: emailUsuario({rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
     } else {
       userStatus.textContent = rolActivo ? `Modo: ${rolActivo.toUpperCase()}` : 'Sin Selección';
     }
@@ -822,7 +822,7 @@ function crearTarjetaHTML(item) {
   const esGuardado = idsGuardados.includes(item.id);
 
   const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
-  const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
+  const linkWsp = `https://wa.me/549item.telefono?text={encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
 
   // Verificar si el usuario actual es ADMIN o DUEÑO de esta publicación
   const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
@@ -832,13 +832,13 @@ function crearTarjetaHTML(item) {
   return `
     <div class="card">
   <!-- 1. Favorito corregido con Supabase -->
-  <button class="btn-fav" onclick="alternarFavorito('${item.id}', 'producto')">${esFav ? '❤️' : '🤍'}</button>
+  <button class="btn-fav" onclick="alternarFavorito('item.id','producto')">{esFav ? '❤️' : '🤍'}</button>
 
-  <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
+  <img src="item.imagen"alt="{item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
   
   <div class="card-body">
     <div class="card-title">
-      <span>${item.titulo}</span>     </div>     <div style="margin-bottom:6px;">       <span class="price">$${item.precio}</span> | 
+      <span>item.titulo</span>   </div>   <divstyle="margin-bottom:6px;">    <spanclass="price">${item.precio}</span> | 
       <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
     </div>
     <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
@@ -861,7 +861,7 @@ function crearTarjetaHTML(item) {
 
     <div style="display:flex; gap:6px; margin-top:8px;">
       <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
-      <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
+      <button onclick="toggleGuardado(item.id)"class="btnbtn-outline"style="flex:1;">{esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
     </div>
 
     ${puedeModificar ? `
@@ -1210,4 +1210,3 @@ async function enviarCalificacion(itemId, estrellas, comentario) {
 </script>
 </body>
 </html>
-
