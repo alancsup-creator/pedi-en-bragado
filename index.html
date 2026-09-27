@@ -827,6 +827,7 @@ async function procesarAuthComprador(e) {
   const email = document.getElementById('emailComprador').value;
   const password = document.getElementById('passComprador').value;
   const nombre = document.getElementById('nombreComprador').value;
+
   try {
     if (esModoRegistroComprador) {
       const { data, error } = await supabaseClient.auth.signUp({
@@ -835,18 +836,21 @@ async function procesarAuthComprador(e) {
         options: { data: { nombre_completo: nombre, rol: 'comprador' } }
       });
       if (error) throw error;
-      alert('Registro exitoso. Por favor, verifica tu correo o inicia sesión.');
+      alert('Registro exitoso. Si tienes activada la confirmación por correo, revisa tu casilla antes de ingresar.');
     } else {
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      cerrarModalComprador();
+      seleccionarRol('comprador');
     }
-    cerrarModalComprador();
-    seleccionarRol('comprador');
   } catch (err) {
-    alert('Error de autenticación: ' + err.message);
+    if (err.message.includes("Invalid login credentials")) {
+      alert("Email o contraseña incorrectos, o la cuenta no ha sido confirmada en tu correo.");
+    } else {
+      alert("Error: " + err.message);
+    }
   }
 }
-
 function abrirModalVendedor() {
   document.getElementById('modalAuthVendedor').classList.remove('hidden');
 }
