@@ -7,15 +7,7 @@
 <title>Pedí en Bragado - Promo Gastronómica</title>
 
 <!-- Manifest básico PWA integrador -->
-<link rel="manifest" href="data:application/manifest+json,{
-  %22name%22:%22Pedienbragado%22,
-  %22short_name%22:%22Pedienbragado%22,
-  %22start_url%22:%22.%22,
-  %22display%22:%22standalone%22,
-  %22background_color%22:%22#ffffff%22,
-  %22theme_color%22:%22#d97706%22
-}">
-
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Pedienbragado%22,%22short_name%22:%22Pedienbragado%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23ffffff%22,%22theme_color%22:%22%23d97706%22}">
 <!-- SDK Oficial de Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -1373,6 +1365,23 @@ async function cambiarEstadoVendedor(idPerfil, nuevoEstado) {
   } else {
     alert('Estado del perfil actualizado.');
     cargarGestionVendedores();
+  }
+}
+  async function cargarProductosSupabase() {
+  try {
+    const { data: productos, error } = await supabaseClient
+      .from('productos')
+      .select('*');
+
+    if (error) throw error;
+
+    // Lógica para renderizar las tarjetas en tu contenedor HTML
+    const container = document.getElementById('contenedorProductos'); // Ajustá el ID de tu contenedor
+    if (container && productos) {
+      container.innerHTML = productos.map(p => crearTarjetaHTML(p, 'producto')).join('');
+    }
+  } catch (err) {
+    console.error('Error cargando productos:', err.message);
   }
 }
 </script>
