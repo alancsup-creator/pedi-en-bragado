@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#d97706">
   <title>Pedí en Bragado - Promo Gastronómica</title>
 
-  <!-- Manifest PWA corregido -->
-  <!-- En el <head> de tu HTML -->
-<link rel="manifest" href="data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}">
+  <!-- Manifest PWA (Sintaxis de comillas corregida) -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Pedí en Bragado","short_name":"PedíBragado","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#d97706"}'>
+  
   <!-- SDK Oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -92,7 +92,8 @@
   </style>
 </head>
 <body>
-  <!-- Modal de Registro/Ingreso de Comprador -->
+
+<!-- Modal de Registro/Ingreso de Comprador -->
 <div id="modalAuthComprador" class="modal-overlay">
   <div class="modal-content" style="max-width: 380px;">
     <h2 id="modalAuthTitle" style="margin-bottom: 12px; text-align: center;">Acceso Comprador</h2>
@@ -100,12 +101,12 @@
     <form id="formComprador" onsubmit="procesarAuthComprador(event)">
       <div class="form-group">
         <label>Correo Electrónico</label>
-        <input type="email" id="authEmail" required placeholder="tu@email.com">
+        <input type="email" id="authEmailComprador" required placeholder="tu@email.com">
       </div>
 
       <div class="form-group">
         <label>Contraseña</label>
-        <input type="password" id="authPassword" required minlength="6" placeholder="******">
+        <input type="password" id="authPasswordComprador" required minlength="6" placeholder="******">
       </div>
 
       <div id="camposRegistro">
@@ -138,7 +139,7 @@
   </div>
 </header>
 
- <!-- Pantalla de Selección de Rol -->
+<!-- Pantalla de Selección de Rol -->
 <section id="roleSelectionSection" style="display: none; text-align: center; padding: 40px 20px;">
   <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
     <h2>¿Cómo querés ingresar hoy?</h2>
@@ -156,25 +157,21 @@
   </div>
 </section>
   
-  <main class="container" id="mainContent" style="display: none;">
+<main class="container" id="mainContent" style="display: none;">
 
-   <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
+  <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
   <section id="secComprador" class="tab-content active">
-    
-    <!-- Banner Principal -->
     <div class="hero-banner" id="heroBanner">
       <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
       <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
     </div>
 
-    <!-- Destacado de la Semana -->
     <div class="featured-card" id="boxDestacado">
       <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
       <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
       <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
     </div>
 
-    <!-- Buscador y Filtros -->
     <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
       <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
       
@@ -191,7 +188,6 @@
       </select>
     </div>
 
-    <!-- Listado de Productos / Locales -->
     <h3 style="margin-bottom:12px; font-size:16px;">Ofertas y Menú del Día</h3>
     <div class="grid" id="gridProductos"></div>
   </section>
@@ -247,8 +243,6 @@
 
   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
-    
-    <!-- ACCESO Y LOGIN -->
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
       <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a Pedienbragado</h2>
       <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
@@ -265,23 +259,19 @@
       <form onsubmit="autenticarVendedorManual(event)">
         <div class="form-group" style="text-align:left;">
           <label>Correo Electrónico:</label>
-          <input type="email" id="authEmail" required placeholder="comercio@ejemplo.com">
+          <input type="email" id="authEmailVendedor" required placeholder="comercio@ejemplo.com">
         </div>
         <button type="submit" class="btn btn-outline">Ingresar por correo</button>
       </form>
     </div>
 
-    <!-- PANEL DE CONTROL DEL VENDEDOR CON PESTAÑAS -->
     <div id="boxPanelVendedor" style="display:none;">
-      
-      <!-- Navegación de Subsecciones para Mi Negocio -->
       <div class="subnav">
         <button class="subnav-btn active" onclick="cambiarSubtabNegocio('subMiComercio', this)">🏪 Mi Comercio</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subPublicarProducto', this)">➕ Publicar Producto / Oferta</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subMisProductos', this)">📋 Mis Productos Publicados</button>
       </div>
 
-      <!-- PESTAÑA 1: MI COMERCIO -->
       <div id="subMiComercio" class="subtab-negocio-content">
         <div class="card" style="padding:16px;">
           <h3>🏪 Configuración de Mi Comercio</h3>
@@ -316,7 +306,6 @@
         </div>
       </div>
 
-      <!-- PESTAÑA 2: PUBLICAR PRODUCTO / OFERTA -->
       <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
           <h3>➕ Publicar Nuevo Producto / Oferta</h3>
@@ -357,7 +346,6 @@
         </div>
       </div>
 
-      <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS (PANEL DE CONTROL DE GESTIÓN) -->
       <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3>📋 Control de Mis Publicaciones</h3>
@@ -367,15 +355,13 @@
         
         <div class="grid" id="gridMisProductos"></div>
       </div>
-
     </div>
   </section>
 
-  <!-- VISTA 4: ADMINISTRADOR (OCULTO) -->
+  <!-- VISTA 4: ADMINISTRADOR -->
   <section id="secAdmin" class="tab-content">
     <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel de Control Administrador</h2>
 
-    <!-- Configuración Visual -->
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🖼️ Banner y Destacados</h3>
       <div class="form-group">
@@ -389,7 +375,6 @@
       <button onclick="guardarConfigAdmin()" class="btn btn-primary">Guardar Cambios Visuales</button>
     </div>
 
-    <!-- Moderación de Vendedores -->
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🏪 Moderación y Membresías de Vendedores</h3>
       <table style="width:100%; font-size:13px; margin-top:8px; border-collapse:collapse;">
@@ -483,16 +468,26 @@
 </nav>
 
 <script>
-  // Variable global para almacenar el perfil activo en la sesión actual
-let rolActivo = null; 
+// 1. CONFIGURACIÓN E INICIALIZACIÓN DE SUPABASE
+const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 1. Reemplazar actualizarInterfaz por esta versión corregida
+const ADMIN_EMAIL = 'alan.csup@gmail.com';
+
+let rolActivo = null;
+let productosGlobales = [];
+let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
+let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
+let usuarioActualEmail = null;
+let miComercioNombre = "";
+
+// 2. GESTIÓN DE INTERFAZ Y SESIÓN
 function actualizarInterfaz(session) {
   const mainContent = document.getElementById('mainContent');
   const roleSection = document.getElementById('roleSelectionSection');
   const userStatus = document.getElementById('lblPerfil');
 
-  // Si aún no seleccionó rol, ocultamos el contenido principal e imponemos el selector
   if (!rolActivo) {
     if (roleSection) roleSection.style.display = 'block';
     if (mainContent) mainContent.style.display = 'none';
@@ -501,20 +496,15 @@ function actualizarInterfaz(session) {
     if (mainContent) mainContent.style.display = 'block';
   }
 
-  // Actualizar la etiqueta del perfil según el estado
   if (userStatus) {
     if (session) {
-      const emailUsuario = session.user.email;
-      usuarioActualEmail = emailUsuario;
-      userStatus.textContent = `Sesión: emailUsuario({rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
+      usuarioActualEmail = session.user.email.toLowerCase();
+      userStatus.textContent = `Sesión: ${usuarioActualEmail} (${rolActivo ? rolActivo.toUpperCase() : 'Sin Rol'})`;
     } else {
       userStatus.textContent = rolActivo ? `Modo: ${rolActivo.toUpperCase()}` : 'Sin Selección';
     }
   }
 }
-  
-// Funciones de Selección de Rol y Autenticación de Comprador
-let esModoRegistro = true;
 
 async function seleccionarRol(rol) {
   rolActivo = rol;
@@ -522,22 +512,18 @@ async function seleccionarRol(rol) {
   if (rol === 'comprador') {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
-      // Si no ha iniciado sesión, abrimos el modal de registro/ingreso
       abrirModalComprador();
       return;
     }
-    // Si ya inició sesión, cargamos sus datos de perfil (Nombre y Apellido)
     await cargarPerfilUsuario(session.user.id);
   }
 
-  // Ocultar pantalla de selección y mostrar contenido principal
   const roleSection = document.getElementById('roleSelectionSection');
   const mainContent = document.getElementById('mainContent');
   
   if (roleSection) roleSection.style.display = 'none';
   if (mainContent) mainContent.style.display = 'block';
 
-  // Configurar la visibilidad de los menús según el rol
   configurarMenuPorRol(rol);
 }
 
@@ -553,35 +539,16 @@ function configurarMenuPorRol(rol) {
     elementosComprador.forEach(el => el.style.display = 'block');
   }
 }
-  async function logout() {
-  await supabaseClient.auth.signOut();
-  rolActivo = null; // Reiniciar selección de rol
-  
-  document.getElementById('loginSection').style.display = 'flex';
-  document.getElementById('roleSelectionSection').style.display = 'none';
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('mainContent').classList.remove('authenticated');
-  
-  const userStatus = document.getElementById('userStatus');
-  if (userStatus) userStatus.innerText = 'Invitado';
 
-  if (typeof closeMenu === 'function') closeMenu();
+function abrirModalComprador() {
+  document.getElementById('modalAuthComprador').style.display = 'flex';
 }
-  
-// 1. CONFIGURACIÓN DE SUPABASE
-const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ADMIN_EMAIL = 'alan.csup@gmail.com';
+function cerrarModalComprador() {
+  document.getElementById('modalAuthComprador').style.display = 'none';
+}
 
-let productosGlobales = [];
-let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
-let idsGuardados = JSON.parse(localStorage.getItem('sl_guardados')) || [];
-let usuarioActualEmail = null;
-let miComercioNombre = "";
-
-// 2. AUTENTICACIÓN
+// 3. AUTENTICACIÓN
 async function iniciarSesionConGoogle() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
@@ -591,15 +558,6 @@ async function iniciarSesionConGoogle() {
   });
 
   if (error) alert("Error al conectar con Google: " + error.message);
-}
-
-async function verificarSesion() {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-
-  if (user) {
-    usuarioActualEmail = user.email.toLowerCase();
-    activarInterfazUsuario(usuarioActualEmail);
-  }
 }
 
 function activarInterfazUsuario(emailUsuario) {
@@ -622,13 +580,14 @@ function activarInterfazUsuario(emailUsuario) {
 
 async function cerrarSesion() {
   await supabaseClient.auth.signOut();
+  rolActivo = null;
   alert("Sesión cerrada.");
   location.reload();
 }
 
 function autenticarVendedorManual(e) {
   e.preventDefault();
-  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+  const email = document.getElementById('authEmailVendedor').value.trim().toLowerCase();
   activarInterfazUsuario(email);
 
   if (email === ADMIN_EMAIL.toLowerCase()) {
@@ -636,9 +595,34 @@ function autenticarVendedorManual(e) {
   }
 }
 
-// 3. GESTIÓN DEL PERFIL DE COMERCIO
+// 4. PERFILES Y COMERCIOS
+async function cargarPerfilUsuario(userId) {
+  try {
+    const { data, error } = await supabaseClient
+      .from('perfiles')
+      .select('nombre, apellido')
+      .eq('id', userId)
+      .maybeSingle();
+
+    const lblPerfil = document.getElementById('lblPerfil');
+
+    if (error) {
+      console.error('Error al obtener perfil:', error);
+      return;
+    }
+
+    if (data && lblPerfil) {
+      lblPerfil.textContent = `👤 ${data.nombre} ${data.apellido}`;
+    } else if (lblPerfil) {
+      lblPerfil.textContent = '👤 Comprador';
+    }
+  } catch (err) {
+    console.error('Error en cargarPerfilUsuario:', err);
+  }
+}
+
 async function cargarPerfilComercio(email) {
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from('comercios')
     .select('*')
     .eq('email', email)
@@ -652,7 +636,6 @@ async function cargarPerfilComercio(email) {
     document.getElementById('vendTelefono').value = data.telefono || '';
     document.getElementById('vendDelivery').value = data.delivery || 'si';
     
-    // Re-renderizamos para reflejar los cambios
     renderizarProductos(productosGlobales);
     renderizarMisProductos();
   }
@@ -688,7 +671,7 @@ async function guardarPerfilComercio(e) {
   }
 }
 
-// 4. OBTENER PRODUCTOS DESDE SUPABASE
+// 5. PRODUCTOS (CARGA Y PUBLICACIÓN)
 async function cargarProductosSupabase() {
   const { data, error } = await supabaseClient
     .from('productos')
@@ -705,7 +688,6 @@ async function cargarProductosSupabase() {
   renderizarMisProductos();
 }
 
-// 5. SUBIDA DE IMÁGENES A SUPABASE STORAGE Y PUBLICACIÓN
 async function publicarProducto(e) {
   e.preventDefault();
 
@@ -725,15 +707,13 @@ async function publicarProducto(e) {
     const fileExt = archivo.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
-    // 1. Subir imagen al Bucket 'productos'
-    const { data: uploadData, error: uploadError } = await supabaseClient
+    const { error: uploadError } = await supabaseClient
       .storage
       .from('productos')
       .upload(fileName, archivo);
 
     if (uploadError) throw uploadError;
 
-    // 2. Obtener URL pública
     const { data: publicUrlData } = supabaseClient
       .storage
       .from('productos')
@@ -743,7 +723,6 @@ async function publicarProducto(e) {
 
     btnSubmit.innerText = "Guardando producto...";
 
-    // 3. Insertar el registro en la base de datos
     const nuevo = {
       comercio: document.getElementById('vendNombre').value || "Mi Comercio Gastronómico",
       titulo: document.getElementById('prodTitulo').value,
@@ -767,8 +746,6 @@ async function publicarProducto(e) {
     e.target.reset();
     await cargarProductosSupabase();
 
-    // Redirigir a la pestaña de "Mis Productos Publicados"
-    const btnMisProd = document.querySelectorAll('.subtab-negocio-content')[2];
     const btnNavSub = document.querySelectorAll('#secVendedor .subnav-btn')[2];
     cambiarSubtabNegocio('subMisProductos', btnNavSub);
 
@@ -780,12 +757,111 @@ async function publicarProducto(e) {
   }
 }
 
-// 6. NAVEGACIÓN PRINCIPAL Y SUBPESTAÑAS
+// 6. RENDERIZADO Y TARJETAS (SINTAXIS CORREGIDA)
+function crearTarjetaHTML(item) {
+  const esFav = idsFavoritos.includes(item.id);
+  const esGuardado = idsGuardados.includes(item.id);
+
+  const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
+  const linkWsp = `https://wa.me/549${item.telefono}?text=${encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
+
+  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+  const esDuenio = miComercioNombre && item.comercio && (miComercioNombre.trim().toLowerCase() === item.comercio.trim().toLowerCase());
+  const puedeModificar = esAdmin || esDuenio;
+
+  return `
+    <div class="card">
+      <button class="btn-fav" onclick="alternarFavorito('${item.id}', 'producto')">${esFav ? '❤️' : '🤍'}</button>
+
+      <img src="${item.imagen}" alt="${item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
+      
+      <div class="card-body">
+        <div class="card-title">
+          <span>${item.titulo}</span>
+        </div>
+        
+        <div style="margin-bottom:6px;">
+          <span class="price">$${item.precio}</span> | 
+          <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
+        </div>
+        
+        <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
+        
+        <div style="border-top:1px solid #f1f5f9; padding-top:8px; font-size:12px;">
+          <strong>🏬 ${item.comercio}</strong><br>
+          <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+            <span class="stars">★ ${item.estrellas || 5}.0</span>
+            <button onclick="abrirModalCalificar('${item.id}')" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: bold;">
+              ✍️ Calificar
+            </button>
+          </div>
+
+          <span class="badge badge-delivery" style="margin-top: 4px;">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
+          <button onclick="toggleGuardado(${item.id})" class="btn btn-outline" style="flex:1;">${esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
+        </div>
+
+        ${puedeModificar ? `
+          <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
+            <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
+            <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderizarProductos(lista) {
+  const grid = document.getElementById('gridProductos');
+  if (!grid) return;
+
+  if (lista.length === 0) {
+    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron platos o negocios para esa búsqueda.</p>';
+    return;
+  }
+
+  grid.innerHTML = lista.map(crearTarjetaHTML).join('');
+}
+
+function renderizarMisProductos() {
+  const grid = document.getElementById('gridMisProductos');
+  if (!grid) return;
+
+  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+
+  const misProds = esAdmin 
+    ? productosGlobales 
+    : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
+
+  if (misProds.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
+        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
+        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
+        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
+          ➕ Publicar Producto Ahora
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
+}
+
+// 7. NAVEGACIÓN Y PESTAÑAS
 function navegarA(tabId, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-  document.getElementById(tabId).classList.add('active');
+  const destino = document.getElementById(tabId);
+  if (destino) destino.style.display = 'block';
   if (btn) btn.classList.add('active');
 
   if (tabId === 'secMiCuenta') {
@@ -816,103 +892,7 @@ function cambiarSubtabNegocio(subtabId, btn) {
   }
 }
 
-// 7. RENDERIZADO DE TARJETAS
-function crearTarjetaHTML(item) {
-  const esFav = idsFavoritos.includes(item.id);
-  const esGuardado = idsGuardados.includes(item.id);
-
-  const linkMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.direccion || 'Bragado')}`;
-  const linkWsp = `https://wa.me/549item.telefono?text={encodeURIComponent('Hola! Vi tu publicación en Pedienbragado de: ' + item.titulo)}`;
-
-  // Verificar si el usuario actual es ADMIN o DUEÑO de esta publicación
-  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-  const esDuenio = miComercioNombre && item.comercio && (miComercioNombre.trim().toLowerCase() === item.comercio.trim().toLowerCase());
-  const puedeModificar = esAdmin || esDuenio;
-
-  return `
-    <div class="card">
-  <!-- 1. Favorito corregido con Supabase -->
-  <button class="btn-fav" onclick="alternarFavorito('item.id','producto')">{esFav ? '❤️' : '🤍'}</button>
-
-  <img src="item.imagen"alt="{item.titulo}" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&amp;fit=crop&amp;w=500&amp;q=80'">
-  
-  <div class="card-body">
-    <div class="card-title">
-      <span>item.titulo</span>   </div>   <divstyle="margin-bottom:6px;">    <spanclass="price">${item.precio}</span> | 
-      <span class="badge badge-category">${item.categoria ? item.categoria.toUpperCase() : ''}</span>
-    </div>
-    <p style="font-size:12px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-    
-    <div style="border-top:1px solid #f1f5f9; padding-top:8px; font-size:12px;">
-      <strong>🏬 ${item.comercio}</strong><br>
-      <a href="${linkMaps}" target="_blank" style="color:var(--primary); text-decoration:none;">📍 ${item.direccion || 'Bragado'}</a><br>
-      
-      <!-- Muestra de Promedio + BOTÓN PARA CALIFICAR -->
-      `
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-        <span class="stars">★ ${item.estrellas || 5}.0</span>
-        <button onclick="abrirModalCalificar('${item.id}')" style="background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: bold;">
-          ✍️ Calificar
-        </button>
-      </div>
-      ` +
-      <span class="badge badge-delivery" style="margin-top: 4px;">${item.delivery === 'si' ? '🛵 Con Delivery' : '🏪 Solo Retiro'}</span>
-    </div>
-
-    <div style="display:flex; gap:6px; margin-top:8px;">
-      <a href="${linkWsp}" target="_blank" class="btn btn-primary" style="flex:2;">📱 Pedir</a>
-      <button onclick="toggleGuardado(item.id)"class="btnbtn-outline"style="flex:1;">{esGuardado ? '🔖 Guardado' : '🔖 Guardar'}</button>
-    </div>
-
-    ${puedeModificar ? `
-      <div style="display:flex; gap:6px; margin-top:6px; border-top: 1px dashed var(--border); padding-top: 6px;">
-        <button onclick="abrirModalEditar(${item.id})" class="btn btn-warning" style="flex:1; padding: 6px; font-size:11px;">✏️ Editar</button>
-        <button onclick="eliminarProductoSupabase(${item.id})" class="btn btn-danger" style="flex:1; padding: 6px; font-size:11px;">🗑️ Eliminar</button>
-      </div>
-    ` : ''}
-  </div>
-</div>
-function renderizarProductos(lista) {
-  const grid = document.getElementById('gridProductos');
-  if (!grid) return;
-
-  if (lista.length === 0) {
-    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron platos o negocios para esa búsqueda.</p>';
-    return;
-  }
-
-  grid.innerHTML = lista.map(crearTarjetaHTML).join('');
-}
-
-// RENDERIZADO EXCLUSIVO PARA "MIS PRODUCTOS PUBLICADOS"
-function renderizarMisProductos() {
-  const grid = document.getElementById('gridMisProductos');
-  if (!grid) return;
-
-  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-
-  // Si es admin muestra todo, sino filtra por el nombre del comercio actual
-  const misProds = esAdmin 
-    ? productosGlobales 
-    : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
-
-  if (misProds.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
-        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
-        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
-        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
-          ➕ Publicar Producto Ahora
-        </button>
-      </div>
-    `;
-    return;
-  }
-
-  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
-}
-
-// 8. ACCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
+// 8. EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
 function abrirModalEditar(id) {
   const prod = productosGlobales.find(p => p.id === id);
   if (!prod) return;
@@ -1008,16 +988,27 @@ async function eliminarProductoSupabase(id) {
   }
 }
 
-// 9. FAVORITOS Y GUARDADOS
-function toggleFavorito(id) {
-  if (idsFavoritos.includes(id)) {
-    idsFavoritos = idsFavoritos.filter(item => item !== id);
+// 9. FAVORITOS, GUARDADOS Y RESEÑAS
+async function alternarFavorito(itemId, tipo) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return alert('Iniciá sesión para guardar favoritos');
+
+  const userId = session.user.id;
+
+  const { data } = await supabaseClient
+    .from('favoritos')
+    .select('id')
+    .eq('usuario_id', userId)
+    .eq('item_id', itemId)
+    .single();
+
+  if (data) {
+    await supabaseClient.from('favoritos').delete().eq('id', data.id);
+    alert('Quitado de favoritos');
   } else {
-    idsFavoritos.push(id);
+    await supabaseClient.from('favoritos').insert([{ usuario_id: userId, item_id: itemId, tipo }]);
+    alert('Añadido a favoritos');
   }
-  localStorage.setItem('sl_favoritos', JSON.stringify(idsFavoritos));
-  renderizarProductos(productosGlobales);
-  renderizarFavoritosYGuardados();
 }
 
 function toggleGuardado(id) {
@@ -1039,7 +1030,34 @@ function renderizarFavoritosYGuardados() {
   document.getElementById('gridGuardados').innerHTML = guards.length ? guards.map(crearTarjetaHTML).join('') : '<p style="padding:10px; color:#64748b;">No tenés productos guardados.</p>';
 }
 
-// 10. OPINIONES EN SUPABASE
+function abrirModalCalificar(itemId) {
+  const estrellas = prompt("Ingresá tu puntuación del 1 al 5:", "5");
+  if (!estrellas) return;
+  const comentario = prompt("Dejá un comentario sobre este producto:");
+  if (comentario !== null) {
+    enviarCalificacion(itemId, parseInt(estrellas), comentario);
+  }
+}
+
+async function enviarCalificacion(itemId, estrellas, comentario) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return alert('Iniciá sesión para opinar');
+
+  const { error } = await supabaseClient.from('resenas').insert([{
+    usuario_id: session.user.id,
+    item_id: itemId,
+    estrellas: estrellas,
+    comentario: comentario
+  }]);
+
+  if (error) {
+    alert('Error al enviar opinión: ' + error.message);
+  } else {
+    alert('¡Gracias por tu opinión!');
+  }
+}
+
+// 10. OPINIONES
 async function enviarOpinionSupabase(e) {
   e.preventDefault();
   
@@ -1080,7 +1098,7 @@ async function cargarOpinionesSupabase() {
   `).join('') : '<p style="color:#64748b; font-size:13px;">No hay comentarios subidos aún.</p>';
 }
 
-// 11. FILTRAR CONTENIDO DE LA TIENDA
+// 11. FILTROS Y CONFIGURACIÓN
 function filtrarContenido() {
   const busqueda = document.getElementById('inputBuscar').value.toLowerCase();
   const cat = document.getElementById('selectCatFiltro').value;
@@ -1094,7 +1112,6 @@ function filtrarContenido() {
   renderizarProductos(filtrados);
 }
 
-// 12. CONFIGURACIÓN ADMIN
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
@@ -1104,110 +1121,17 @@ function guardarConfigAdmin() {
   alert("✅ Cambios visuales actualizados en la portada.");
 }
 
-// INICIALIZACIÓN
+// 12. INICIALIZACIÓN GENERAL AL Cargar DOM
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Cargar el catálogo de productos desde Supabase
   await cargarProductosSupabase();
 
-  // 2. Obtener sesión activa de Supabase
   const { data: { session } } = await supabaseClient.auth.getSession();
-  
-  // 3. Evaluar el estado e imponer la pantalla de rol
   actualizarInterfaz(session);
 
-  // 4. Mantener escuchando los cambios de autenticación
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     actualizarInterfaz(session);
   });
 });
-
-  function navegarA(idSeccion) {
-  // Ocultar todas las secciones de pestañas
-  const secciones = document.querySelectorAll('.tab-content');
-  secciones.forEach(sec => sec.style.display = 'none');
-
-  // Quitar la clase active de los botones de navegación
-  const botones = document.querySelectorAll('.nav-link, .tab-btn');
-  botones.forEach(btn => btn.classList.remove('active'));
-
-  // Mostrar la sección seleccionada
-  const seccionDestino = document.getElementById(idSeccion);
-  if (seccionDestino) {
-    seccionDestino.style.display = 'block';
-  }
-
-  // Activar el botón correspondiente si existe el evento
-  if (window.event && window.event.currentTarget) {
-    window.event.currentTarget.classList.add('active');
-  }
-}
-async function cargarPerfilUsuario(userId) {
-  try {
-    const { data, error } = await supabaseClient
-      .from('perfiles')
-      .select('nombre, apellido')
-      .eq('id', userId)
-      .maybeSingle();
-
-    const lblPerfil = document.getElementById('lblPerfil');
-
-    if (error) {
-      console.error('Error al obtener perfil:', error);
-      return;
-    }
-
-    if (data && lblPerfil) {
-      lblPerfil.textContent = `👤 ${data.nombre} ${data.apellido}`;
-    } else if (lblPerfil) {
-      lblPerfil.textContent = '👤 Comprador';
-    }
-  } catch (err) {
-    console.error('Error en cargarPerfilUsuario:', err);
-  }
-}
-  // Marcar / Desmarcar Favoritos
-async function alternarFavorito(itemId, tipo) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return alert('Iniciá sesión para guardar favoritos');
-
-  const userId = session.user.id;
-
-  // Verificar si ya está en favoritos
-  const { data } = await supabaseClient
-    .from('favoritos')
-    .select('id')
-    .eq('usuario_id', userId)
-    .eq('item_id', itemId)
-    .single();
-
-  if (data) {
-    await supabaseClient.from('favoritos').delete().eq('id', data.id);
-    alert('Quitado de favoritos');
-  } else {
-    await supabaseClient.from('favoritos').insert([{ usuario_id: userId, item_id: itemId, tipo }]);
-    alert('Añadido a favoritos');
-  }
-}
-
-// Enviar Reseña y Calificación (Estrellas)
-async function enviarCalificacion(itemId, estrellas, comentario) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return alert('Iniciá sesión para opinar');
-
-  const { error } = await supabaseClient.from('resenas').insert([{
-    usuario_id: session.user.id,
-    item_id: itemId,
-    estrellas: estrellas,
-    comentario: comentario
-  }]);
-
-  if (error) {
-    alert('Error al enviar opinión: ' + error.message);
-  } else {
-    alert('¡Gracias por tu opinión!');
-  }
-}
 </script>
 </body>
 </html>
-
