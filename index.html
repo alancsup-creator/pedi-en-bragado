@@ -452,13 +452,17 @@ async function actualizarInterfaz() {
 }
 
 async function iniciarSesionConGoogle() {
+  // Limpia cualquier parámetro previo para obtener la URL exacta actual de tu GitHub Pages
+  const redirectUrl = window.location.href.split('?')[0].split('#')[0];
+
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin }
+    options: { 
+      redirectTo: redirectUrl 
+    }
   });
   if (error) alert("Error al conectar con Google: " + error.message);
 }
-
 function activarInterfazUsuario(emailUsuario) {
   usuarioActualEmail = emailUsuario.toLowerCase();
   document.getElementById('lblPerfil').innerText = `Sesión: ${usuarioActualEmail}`;
