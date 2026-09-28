@@ -876,10 +876,11 @@ function cerrarModalVendedor() {
 
 async function procesarAuthVendedor(e) {
   e.preventDefault();
-  const email = document.getElementById('emailVendedor').value;
+  const email = document.getElementById('emailVendedor').value.trim();
   const password = document.getElementById('passVendedor').value;
   const nombreComercio = document.getElementById('nombreComercio').value;
   const telefono = document.getElementById('telefonoVendedor').value;
+
   try {
     const { data: authData, error: authError } = await supabaseClient.auth.signUp({
       email,
@@ -891,7 +892,9 @@ async function procesarAuthVendedor(e) {
         } 
       }
     });
+
     if (authError) throw authError;
+
     if (authData.user) {
       const { error: dbError } = await supabaseClient
         .from('perfiles')
@@ -907,13 +910,19 @@ async function procesarAuthVendedor(e) {
         ]);
       if (dbError) throw dbError;
     }
-    alert('Solicitud de vendedor enviada. Queda pendiente de aprobación por el administrador.');
+
+    alert('Solicitud enviada con éxito. Un administrador revisará la cuenta.');
     cerrarModalVendedor();
   } catch (err) {
-    alert('Error al registrar vendedor: ' + err.message);
+    if (err.message.includes("User already registered")) {
+      alert("Este correo ya está registrado. Si ya tienes cuenta, prueba ingresar directamente.");
+    } else if (err.message.includes("column")) {
+      alert("Error en la base de datos: Verifica que la columna 'email' exista en la tabla 'perfiles' de Supabase.");
+    } else {
+      alert("Error al registrar vendedor: " + err.message);
+    }
   }
 }
-
 // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
   const tbody = document.getElementById('tablaVendedoresAdmin');
