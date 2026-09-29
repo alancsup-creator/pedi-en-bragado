@@ -437,16 +437,24 @@
 <nav class="nav-bottom">
   <button class="nav-btn active" onclick="navegarA('secComprador', this)">🍕 Comercios</button>
   <button class="nav-btn" onclick="seleccionarRol('vendedor')">🏪 Mi Negocio</button>
-  <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
+<button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
 </nav>
 
 <script>
-// 1. CONFIGURACIÓN DE SUPABASE
-const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ADMIN_EMAIL = 'alan.csup@gmail.com';
+  // Registro del Service Worker para PWA
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    });
+  }
 
+  // 1. CONFIGURACIÓN DE SUPABASE
+  const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const ADMIN_EMAIL = 'alan.csup@gmail.com';
 let rolActivo = null;
 let productosGlobales = [];
 let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
