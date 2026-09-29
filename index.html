@@ -624,39 +624,199 @@ async function guardarPerfilComercio(e) {
 }
 
 // 4. CARGAR Y RENDERIZAR PRODUCTOS
+// Carga de productos en la tienda pública con filtro de oculto y vencimiento
 async function cargarProductosSupabase() {
   try {
-    // Traer comercios que NO estén ocultos y estén aprobados
+    // 1. Obtener comercios aprobados y no ocultos
     const { data: comerciosVisibles, error: errComercios } = await supabaseClient
       .from('comercios')
-      .select('email')
+      .select('email, fecha_vencimiento')
       .eq('estado', 'aprobado')
-      .or('oculto.is.null,oculto.eq.false'); // Filtra los que no están ocultos
+      .or('oculto.is.null,oculto.eq.false');
 
     if (errComercios) throw errComercios;
 
-    const emailsValidos = (comerciosVisibles || []).map(c => c.email ? c.email.toLowerCase() : '');
+    const ahora = new Date();
 
-    // Traer productos
+    // 2. Filtrar comercios cuya fecha de vencimiento no haya pasado
+    const emailsValidos = (comerciosVisibles || [])
+      .filter(c => {
+        if (!c.email) return false;
+        if (!c.fecha_vencimiento) return true; // Si no tiene fecha definida, se muestra
+        return new Date(c.fecha_vencimiento) > ahora; // Solo pasa si la fecha es futura
+      })
+      .map(c => c.email.toLowerCase());
+
+    // 3. Traer todos los productos
     const { data: productos, error: errProductos } = await supabaseClient
       .from('productos')
       .select('*');
 
     if (errProductos) throw errProductos;
 
-    // Filtrar únicamente los productos correspondientes a comercios visibles
+    // 4. Filtrar únicamente los productos de vendedores con suscripción activa y no ocultos
     const productosFiltrados = (productos || []).filter(p => 
       p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase())
     );
 
-    // Aquí continúas con el renderizado habitual de tus productos...
-    renderizarProductos(productosFiltrados);
+    // Renderizar productos en pantalla
+    if (typeof renderizarProductos === 'function') {
+      renderizarProductos(productosFiltrados);
+    }
 
   } catch (err) {
     console.error("Error al cargar productos públicos:", err);
   }
 }
-  function crearTarjetaHTML(item) {
+
+// 10. ADMINISTRACIÓN Y MODERACIÓN
+async function cargarGestionVendedores() {
+  const contenedor = document.getElementById('tablaVendedoresAdmin');
+  if (!contenedor) return;
+
+  try {
+    const { data: perfiles, error: errPerfiles } = await supabaseClient
+      .from('perfiles')
+      .select('*');
+
+    if (errPerfiles) console.error("Error al traer perfiles:", errPerfiles);
+
+    const { data: comercios, error: errComercios } = await supabaseClient
+      .from('comercios')
+      .select('*');
+
+    if (errComercios) console.error("Error al traer comercios:", errComercios);
+
+    const mapaSolicitudes = new Map();
+
+    (comercios || []).forEach(c => {
+      if (c.email) {
+        mapaSolicitudes.set(c.email.toLowerCase(), {
+          id: c.id,
+          email: c.email.toLowerCase(),
+          nombre_comercio: c.nombre || 'Sin nombre',
+          telefono: c.telefono || 'Sin teléfono',
+          estado: c.estado || 'pendiente',
+          oculto: c.oculto || false,
+          fecha_vencimiento: c.fecha_vencimiento || null
+        });
+      }
+    });
+
+    (perfiles || []).forEach(p => {
+      if (p.email) {
+        const mail = p.email.toLowerCase();
+        const existente = mapaSolicitudes.get(mail) || {};
+        mapaSolicitudes.set(mail, {
+          ...existente,
+          id: existente.id || p.id,
+          email: mail,
+          nombre_comercio: p.nombre_comercio || existente.nombre_comercio || 'Sin nombre',
+          telefono: p.telefono || existente.telefono || 'Sin teléfono',
+          estado: p.estado || existente.estado || 'pendiente',
+          oculto: existente.oculto || false,
+          fecha_vencimiento: p.fecha_vencimiento || existente.fecha_vencimiento || null
+        });
+      }
+    });
+
+    const todasLasSolicitudes = Array.from(mapaSolicitudes.values());
+
+    if (todasLasSolicitudes.length === 0) {
+      contenedor.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">No hay solicitudes ni comercios registrados aún.</td></tr>';
+      return;
+    }
+
+    const ahora = new Date();
+
+    contenedor.innerHTML = todasLasSolicitudes.map(sol => {
+      const estaVencido = sol.fecha_vencimiento && new Date(sol.fecha_vencimiento) < ahora;
+
+      return `
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td style="padding:8px;">
+            <strong>${sol.nombre_comercio}</strong><br>
+            <small style="color:#64748b;">${sol.email}</small>
+          </td>
+          <td style="padding:8px;">${sol.telefono}</td>
+          <td style="padding:8px;">
+            <span class="badge ${sol.estado === 'aprobado' ? 'badge-aprobado' : 'badge-pendiente'}">
+              ${sol.estado.toUpperCase()}
+            </span>
+            ${sol.oculto ? '<br><span class="badge badge-suspendido" style="margin-top:4px;">OCULTO</span>' : ''}
+            ${estaVencido ? '<br><span class="badge badge-danger" style="margin-top:4px; background-color:#ef4444; color:white;">VENCIDO</span>' : ''}
+          </td>
+          <td style="padding:8px;">${sol.fecha_vencimiento ? sol.fecha_vencimiento.split('T')[0] : 'Sin fecha'}</td>
+          <td style="padding:8px; display:flex; gap:4px; flex-wrap:wrap;">
+            <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Aprobar</button>
+            <button onclick="renovarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-success" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">+1 Mes</button>
+            <button onclick="quitarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-secondary" style="padding:4px 8px; font-size:11px; margin:0; width:auto; background-color:#64748b; color:white;">-1 Mes</button>
+            <button onclick="toggleOcultarComercio('${sol.id}', ${sol.oculto})" class="btn btn-warning" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">${sol.oculto ? '👁️ Mostrar' : '🙈 Ocultar'}</button>
+            <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Rechazar</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error("Error al cargar gestión de vendedores:", err);
+    contenedor.innerHTML = '<tr><td colspan="5" style="color:red; padding:20px; text-align:center;">Error al cargar las solicitudes.</td></tr>';
+  }
+}
+
+// Renovar +1 Mes
+async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
+  try {
+    const baseDate = fechaVencimientoActual && new Date(fechaVencimientoActual) > new Date()
+      ? new Date(fechaVencimientoActual)
+      : new Date();
+
+    baseDate.setMonth(baseDate.getMonth() + 1);
+
+    const { error } = await supabaseClient
+      .from('comercios')
+      .update({ 
+        fecha_vencimiento: baseDate.toISOString(),
+        estado: 'aprobado' 
+      })
+      .eq('id', comercioId);
+
+    if (error) throw error;
+
+    await cargarGestionVendedores();
+    await cargarProductosSupabase();
+  } catch (err) {
+    alert('Error al renovar la membresía: ' + err.message);
+  }
+}
+
+// Deshacer / Restar -1 Mes
+async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
+  if (!fechaVencimientoActual || fechaVencimientoActual === 'null') {
+    alert("El comercio no tiene una fecha de vencimiento configurada.");
+    return;
+  }
+
+  try {
+    const baseDate = new Date(fechaVencimientoActual);
+    baseDate.setMonth(baseDate.getMonth() - 1);
+
+    const { error } = await supabaseClient
+      .from('comercios')
+      .update({ 
+        fecha_vencimiento: baseDate.toISOString()
+      })
+      .eq('id', comercioId);
+
+    if (error) throw error;
+
+    alert("✅ Se restó 1 mes a la membresía.");
+    await cargarGestionVendedores();
+    await cargarProductosSupabase();
+  } catch (err) {
+    alert('Error al restar la membresía: ' + err.message);
+  }
+}  function crearTarjetaHTML(item) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   return `
     <div class="card">
@@ -1115,6 +1275,7 @@ async function cargarGestionVendedores() {
         <td style="padding:8px; display:flex; gap:4px; flex-wrap:wrap;">
           <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Aprobar</button>
           <button onclick="renovarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-success" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">+1 Mes</button>
+          <button onclick="quitarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-secondary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">-1 Mes</button>
           <button onclick="toggleOcultarComercio('${sol.id}', ${sol.oculto})" class="btn btn-warning" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">${sol.oculto ? '👁️ Mostrar' : '🙈 Ocultar'}</button>
           <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Rechazar</button>
         </td>
@@ -1134,7 +1295,7 @@ async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
     fechaVenc.setDate(fechaVenc.getDate() + 30);
     const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
 
-    // 1. Intentar actualizar en la tabla comercios (por email ignorando mayúsculas/minúsculas)
+    // 1. Actualizar tabla comercios
     const { error: errComercio } = await supabaseClient
       .from('comercios')
       .update({
@@ -1143,52 +1304,31 @@ async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
       })
       .ilike('email', emailNormalizado);
 
-    if (errComercio) {
-      console.error("Error al actualizar tabla comercios:", errComercio);
-    }
+    if (errComercio) throw errComercio;
 
-    // 2. Intentar actualizar en la tabla perfiles (buscando primero si existe)
-    const { data: perfilExistente } = await supabaseClient
+    // 2. Actualizar tabla perfiles (solo UPDATE para evitar conflicto de RLS con INSERT)
+    const { error: errPerfil } = await supabaseClient
       .from('perfiles')
-      .select('id, email')
-      .ilike('email', emailNormalizado)
-      .maybeSingle();
+      .update({
+        estado: nuevoEstado,
+        fecha_vencimiento: fechaISO
+      })
+      .ilike('email', emailNormalizado);
 
-    if (perfilExistente) {
-      const { error: errPerfilUpdate } = await supabaseClient
-        .from('perfiles')
-        .update({
-          estado: nuevoEstado,
-          fecha_vencimiento: fechaISO
-        })
-        .eq('id', perfilExistente.id);
-
-      if (errPerfilUpdate) throw errPerfilUpdate;
-    } else {
-      // Si no existe el perfil, se inserta
-      const { error: errPerfilInsert } = await supabaseClient
-        .from('perfiles')
-        .insert([{
-          email: emailNormalizado,
-          estado: nuevoEstado,
-          fecha_vencimiento: fechaISO
-        }]);
-
-      if (errPerfilInsert) throw errPerfilInsert;
-    }
+    if (errPerfil) throw errPerfil;
 
     alert(`✅ Comercio ${emailNormalizado} actualizado a estado: ${nuevoEstado.toUpperCase()}`);
     
-    // Recargar la interfaz
+    // Recargar datos e interfaz
     await cargarGestionVendedores();
     await cargarProductosSupabase();
 
   } catch (err) {
-    console.error("Error completo:", err);
+    console.error("Error al actualizar:", err);
     alert("Error al actualizar el estado: " + err.message);
   }
 }
-function guardarConfigAdmin() {
+  function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
   document.getElementById('txtBannerTitulo').innerText = tit;
@@ -1251,6 +1391,31 @@ async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
     cargarGestionVendedores();
   } catch (err) {
     alert('Error al renovar la membresía: ' + err.message);
+  }
+}
+  async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
+  if (!fechaVencimientoActual) {
+    alert("El comercio no tiene una fecha de vencimiento asignada.");
+    return;
+  }
+
+  try {
+    const baseDate = new Date(fechaVencimientoActual);
+    baseDate.setMonth(baseDate.getMonth() - 1);
+
+    const { error } = await supabaseClient
+      .from('comercios')
+      .update({ 
+        fecha_vencimiento: baseDate.toISOString()
+      })
+      .eq('id', comercioId);
+
+    if (error) throw error;
+
+    alert("✅ Se restó 1 mes a la membresía.");
+    await cargarGestionVendedores();
+  } catch (err) {
+    alert('Error al restar la membresía: ' + err.message);
   }
 }
 
