@@ -606,26 +606,33 @@ async function guardarPerfilComercio(e) {
     telefono: document.getElementById('vendTelefono').value,
     delivery: document.getElementById('vendDelivery').value
   };
+  
+  // Guardar en la tabla comercios
   const { error } = await supabaseClient
     .from('comercios')
     .upsert([payload], { onConflict: 'email' });
+    
+  // Sincronizar en la tabla perfiles
+  await supabaseClient
+    .from('perfiles')
+    .update({ nombre_comercio: payload.nombre, telefono: payload.telefono })
+    .eq('email', usuarioActualEmail);
+
   if (error) {
     alert("Error al guardar perfil: " + error.message);
   } else {
     miComercioNombre = payload.nombre;
     alert("✅ Datos del comercio actualizados correctamente.");
-    renderizarProductos(productosGlobales);
-    renderizarMisProductos();
+    cargarProductosSupabase();
   }
 }
-
 // 4. CARGAR Y RENDERIZAR PRODUCTOS
 async function cargarProductosSupabase() {
   const container = document.getElementById('contenedorProductos');
   if (!container) return;
 
   try {
-    // 1. Obtenemos todos los comercios aprobados
+    // 1. Obtener comercios aprobados desde perfiles
     const { data: comerciosAprobados, error: errPerfiles } = await supabaseClient
       .from('perfiles')
       .select('email, nombre_comercio, estado, fecha_vencimiento')
@@ -633,12 +640,11 @@ async function cargarProductosSupabase() {
 
     if (errPerfiles) throw errPerfiles;
 
-    // Filtramos aquellos cuya fecha de vencimiento esté vigente (o aún sin vencer)
     const emailsAutorizados = (comerciosAprobados || [])
       .filter(c => !c.fecha_vencimiento || new Date(c.fecha_vencimiento) > new Date())
       .map(c => c.email.toLowerCase());
 
-    // 2. Obtenemos los productos
+    // 2. Obtener productos
     const { data: productos, error: errProd } = await supabaseClient
       .from('productos')
       .select('*');
@@ -646,17 +652,14 @@ async function cargarProductosSupabase() {
     if (errProd) throw errProd;
 
     productosGlobales = productos || [];
-
-    // 3. Si es el Administrador, ve todo. Si es Comprador/Invitado, solo de comercios aprobados.
     const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
     
     if (esAdmin) {
       renderizarProductos(productosGlobales);
     } else {
       const productosVisibles = productosGlobales.filter(p => {
-        // Asumiendo que el producto guarda la referencia o mail del comercio
         const mailProd = (p.email_vendedor || p.email || '').toLowerCase();
-        return emailsAutorizados.includes(mailProd);
+        return emailsAutorizados.includes(mailProd) || (miComercioNombre && p.comercio === miComercioNombre);
       });
       renderizarProductos(productosVisibles);
     }
@@ -666,8 +669,7 @@ async function cargarProductosSupabase() {
     console.error('Error al cargar productos:', err.message);
     container.innerHTML = '<p style="padding:20px; color:#64748b;">Ocurrió un error al cargar los productos.</p>';
   }
-}
-  
+}  
 function crearTarjetaHTML(item) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   return `
@@ -741,33 +743,37 @@ async function publicarProducto(e) {
     btnSubmit.innerText = "Subiendo imagen...";
     const fileExt = archivo.name.split('.').pop();
     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-    const { data: uploadData, error: uploadError } = await supabaseClient
+    const { error: uploadError } = await supabaseClient
       .storage
       .from('productos')
       .upload(fileName, archivo);
     if (uploadError) throw uploadError;
+    
     const { data: publicUrlData } = supabaseClient
       .storage
       .from('productos')
       .getPublicUrl(fileName);
-    const imageUrl = publicUrlData.publicUrl;
+      
     btnSubmit.innerText = "Guardando producto...";
     const nuevo = {
-      comercio: document.getElementById('vendNombre').value || "Mi Comercio Gastronómico",
+      email_vendedor: usuarioActualEmail,
+      comercio: document.getElementById('vendNombre').value || "Mi Comercio",
       titulo: document.getElementById('prodTitulo').value,
       categoria: document.getElementById('prodCategoria').value,
       precio: parseFloat(document.getElementById('prodPrecio').value),
-      imagen: imageUrl,
+      imagen: publicUrlData.publicUrl,
       descripcion: document.getElementById('prodDesc').value,
-      direccion: document.getElementById('vendDireccion').value || "Bragado Centro",
-      telefono: document.getElementById('vendTelefono').value || "2342000000",
+      direccion: document.getElementById('vendDireccion').value || "Bragado",
+      telefono: document.getElementById('vendTelefono').value || "",
       delivery: document.getElementById('vendDelivery').value,
       estrellas: 5
     };
+    
     const { error: insertError } = await supabaseClient
       .from('productos')
       .insert([nuevo]);
     if (insertError) throw insertError;
+    
     alert("✅ Producto publicado con éxito.");
     e.target.reset();
     await cargarProductosSupabase();
@@ -780,7 +786,6 @@ async function publicarProducto(e) {
     btnSubmit.innerText = "Publicar en la Plataforma";
   }
 }
-
 // 6. NAVEGACIÓN Y SUBPESTAÑAS
 function navegarA(tabId, btn) {
   // 1. Ocultamos la tarjeta de selección inicial ("¿Cómo querés ingresar hoy?")
