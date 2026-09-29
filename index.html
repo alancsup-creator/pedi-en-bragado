@@ -617,48 +617,38 @@ async function guardarPerfilComercio(e) {
 
 // 4. CARGAR Y RENDERIZAR PRODUCTOS
 async function cargarProductosSupabase() {
-  const container = document.getElementById('contenedorProductos');
-  if (!container) return;
-
   try {
-    const { data: comerciosAprobados, error: errPerfiles } = await supabaseClient
-      .from('perfiles')
-      .select('email, nombre_comercio, estado, fecha_vencimiento')
-      .eq('estado', 'aprobado');
+    // Traer comercios que NO estén ocultos y estén aprobados
+    const { data: comerciosVisibles, error: errComercios } = await supabaseClient
+      .from('comercios')
+      .select('email')
+      .eq('estado', 'aprobado')
+      .or('oculto.is.null,oculto.eq.false'); // Filtra los que no están ocultos
 
-    if (errPerfiles) throw errPerfiles;
+    if (errComercios) throw errComercios;
 
-    const emailsAutorizados = (comerciosAprobados || [])
-      .filter(c => !c.fecha_vencimiento || new Date(c.fecha_vencimiento) > new Date())
-      .map(c => c.email.toLowerCase());
+    const emailsValidos = (comerciosVisibles || []).map(c => c.email ? c.email.toLowerCase() : '');
 
-    const { data: productos, error: errProd } = await supabaseClient
+    // Traer productos
+    const { data: productos, error: errProductos } = await supabaseClient
       .from('productos')
       .select('*');
 
-    if (errProd) throw errProd;
+    if (errProductos) throw errProductos;
 
-    productosGlobales = productos || [];
-    const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-    
-    if (esAdmin) {
-      renderizarProductos(productosGlobales);
-    } else {
-      const productosVisibles = productosGlobales.filter(p => {
-        const mailProd = (p.email_vendedor || p.email || '').toLowerCase();
-        return emailsAutorizados.includes(mailProd) || (miComercioNombre && p.comercio === miComercioNombre);
-      });
-      renderizarProductos(productosVisibles);
-    }
+    // Filtrar únicamente los productos correspondientes a comercios visibles
+    const productosFiltrados = (productos || []).filter(p => 
+      p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase())
+    );
 
-    renderizarMisProductos();
+    // Aquí continúas con el renderizado habitual de tus productos...
+    renderizarProductos(productosFiltrados);
+
   } catch (err) {
-    console.error('Error al cargar productos:', err.message);
-    container.innerHTML = '<p style="padding:20px; color:#64748b;">Ocurrió un error al cargar los productos.</p>';
+    console.error("Error al cargar productos públicos:", err);
   }
-}  
-
-function crearTarjetaHTML(item) {
+}
+  function crearTarjetaHTML(item) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   return `
     <div class="card">
@@ -1170,19 +1160,36 @@ function guardarConfigAdmin() {
 // 1. Función para Alternar Visibilidad (Ocultar / Mostrar)
 async function toggleOcultarComercio(comercioId, estadoActualOculto) {
   try {
-    const { error } = await supabaseClient
-      .from('comercios')
-      .update({ oculto: !estadoActualOculto })
-      .eq('id', comercioId);
+    const nuevoEstado = !estadoActualOculto;
 
-    if (error) throw error;
+    // 1. Actualizar en la tabla comercios
+    const { data: comercio, error: errComercio } = await supabaseClient
+      .from('comercios')
+      .update({ oculto: nuevoEstado })
+      .eq('id', comercioId)
+      .select('email')
+      .single();
+
+    if (errComercio) throw errComercio;
+
+    // 2. Si el comercio tiene email, actualizar también en la tabla perfiles
+    if (comercio && comercio.email) {
+      await supabaseClient
+        .from('perfiles')
+        .update({ oculto: nuevoEstado })
+        .eq('email', comercio.email.toLowerCase());
+    }
+
+    alert(`✅ Visibilidad actualizada: ${nuevoEstado ? 'Comercio Oculto' : 'Comercio Visible'}`);
     
-    cargarGestionVendedores(); 
+    // Refrescar panel admin y la vista pública de productos
+    await cargarGestionVendedores(); 
+    await cargarProductosSupabase();
+
   } catch (err) {
     alert('Error al cambiar la visibilidad: ' + err.message);
   }
 }
-
 // 2. Función para Renovar 1 Mes
 async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
   try {
