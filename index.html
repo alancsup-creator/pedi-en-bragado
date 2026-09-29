@@ -991,10 +991,11 @@ async function procesarAuthVendedor(e) {
   e.preventDefault();
   const email = document.getElementById('emailVendedor').value.trim().toLowerCase();
   const password = document.getElementById('passVendedor').value;
-  const nombreComercio = document.getElementById('nombreComercio').value;
-  const telefono = document.getElementById('telefonoVendedor').value;
+  const nombreComercio = document.getElementById('nombreComercio').value.trim();
+  const telefono = document.getElementById('telefonoVendedor').value.trim();
 
   try {
+    // 1. Crear usuario en Supabase Auth
     const { data: authData, error: authError } = await supabaseClient.auth.signUp({
       email,
       password,
@@ -1008,34 +1009,55 @@ async function procesarAuthVendedor(e) {
 
     if (authError) throw authError;
 
-    if (authData.user) {
-      const { error: dbError } = await supabaseClient
-        .from('perfiles')
-        .upsert([
-          {
-            id: authData.user.id,
-            email: email,
-            nombre_comercio: nombreComercio,
-            telefono: telefono,
-            rol: 'vendedor',
-            estado: 'pendiente',
-            created_at: new Date().toISOString()
-          }
-        ]);
-      if (dbError) throw dbError;
-    }
+    // 2. Guardar en la tabla 'perfiles'
+    const { error: dbPerfilError } = await supabaseClient
+      .from('perfiles')
+      .upsert([
+        {
+          id: authData.user ? authData.user.id : undefined,
+          email: email,
+          nombre_comercio: nombreComercio,
+          telefono: telefono,
+          rol: 'vendedor',
+          estado: 'pendiente',
+          created_at: new Date().toISOString()
+        }
+      ], { onConflict: 'email' });
+
+    if (dbPerfilError) throw dbPerfilError;
+
+    // 3. Guardar en la tabla 'comercios' (para que sincronice con la vista de Admin y Productos)
+    const { error: dbComercioError } = await supabaseClient
+      .from('comercios')
+      .upsert([
+        {
+          email: email,
+          nombre: nombreComercio,
+          telefono: telefono,
+          estado: 'pendiente'
+        }
+      ], { onConflict: 'email' });
+
+    if (dbComercioError) throw dbComercioError;
 
     alert('⏳ Solicitud enviada correctamente. Un administrador debe autorizar tu cuenta antes de que tu comercio y productos sean visibles.');
+    
+    // Recargar la lista del admin si tenés la vista abierta
+    if (typeof cargarGestionVendedores === 'function') {
+      cargarGestionVendedores();
+    }
+
     cerrarModalVendedor();
+
   } catch (err) {
-    if (err.message.includes("User already registered")) {
+    if (err.message && err.message.includes("User already registered")) {
       alert("Este correo ya está registrado en la plataforma.");
     } else {
       alert("Error al registrar vendedor: " + err.message);
     }
   }
 }
-// 10. ADMINISTRACIÓN Y MODERACIÓN
+  // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
   const contenedor = document.getElementById('listaSolicitudesVendedores'); // o el ID de tu contenedor de tabla/lista
   if (!contenedor) return;
