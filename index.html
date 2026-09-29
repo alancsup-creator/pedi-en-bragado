@@ -1302,50 +1302,36 @@ async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
     fechaVenc.setDate(fechaVenc.getDate() + 30);
     const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
 
-    console.log(`Intentando cambiar estado de ${emailNormalizado} a ${nuevoEstado}...`);
-
     // 1. Actualizar en tabla comercios
-    const { data: comUpdated, error: errComercios } = await supabaseClient
+    const { error: errComercios } = await supabaseClient
       .from('comercios')
       .update({
         estado: nuevoEstado,
         fecha_vencimiento: fechaISO
       })
-      .ilike('email', emailNormalizado)
-      .select();
+      .ilike('email', emailNormalizado);
 
-    if (errComercios) {
-      console.error("Error en tabla comercios:", errComercios);
-      throw new Error("Tabla comercios: " + errComercios.message);
-    }
+    if (errComercios) console.error("Error al actualizar comercios:", errComercios);
 
     // 2. Actualizar en tabla perfiles
-    const { data: perfUpdated, error: errPerfiles } = await supabaseClient
+    const { error: errPerfiles } = await supabaseClient
       .from('perfiles')
       .update({
         estado: nuevoEstado,
         fecha_vencimiento: fechaISO
       })
-      .ilike('email', emailNormalizado)
-      .select();
+      .ilike('email', emailNormalizado);
 
-    if (errPerfiles) {
-      console.error("Error en tabla perfiles:", errPerfiles);
-      // No frenamos si falla perfiles pero comercios actualizó, avisamos en consola
-    }
+    if (errPerfiles) console.error("Error al actualizar perfiles:", errPerfiles);
 
-    if ((!comUpdated || comUpdated.length === 0) && (!perfUpdated || perfUpdated.length === 0)) {
-      alert(`⚠️ No se encontró ningún registro con el email: ${emailNormalizado}. Revisa que esté registrado correctamente en las tablas de Supabase.`);
-      return;
-    }
+    alert(`✅ Comercio ${emailNormalizado} actualizado en ambas tablas a: ${nuevoEstado.toUpperCase()}`);
 
-    alert(`✅ Comercio ${emailNormalizado} actualizado con éxito a: ${nuevoEstado.toUpperCase()}`);
-
+    // Recargar vistas
     await cargarGestionVendedores();
     await cargarProductosSupabase();
 
   } catch (err) {
-    console.error("Error completo al cambiar estado:", err);
+    console.error("Error al cambiar estado:", err);
     alert("Error al actualizar el estado: " + err.message);
   }
 }
