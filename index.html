@@ -1445,6 +1445,47 @@ document.addEventListener('DOMContentLoaded', async () => {
   await cargarProductosSupabase();
   await actualizarInterfaz();
 });
+
+  // Función para verificar el estado actualizado del comercio en Supabase
+async function obtenerEstadoComercio(email) {
+  if (!email) return null;
+  try {
+    const emailClean = email.toLowerCase().trim();
+    
+    const { data, error } = await supabaseClient
+      .from('comercios')
+      .select('estado, oculto, fecha_vencimiento')
+      .ilike('email', emailClean)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error al obtener estado del comercio:", error);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error("Error de conexión al obtener estado:", err);
+    return null;
+  }
+}
+  // Ejemplo de uso al cargar el panel del comercio:
+async function abrirPanelVendedor(emailVendedor) {
+  const infoComercio = await obtenerEstadoComercio(emailVendedor);
+
+  if (!infoComercio) {
+    alert("No se encontró la información de tu comercio.");
+    return;
+  }
+
+  if (infoComercio.estado !== 'aprobado') {
+    alert(`Tu cuenta está en estado: ${infoComercio.estado.toUpperCase()}. Por favor aguarda la aprobación del administrador.`);
+    // Podés ocultar la sección de agregar productos o mostrar un aviso de cuenta pendiente
+    return;
+  }
+
+  // Si está aprobado, cargamos sus productos propios
+  await cargarProductosSupabase(emailVendedor);
+}
 </script>
 </body>
 </html>
