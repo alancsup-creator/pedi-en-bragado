@@ -1037,41 +1037,103 @@ async function procesarAuthVendedor(e) {
 }
 // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
-  const tbody = document.getElementById('tablaVendedoresAdmin');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">Cargando...</td></tr>';
-  const { data: vendedores, error } = await supabaseClient
-    .from('perfiles')
-    .select('*')
-    .eq('rol', 'vendedor')
-    .order('created_at', { ascending: false });
-  if (error || !vendedores) {
-    tbody.innerHTML = '<tr><td colspan="5" style="padding:10px; text-align:center;">No se encontraron perfiles o hubo un error.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = '';
-  vendedores.forEach(v => {
-    const fechaVenc = v.fecha_vencimiento ? new Date(v.fecha_vencimiento).toLocaleDateString() : 'Sin activar';
-    const estadoClass = v.estado === 'aprobado' ? 'badge-aprobado' : (v.estado === 'suspendido' ? 'badge-suspendido' : 'badge-pendiente');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="padding:8px;">${v.nombre_comercio || v.nombre || 'Sin nombre'}</td>
-      <td style="padding:8px;">${v.email}</td>
-      <td style="padding:8px;"><span class="badge ${estadoClass}">${(v.estado || 'pendiente').toUpperCase()}</span></td>
-      <td style="padding:8px;">${fechaVenc}</td>
-      <td style="padding:8px;">
-        <button class="btn-success" onclick="aprobarORenovarVendedor('${v.id}', '${v.fecha_vencimiento || ''}')">
-          ${v.estado === 'pendiente' ? 'Aprobar' : 'Renovar +1 M'}
-        </button>
-        <button class="btn-danger" style="border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="cambiarEstadoVendedor('${v.id}', 'suspendido')">
-          Suspender
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+  const contenedor = document.getElementById('listaSolicitudesVendedores'); // o el ID de tu contenedor de tabla/lista
+  if (!contenedor) return;
 
+  try {
+    // 1. Consultar la tabla perfiles
+    const { data: perfiles, error: errPerfiles } = await supabaseClient
+      .from('perfiles')
+      .select('*');
+
+    if (errPerfiles) console.error("Error al traer perfiles:", errPerfiles);
+
+    // 2. Consultar la tabla comercios por si hay registros pendientes allí
+    const { data: comercios, error: errComercios } = await supabaseClient
+      .from('comercios')
+      .select('*');
+
+    if (errComercios) console.error("Error al traer comercios:", errComercios);
+
+    // Unificamos las dos fuentes para no perder ningún registro
+    const mapaSolicitudes = new Map();
+
+    (comercios || []).forEach(c => {
+      if (c.email) {
+        mapaSolicitudes.set(c.email.toLowerCase(), {
+          email: c.email.toLowerCase(),
+          nombre_comercio: c.nombre || 'Sin nombre',
+          telefono: c.telefono || 'Sin teléfono',
+          estado: c.estado || 'pendiente',
+          fecha_vencimiento: c.fecha_vencimiento || null
+        });
+      }
+    });
+
+    (perfiles || []).forEach(p => {
+      if (p.email) {
+        const mail = p.email.toLowerCase();
+        const existente = mapaSolicitudes.get(mail) || {};
+        mapaSolicitudes.set(mail, {
+          ...existente,
+          email: mail,
+          nombre_comercio: p.nombre_comercio || existente.nombre_comercio || 'Sin nombre',
+          telefono: p.telefono || existente.telefono || 'Sin teléfono',
+          estado: p.estado || existente.estado || 'pendiente',
+          fecha_vencimiento: p.fecha_vencimiento || existente.fecha_vencimiento || null
+        });
+      }
+    });
+
+    const todasLasSolicitudes = Array.from(mapaSolicitudes.values());
+
+    if (todasLasSolicitudes.length === 0) {
+      contenedor.innerHTML = '<p style="text-align:center; padding:20px; color:#64748b;">No hay solicitudes ni comercios registrados aún.</p>';
+      return;
+    }
+
+    // Renderizar la tabla de gestión
+    contenedor.innerHTML = `
+      <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+        <thead>
+          <tr style="background:#f1f5f9; text-align:left;">
+            <th style="padding:8px;">Comercio / Email</th>
+            <th style="padding:8px;">Teléfono</th>
+            <th style="padding:8px;">Estado</th>
+            <th style="padding:8px;">Vencimiento</th>
+            <th style="padding:8px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${todasLasSolicitudes.map(sol => `
+            <tr style="border-bottom:1px solid #e2e8f0;">
+              <td style="padding:8px;">
+                <strong>${sol.nombre_comercio}</strong><br>
+                <small style="color:#64748b;">${sol.email}</small>
+              </td>
+              <td style="padding:8px;">${sol.telefono}</td>
+              <td style="padding:8px;">
+                <span class="badge ${sol.estado === 'aprobado' ? 'badge-success' : 'badge-warning'}">
+                  ${sol.estado.toUpperCase()}
+                </span>
+              </td>
+              <td style="padding:8px;">${sol.fecha_vencimiento ? sol.fecha_vencimiento.split('T')[0] : 'Sin fecha'}</td>
+              <td style="padding:8px; display:flex; gap:4px;">
+                <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:12px;">Aprobar</button>
+                <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:12px;">Rechazar</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+  } catch (err) {
+    console.error("Error al cargar gestión de vendedores:", err);
+    contenedor.innerHTML = '<p style="color:red; padding:20px;">Error al cargar las solicitudes.</p>';
+  }
+}
+  
 async function aprobarORenovarVendedor(idPerfil, fechaActual) {
   let nuevaFecha = new Date();
   if (fechaActual && new Date(fechaActual) > new Date()) {
@@ -1093,20 +1155,38 @@ async function aprobarORenovarVendedor(idPerfil, fechaActual) {
   }
 }
 
-async function cambiarEstadoVendedor(idPerfil, nuevoEstado) {
-  if (!confirm(`¿Estás seguro de cambiar el estado a: ${nuevoEstado}?`)) return;
-  const { error } = await supabaseClient
-    .from('perfiles')
-    .update({ estado: nuevoEstado })
-    .eq('id', idPerfil);
-  if (error) {
-    alert('Error al cambiar estado: ' + error.message);
-  } else {
-    alert('Estado actualizado.');
+async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
+  try {
+    // Definimos 30 días de vigencia si se aprueba
+    const fechaVenc = new Date();
+    fechaVenc.setDate(fechaVenc.getDate() + 30);
+    const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
+
+    // 1. Actualizar/Insertar en perfiles
+    await supabaseClient
+      .from('perfiles')
+      .upsert([{
+        email: emailTarget.toLowerCase(),
+        estado: nuevoEstado,
+        fecha_vencimiento: fechaISO
+      }], { onConflict: 'email' });
+
+    // 2. Actualizar en comercios
+    await supabaseClient
+      .from('comercios')
+      .update({
+        estado: nuevoEstado,
+        fecha_vencimiento: fechaISO
+      })
+      .eq('email', emailTarget.toLowerCase());
+
+    alert(`✅ Comercio ${emailTarget} actualizado a estado: ${nuevoEstado.toUpperCase()}`);
     cargarGestionVendedores();
+    cargarProductosSupabase();
+  } catch (err) {
+    alert("Error al actualizar el estado: " + err.message);
   }
 }
-
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
