@@ -1186,6 +1186,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   await cargarProductosSupabase();
   await actualizarInterfaz();
 });
+  // 1. Función para Alternar Visibilidad (Ocultar / Mostrar)
+async function toggleOcultarComercio(comercioId, estadoActualOculto) {
+  try {
+    const { error } = await supabase
+      .from('comercios')
+      .update({ oculto: !estadoActualOculto })
+      .eq('id', comercioId);
+
+    if (error) throw error;
+    
+    // Vuelve a cargar la lista para actualizar la tabla
+    cargarVendedoresAdmin(); 
+  } catch (err) {
+    alert('Error al cambiar la visibilidad: ' + err.message);
+  }
+}
+
+// 2. Función para Renovar 1 Mes
+async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
+  try {
+    const baseDate = fechaVencimientoActual && new Date(fechaVencimientoActual) > new Date()
+      ? new Date(fechaVencimientoActual)
+      : new Date();
+
+    baseDate.setMonth(baseDate.getMonth() + 1);
+
+    const { error } = await supabase
+      .from('comercios')
+      .update({ 
+        fecha_vencimiento: baseDate.toISOString(),
+        aprobado: true 
+      })
+      .eq('id', comercioId);
+
+    if (error) throw error;
+
+    // Vuelve a cargar la lista para actualizar la tabla
+    cargarVendedoresAdmin();
+  } catch (err) {
+    alert('Error al renovar la membresía: ' + err.message);
+  }
+}
 </script>
 </body>
 </html>
