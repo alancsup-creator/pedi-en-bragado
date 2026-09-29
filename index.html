@@ -1121,34 +1121,65 @@ async function cargarGestionVendedores() {
 
 async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
   try {
+    const emailNormalizado = emailTarget.toLowerCase().trim();
     const fechaVenc = new Date();
     fechaVenc.setDate(fechaVenc.getDate() + 30);
     const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
 
-    await supabaseClient
-      .from('perfiles')
-      .upsert([{
-        email: emailTarget.toLowerCase(),
-        estado: nuevoEstado,
-        fecha_vencimiento: fechaISO
-      }], { onConflict: 'email' });
-
-    await supabaseClient
+    // 1. Intentar actualizar en la tabla comercios (por email ignorando mayúsculas/minúsculas)
+    const { error: errComercio } = await supabaseClient
       .from('comercios')
       .update({
         estado: nuevoEstado,
         fecha_vencimiento: fechaISO
       })
-      .eq('email', emailTarget.toLowerCase());
+      .ilike('email', emailNormalizado);
 
-    alert(`✅ Comercio ${emailTarget} actualizado a estado: ${nuevoEstado.toUpperCase()}`);
-    cargarGestionVendedores();
-    cargarProductosSupabase();
+    if (errComercio) {
+      console.error("Error al actualizar tabla comercios:", errComercio);
+    }
+
+    // 2. Intentar actualizar en la tabla perfiles (buscando primero si existe)
+    const { data: perfilExistente } = await supabaseClient
+      .from('perfiles')
+      .select('id, email')
+      .ilike('email', emailNormalizado)
+      .maybeSingle();
+
+    if (perfilExistente) {
+      const { error: errPerfilUpdate } = await supabaseClient
+        .from('perfiles')
+        .update({
+          estado: nuevoEstado,
+          fecha_vencimiento: fechaISO
+        })
+        .eq('id', perfilExistente.id);
+
+      if (errPerfilUpdate) throw errPerfilUpdate;
+    } else {
+      // Si no existe el perfil, se inserta
+      const { error: errPerfilInsert } = await supabaseClient
+        .from('perfiles')
+        .insert([{
+          email: emailNormalizado,
+          estado: nuevoEstado,
+          fecha_vencimiento: fechaISO
+        }]);
+
+      if (errPerfilInsert) throw errPerfilInsert;
+    }
+
+    alert(`✅ Comercio ${emailNormalizado} actualizado a estado: ${nuevoEstado.toUpperCase()}`);
+    
+    // Recargar la interfaz
+    await cargarGestionVendedores();
+    await cargarProductosSupabase();
+
   } catch (err) {
+    console.error("Error completo:", err);
     alert("Error al actualizar el estado: " + err.message);
   }
 }
-
 function guardarConfigAdmin() {
   const tit = document.getElementById('adminBannerTitulo').value;
   const dest = document.getElementById('adminDestacadoNombre').value;
