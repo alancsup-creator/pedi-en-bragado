@@ -1065,10 +1065,12 @@ async function cargarGestionVendedores() {
     (comercios || []).forEach(c => {
       if (c.email) {
         mapaSolicitudes.set(c.email.toLowerCase(), {
+          id: c.id,
           email: c.email.toLowerCase(),
           nombre_comercio: c.nombre || 'Sin nombre',
           telefono: c.telefono || 'Sin teléfono',
           estado: c.estado || 'pendiente',
+          oculto: c.oculto || false,
           fecha_vencimiento: c.fecha_vencimiento || null
         });
       }
@@ -1080,10 +1082,12 @@ async function cargarGestionVendedores() {
         const existente = mapaSolicitudes.get(mail) || {};
         mapaSolicitudes.set(mail, {
           ...existente,
+          id: existente.id || p.id,
           email: mail,
           nombre_comercio: p.nombre_comercio || existente.nombre_comercio || 'Sin nombre',
           telefono: p.telefono || existente.telefono || 'Sin teléfono',
           estado: p.estado || existente.estado || 'pendiente',
+          oculto: existente.oculto || false,
           fecha_vencimiento: p.fecha_vencimiento || existente.fecha_vencimiento || null
         });
       }
@@ -1107,11 +1111,14 @@ async function cargarGestionVendedores() {
           <span class="badge ${sol.estado === 'aprobado' ? 'badge-aprobado' : 'badge-pendiente'}">
             ${sol.estado.toUpperCase()}
           </span>
+          ${sol.oculto ? '<br><span class="badge badge-suspendido" style="margin-top:4px;">OCULTO</span>' : ''}
         </td>
         <td style="padding:8px;">${sol.fecha_vencimiento ? sol.fecha_vencimiento.split('T')[0] : 'Sin fecha'}</td>
-        <td style="padding:8px; display:flex; gap:4px;">
-          <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:12px; margin:0;">Aprobar</button>
-          <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:12px; margin:0;">Rechazar</button>
+        <td style="padding:8px; display:flex; gap:4px; flex-wrap:wrap;">
+          <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Aprobar</button>
+          <button onclick="renovarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-success" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">+1 Mes</button>
+          <button onclick="toggleOcultarComercio('${sol.id}', ${sol.oculto})" class="btn btn-warning" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">${sol.oculto ? '👁️ Mostrar' : '🙈 Ocultar'}</button>
+          <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Rechazar</button>
         </td>
       </tr>
     `).join('');
@@ -1119,27 +1126,6 @@ async function cargarGestionVendedores() {
   } catch (err) {
     console.error("Error al cargar gestión de vendedores:", err);
     contenedor.innerHTML = '<tr><td colspan="5" style="color:red; padding:20px; text-align:center;">Error al cargar las solicitudes.</td></tr>';
-  }
-}
-  
-async function aprobarORenovarVendedor(idPerfil, fechaActual) {
-  let nuevaFecha = new Date();
-  if (fechaActual && new Date(fechaActual) > new Date()) {
-    nuevaFecha = new Date(fechaActual);
-  }
-  nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-  const { error } = await supabaseClient
-    .from('perfiles')
-    .update({
-      estado: 'aprobado',
-      fecha_vencimiento: nuevaFecha.toISOString()
-    })
-    .eq('id', idPerfil);
-  if (error) {
-    alert('Error al renovar perfil: ' + error.message);
-  } else {
-    alert('Perfil renovado con éxito.');
-    cargarGestionVendedores();
   }
 }
 
@@ -1181,23 +1167,17 @@ function guardarConfigAdmin() {
   alert("✅ Cambios visuales actualizados.");
 }
 
-// INICIALIZACIÓN
-document.addEventListener('DOMContentLoaded', async () => {
-  await cargarProductosSupabase();
-  await actualizarInterfaz();
-});
-  // 1. Función para Alternar Visibilidad (Ocultar / Mostrar)
+// 1. Función para Alternar Visibilidad (Ocultar / Mostrar)
 async function toggleOcultarComercio(comercioId, estadoActualOculto) {
   try {
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from('comercios')
       .update({ oculto: !estadoActualOculto })
       .eq('id', comercioId);
 
     if (error) throw error;
     
-    // Vuelve a cargar la lista para actualizar la tabla
-    cargarVendedoresAdmin(); 
+    cargarGestionVendedores(); 
   } catch (err) {
     alert('Error al cambiar la visibilidad: ' + err.message);
   }
@@ -1212,22 +1192,27 @@ async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
 
     baseDate.setMonth(baseDate.getMonth() + 1);
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from('comercios')
       .update({ 
         fecha_vencimiento: baseDate.toISOString(),
-        aprobado: true 
+        estado: 'aprobado' 
       })
       .eq('id', comercioId);
 
     if (error) throw error;
 
-    // Vuelve a cargar la lista para actualizar la tabla
-    cargarVendedoresAdmin();
+    cargarGestionVendedores();
   } catch (err) {
     alert('Error al renovar la membresía: ' + err.message);
   }
 }
+
+// INICIALIZACIÓN
+document.addEventListener('DOMContentLoaded', async () => {
+  await cargarProductosSupabase();
+  await actualizarInterfaz();
+});
 </script>
 </body>
 </html>
