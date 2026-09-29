@@ -274,20 +274,20 @@
       <button onclick="guardarConfigAdmin()" class="btn btn-primary">Guardar Cambios Visuales</button>
     </div>
     <!-- Gestión y Aprobación de Vendedores -->
-    <div class="card" style="padding:16px; margin-bottom:20px;">
-      <h3>🏪 Gestión y Solicitudes de Vendedores</h3>
-      <div style="overflow-x: auto;">
-        <table class="admin-table" style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
-          <thead>
-            <tr style="text-align:left; border-bottom: 2px solid #ddd; background:#f1f5f9;">
-              <th style="padding:8px;">Comercio</th>
-              <th style="padding:8px;">Email</th>
-              <th style="padding:8px;">Estado</th>
-              <th style="padding:8px;">Vencimiento</th>
-              <th style="padding:8px;">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaVendedoresAdmin">
+<div class="card" style="padding:16px; margin-bottom:20px;">
+  <h3>🏪 Gestión y Solicitudes de Vendedores</h3>
+  <div style="overflow-x: auto;">
+    <table class="admin-table" style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
+      <thead>
+        <tr style="text-align:left; border-bottom: 2px solid #ddd; background:#f1f5f9;">
+          <th style="padding:8px;">Comercio / Tel</th>
+          <th style="padding:8px;">Email</th>
+          <th style="padding:8px;">Estado</th>
+          <th style="padding:8px;">Fechas (Alta / Venc.)</th>
+          <th style="padding:8px;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaVendedoresAdmin">
             <!-- Se carga dinámicamente -->
           </tbody>
         </table>
@@ -561,20 +561,51 @@ async function guardarPerfilComercio(e) {
 async function cargarProductosSupabase() {
   const container = document.getElementById('contenedorProductos');
   if (!container) return;
+
   try {
-    const { data: productos, error } = await supabaseClient
+    // 1. Obtenemos todos los comercios aprobados
+    const { data: comerciosAprobados, error: errPerfiles } = await supabaseClient
+      .from('perfiles')
+      .select('email, nombre_comercio, estado, fecha_vencimiento')
+      .eq('estado', 'aprobado');
+
+    if (errPerfiles) throw errPerfiles;
+
+    // Filtramos aquellos cuya fecha de vencimiento esté vigente (o aún sin vencer)
+    const emailsAutorizados = (comerciosAprobados || [])
+      .filter(c => !c.fecha_vencimiento || new Date(c.fecha_vencimiento) > new Date())
+      .map(c => c.email.toLowerCase());
+
+    // 2. Obtenemos los productos
+    const { data: productos, error: errProd } = await supabaseClient
       .from('productos')
       .select('*');
-    if (error) throw error;
+
+    if (errProd) throw errProd;
+
     productosGlobales = productos || [];
-    renderizarProductos(productosGlobales);
+
+    // 3. Si es el Administrador, ve todo. Si es Comprador/Invitado, solo de comercios aprobados.
+    const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
+    
+    if (esAdmin) {
+      renderizarProductos(productosGlobales);
+    } else {
+      const productosVisibles = productosGlobales.filter(p => {
+        // Asumiendo que el producto guarda la referencia o mail del comercio
+        const mailProd = (p.email_vendedor || p.email || '').toLowerCase();
+        return emailsAutorizados.includes(mailProd);
+      });
+      renderizarProductos(productosVisibles);
+    }
+
     renderizarMisProductos();
   } catch (err) {
     console.error('Error al cargar productos:', err.message);
     container.innerHTML = '<p style="padding:20px; color:#64748b;">Ocurrió un error al cargar los productos.</p>';
   }
 }
-
+  
 function crearTarjetaHTML(item) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   return `
@@ -880,7 +911,7 @@ function cerrarModalVendedor() {
 
 async function procesarAuthVendedor(e) {
   e.preventDefault();
-  const email = document.getElementById('emailVendedor').value.trim();
+  const email = document.getElementById('emailVendedor').value.trim().toLowerCase();
   const password = document.getElementById('passVendedor').value;
   const nombreComercio = document.getElementById('nombreComercio').value;
   const telefono = document.getElementById('telefonoVendedor').value;
@@ -909,19 +940,18 @@ async function procesarAuthVendedor(e) {
             nombre_comercio: nombreComercio,
             telefono: telefono,
             rol: 'vendedor',
-            estado: 'pendiente'
+            estado: 'pendiente',
+            created_at: new Date().toISOString()
           }
         ]);
       if (dbError) throw dbError;
     }
 
-    alert('Solicitud enviada con éxito. Un administrador revisará la cuenta.');
+    alert('⏳ Solicitud enviada correctamente. Un administrador debe autorizar tu cuenta antes de que tu comercio y productos sean visibles.');
     cerrarModalVendedor();
   } catch (err) {
     if (err.message.includes("User already registered")) {
-      alert("Este correo ya está registrado. Si ya tienes cuenta, prueba ingresar directamente.");
-    } else if (err.message.includes("column")) {
-      alert("Error en la base de datos: Verifica que la columna 'email' exista en la tabla 'perfiles' de Supabase.");
+      alert("Este correo ya está registrado en la plataforma.");
     } else {
       alert("Error al registrar vendedor: " + err.message);
     }
