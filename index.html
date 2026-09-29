@@ -625,9 +625,27 @@ async function guardarPerfilComercio(e) {
 
 // 4. CARGAR Y RENDERIZAR PRODUCTOS
 // Carga de productos en la tienda pública con filtro de oculto y vencimiento
-async function cargarProductosSupabase() {
+async function cargarProductosSupabase(emailVendedorLogueado = null) {
   try {
-    // 1. Obtener comercios aprobados y no ocultos
+    // 1. Traer todos los productos desde Supabase
+    const { data: productos, error: errProductos } = await supabaseClient
+      .from('productos')
+      .select('*');
+
+    if (errProductos) throw errProductos;
+
+    // Si la llamada es para el panel propio del vendedor, le mostramos TODOS sus productos creados
+    if (emailVendedorLogueado) {
+      const misProductos = (productos || []).filter(p => 
+        p.email_vendedor && p.email_vendedor.toLowerCase() === emailVendedorLogueado.toLowerCase()
+      );
+      if (typeof renderizarProductosVendedor === 'function') {
+        renderizarProductosVendedor(misProductos);
+      }
+      return;
+    }
+
+    // 2. Si es para el catálogo público, filtramos comercios habilitados
     const { data: comerciosVisibles, error: errComercios } = await supabaseClient
       .from('comercios')
       .select('email, fecha_vencimiento')
@@ -638,37 +656,26 @@ async function cargarProductosSupabase() {
 
     const ahora = new Date();
 
-    // 2. Filtrar comercios cuya fecha de vencimiento no haya pasado
     const emailsValidos = (comerciosVisibles || [])
       .filter(c => {
         if (!c.email) return false;
-        if (!c.fecha_vencimiento) return true; // Si no tiene fecha definida, se muestra
-        return new Date(c.fecha_vencimiento) > ahora; // Solo pasa si la fecha es futura
+        if (!c.fecha_vencimiento) return true;
+        return new Date(c.fecha_vencimiento) > ahora;
       })
       .map(c => c.email.toLowerCase());
 
-    // 3. Traer todos los productos
-    const { data: productos, error: errProductos } = await supabaseClient
-      .from('productos')
-      .select('*');
-
-    if (errProductos) throw errProductos;
-
-    // 4. Filtrar únicamente los productos de vendedores con suscripción activa y no ocultos
-    const productosFiltrados = (productos || []).filter(p => 
+    const productosPublicos = (productos || []).filter(p => 
       p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase())
     );
 
-    // Renderizar productos en pantalla
     if (typeof renderizarProductos === 'function') {
-      renderizarProductos(productosFiltrados);
+      renderizarProductos(productosPublicos);
     }
 
   } catch (err) {
-    console.error("Error al cargar productos públicos:", err);
+    console.error("Error al cargar productos:", err);
   }
 }
-
 // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
   const contenedor = document.getElementById('tablaVendedoresAdmin');
@@ -1295,36 +1302,50 @@ async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
     fechaVenc.setDate(fechaVenc.getDate() + 30);
     const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
 
-    // 1. Actualizar tabla comercios
-    const { error: errComercio } = await supabaseClient
+    console.log(`Intentando cambiar estado de ${emailNormalizado} a ${nuevoEstado}...`);
+
+    // 1. Actualizar en tabla comercios
+    const { data: comUpdated, error: errComercios } = await supabaseClient
       .from('comercios')
       .update({
         estado: nuevoEstado,
         fecha_vencimiento: fechaISO
       })
-      .ilike('email', emailNormalizado);
+      .ilike('email', emailNormalizado)
+      .select();
 
-    if (errComercio) throw errComercio;
+    if (errComercios) {
+      console.error("Error en tabla comercios:", errComercios);
+      throw new Error("Tabla comercios: " + errComercios.message);
+    }
 
-    // 2. Actualizar tabla perfiles (solo UPDATE para evitar conflicto de RLS con INSERT)
-    const { error: errPerfil } = await supabaseClient
+    // 2. Actualizar en tabla perfiles
+    const { data: perfUpdated, error: errPerfiles } = await supabaseClient
       .from('perfiles')
       .update({
         estado: nuevoEstado,
         fecha_vencimiento: fechaISO
       })
-      .ilike('email', emailNormalizado);
+      .ilike('email', emailNormalizado)
+      .select();
 
-    if (errPerfil) throw errPerfil;
+    if (errPerfiles) {
+      console.error("Error en tabla perfiles:", errPerfiles);
+      // No frenamos si falla perfiles pero comercios actualizó, avisamos en consola
+    }
 
-    alert(`✅ Comercio ${emailNormalizado} actualizado a estado: ${nuevoEstado.toUpperCase()}`);
-    
-    // Recargar datos e interfaz
+    if ((!comUpdated || comUpdated.length === 0) && (!perfUpdated || perfUpdated.length === 0)) {
+      alert(`⚠️ No se encontró ningún registro con el email: ${emailNormalizado}. Revisa que esté registrado correctamente en las tablas de Supabase.`);
+      return;
+    }
+
+    alert(`✅ Comercio ${emailNormalizado} actualizado con éxito a: ${nuevoEstado.toUpperCase()}`);
+
     await cargarGestionVendedores();
     await cargarProductosSupabase();
 
   } catch (err) {
-    console.error("Error al actualizar:", err);
+    console.error("Error completo al cambiar estado:", err);
     alert("Error al actualizar el estado: " + err.message);
   }
 }
