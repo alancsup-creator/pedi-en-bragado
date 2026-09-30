@@ -128,10 +128,10 @@
     <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
   </div>
   
-  <!-- Botón de instalación PWA -->
-  <button id="btnInstalarPWA" class="btn btn-primary" style="display: none; margin: 10px;" onclick="instalarPWA()">
-    📥 Instalar App
-  </button>
+  <!-- Agregalo en tu <header> junto a las acciones de usuario -->
+<button id="btnInstalarPWA" class="btn btn-warning" style="display: none; padding: 4px 10px; font-size: 12px; margin: 0; width: auto;" onclick="instalarPWA()">
+  📥 Instalar App
+</button>
 </header>
 <main class="container" id="mainContent">
   <!-- Pantalla de Selección de Rol -->
@@ -219,40 +219,59 @@
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subMisProductos', this)">📋 Mis Productos Publicados</button>
       </div>
 
-      <!-- PESTAÑA 1: MI COMERCIO -->
-      <div id="subMiComercio" class="subtab-negocio-content">
-        <div class="card" style="padding:16px;">
-          <h3>🏪 Configuración de Mi Comercio</h3>
-          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Estado de Cuenta: <span class="badge badge-delivery">HABILITADO</span></p>
-          <form onsubmit="guardarPerfilComercio(event)">
-            <div class="form-group">
-              <label>Nombre del Negocio:</label>
-              <input type="text" id="vendNombre" required placeholder="Ej: Rotisería El Buen Gusto">
-            </div>
-            <div class="form-group">
-              <label>Breve Reseña / Especialidad:</label>
-              <textarea id="vendResena" rows="2" placeholder="Ej: Especialistas en empanadas y minutas..."></textarea>
-            </div>
-            <div class="form-group">
-              <label>Dirección Física:</label>
-              <input type="text" id="vendDireccion" placeholder="Ej: Calle Saavedra 123, Bragado" required>
-            </div>
-            <div class="form-group">
-              <label>Teléfono WhatsApp (Sin 0 ni 15):</label>
-              <input type="text" id="vendTelefono" placeholder="2342..." required>
-            </div>
-            <div class="form-group">
-              <label>¿Cuenta con Delivery?:</label>
-              <select id="vendDelivery">
-                <option value="si">Sí, cuenta con delivery</option>
-                <option value="no">No, solo retiro en local</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-outline">Actualizar Datos del Comercio</button>
-          </form>
-        </div>
-      </div>
+   <!-- PESTAÑA 1: MI COMERCIO -->
+<div id="subMiComercio" class="subtab-negocio-content">
+  <div class="card" style="padding:16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3>🏪 Información de Mi Comercio</h3>
+      <span class="badge badge-delivery">HABILITADO</span>
+    </div>
 
+    <!-- 1. VISTA DE LECTURA (Visible por defecto) -->
+    <div id="vistaDatosComercio">
+      <div class="info-box" style="background: #f1f5f9; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+        <div style="margin-bottom:8px;"><label style="font-weight:bold; font-size:11px; color:#475569; display:block;">NOMBRE DEL NEGOCIO:</label><span id="viewVendNombre" style="font-weight:bold; font-size:16px;">-</span></div>
+        <div style="margin-bottom:8px;"><label style="font-weight:bold; font-size:11px; color:#475569; display:block;">RESEÑA / ESPECIALIDAD:</label><span id="viewVendResena">-</span></div>
+        <div style="margin-bottom:8px;"><label style="font-weight:bold; font-size:11px; color:#475569; display:block;">DIRECCIÓN FÍSICA:</label><span id="viewVendDireccion">-</span></div>
+        <div style="margin-bottom:8px;"><label style="font-weight:bold; font-size:11px; color:#475569; display:block;">TELÉFONO WHATSAPP:</label><span id="viewVendTelefono">-</span></div>
+        <div style="margin-bottom:8px;"><label style="font-weight:bold; font-size:11px; color:#475569; display:block;">DELIVERY:</label><span id="viewVendDelivery">-</span></div>
+      </div>
+      <button onclick="mostrarFormularioComercio()" class="btn btn-primary">✏️ Editar Datos del Comercio</button>
+    </div>
+
+    <!-- 2. FORMULARIO DE EDICIÓN (Oculto por defecto) -->
+    <form id="formDatosComercio" onsubmit="guardarPerfilComercio(event)" style="display:none;">
+      <div class="form-group">
+        <label>Nombre del Negocio:</label>
+        <input type="text" id="vendNombre" required placeholder="Ej: Rotisería El Buen Gusto">
+      </div>
+      <div class="form-group">
+        <label>Breve Reseña / Especialidad:</label>
+        <textarea id="vendResena" rows="2" placeholder="Ej: Especialistas en empanadas y minutas..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Dirección Física:</label>
+        <input type="text" id="vendDireccion" placeholder="Ej: Calle Saavedra 123, Bragado" required>
+      </div>
+      <div class="form-group">
+        <label>Teléfono WhatsApp (Sin 0 ni 15):</label>
+        <input type="text" id="vendTelefono" placeholder="2342..." required>
+      </div>
+      <div class="form-group">
+        <label>¿Cuenta con Delivery?:</label>
+        <select id="vendDelivery">
+          <option value="si">Sí, cuenta con delivery</option>
+          <option value="no">No, solo retiro en local</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button type="submit" class="btn btn-primary" style="flex:1;">💾 Guardar Cambios</button>
+        <button type="button" onclick="ocultarFormularioComercio()" class="btn btn-outline" style="flex:1;">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+      
       <!-- PESTAÑA 2: PUBLICAR PRODUCTO / OFERTA -->
       <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
@@ -718,6 +737,21 @@ async function cargarProductosSupabase(emailVendedorLogueado = null) {
 
   } catch (err) {
     console.error("Error al cargar productos:", err);
+  }
+}
+ async function cargarMisProductosVendedor() {
+  if (!usuarioActualEmail) return;
+  try {
+    // Consulta directa buscando coincidencia exacta o case-insensitive por email
+    const { data, error } = await supabaseClient
+      .from('productos')
+      .select('*')
+      .ilike('email_vendedor', usuarioActualEmail);
+
+    if (error) throw error;
+    renderizarMisProductos(data || []);
+  } catch (err) {
+    console.error("Error al traer los productos del vendedor:", err);
   }
 }
   // 10. ADMINISTRACIÓN Y MODERACIÓN
@@ -1610,48 +1644,65 @@ async function abrirPanelVendedor(emailVendedor) {
   // Si está aprobado, cargamos sus productos propios
   await cargarProductosSupabase(emailVendedor);
 }
-  let deferredPrompt;
+
+  function mostrarFormularioComercio() {
+  document.getElementById('vistaDatosComercio').style.display = 'none';
+  document.getElementById('formDatosComercio').style.display = 'block';
+}
+
+function ocultarFormularioComercio() {
+  document.getElementById('vistaDatosComercio').style.display = 'block';
+  document.getElementById('formDatosComercio').style.display = 'none';
+}
+
+async function cargarPerfilComercio(email) {
+  const { data } = await supabaseClient
+    .from('comercios')
+    .select('*')
+    .ilike('email', email)
+    .maybeSingle();
+
+  if (data) {
+    // Rellenar Vista Lectura
+    document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
+    document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
+    document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
+    document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
+    document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
+
+    // Rellenar Formulario de Edición
+    if(document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
+    if(document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
+    if(document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
+    if(document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
+    if(document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
+  }
+}
+ let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevenir que Chrome muestre el cartel automático por defecto
   e.preventDefault();
-  // Guardar el evento para dispararlo cuando el usuario haga clic en el botón
   deferredPrompt = e;
-  
-  // Mostrar nuestro botón de instalación
   const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) {
-    btnInstalar.style.display = 'inline-block';
-  }
+  if (btnInstalar) btnInstalar.style.display = 'inline-block';
 });
 
 async function instalarPWA() {
-  if (!deferredPrompt) return;
-  
-  // Mostrar la ventana de diálogo de instalación del sistema
-  deferredPrompt.prompt();
-  
-  // Esperar la respuesta del usuario
-  const { outcome } = await deferredPrompt.userChoice;
-  console.log(`Respuesta de instalación: ${outcome}`);
-  
-  // Limpiar el evento guardado
-  deferredPrompt = null;
-  
-  // Ocultar el botón si el usuario aceptó
-  const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) {
-    btnInstalar.style.display = 'none';
+  if (!deferredPrompt) {
+    alert("Para instalar la App en tu dispositivo: Tocá 'Compartir' u 'Opciones' en el navegador y elegí 'Agregar a la pantalla de inicio'.");
+    return;
   }
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('btnInstalarPWA').style.display = 'none';
+  }
+  deferredPrompt = null;
 }
 
-// Ocultar el botón si la app ya fue instalada
 window.addEventListener('appinstalled', () => {
-  console.log('✅ PWA instalada exitosamente');
   const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) {
-    btnInstalar.style.display = 'none';
-  }
+  if (btnInstalar) btnInstalar.style.display = 'none';
 });
 </script>
 </body>
