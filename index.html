@@ -293,16 +293,17 @@
         </div>
       </div>
 
-      <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS -->
-      <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <h3>📋 Control de Mis Publicaciones</h3>
-          <button onclick="cargarProductosSupabase()" class="btn btn-outline" style="width:auto; padding:4px 10px; font-size:12px; margin:0;">🔄 Refrescar</button>
-        </div>
-        <p style="font-size:12px; color:#64748b; margin-bottom:12px;">A continuación puedes revisar, modificar precios/fotos o dar de baja tus artículos activos.</p>
-        <div class="grid" id="gridMisProductos"></div>
-      </div>
-    </div>
+     <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS -->
+<div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <h3>📋 Control de Mis Publicaciones</h3>
+    <button onclick="cargarProductosSupabase()" class="btn btn-outline" style="width:auto; padding:4px 10px; font-size:12px; margin:0;">🔄 Refrescar</button>
+  </div>
+  <p style="font-size:12px; color:#64748b; margin-bottom:12px;">A continuación puedes revisar, modificar precios/fotos o dar de baja tus artículos activos.</p>
+  
+  <!-- Aquí renderizarMisProductos() insertará las tarjetas de tus productos -->
+  <div class="grid" id="gridMisProductos"></div>
+</div>
   </section>
 
   <!-- VISTA 4: ADMINISTRADOR (OCULTO) -->
@@ -555,10 +556,26 @@ function activarInterfazUsuario(emailUsuario) {
 }
   
 async function cerrarSesion() {
-  await supabaseClient.auth.signOut();
-  rolActivo = null;
-  alert("Sesión cerrada.");
-  location.reload();
+  try {
+    // 1. Cerrar sesión en Supabase
+    await supabaseClient.auth.signOut();
+  } catch (err) {
+    console.error("Error al cerrar sesión en Supabase:", err);
+  } finally {
+    // 2. Limpiar variables de sesión en memoria
+    rolActivo = null;
+    if (typeof usuarioActual !== 'undefined') usuarioActual = null;
+    if (typeof usuarioActualEmail !== 'undefined') usuarioActualEmail = null;
+
+    // 3. Limpiar almacenamiento local (por si guardaste rol, email o token)
+    localStorage.removeItem('rolActivo');
+    localStorage.removeItem('sb-access-token'); // Limpieza de token local si usás persistencia manual
+
+    alert("Sesión cerrada.");
+
+    // 4. Recargar la página para limpiar la app por completo
+    location.reload();
+  }
 }
 
 function autenticarVendedorManual(e) {
@@ -634,45 +651,65 @@ async function guardarPerfilComercio(e) {
 // Carga de productos en la tienda pública con filtro de oculto y vencimiento
 async function cargarProductosSupabase(emailVendedorLogueado = null) {
   try {
-    // 1. Traer todos los productos desde Supabase
+    // 1. Obtener TODOS los productos de la tabla
     const { data: productos, error: errProductos } = await supabaseClient
       .from('productos')
       .select('*');
 
     if (errProductos) throw errProductos;
 
-    // Si la llamada es para el panel propio del vendedor, le mostramos TODOS sus productos creados
+    // Normalizar lista de productos
+    const listaProductos = productos || [];
+
+    // -------------------------------------------------------------
+    // CASO A: VENDEDOR VIENDO SU PROPIO PANEL
+    // -------------------------------------------------------------
     if (emailVendedorLogueado) {
-      const misProductos = (productos || []).filter(p => 
-        p.email_vendedor && p.email_vendedor.toLowerCase() === emailVendedorLogueado.toLowerCase()
+      const emailClean = emailVendedorLogueado.toLowerCase().trim();
+      
+      // Filtrar sus productos sin importar el estado de aprobación/vencimiento
+      const misProductos = listaProductos.filter(p => 
+        p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailClean
       );
+
+      console.log(`[Panel Vendedor] ${misProductos.length} productos encontrados para ${emailClean}`);
+
+      // Llamar a la función que dibuja las tarjetas en el panel del vendedor
       if (typeof renderizarProductosVendedor === 'function') {
         renderizarProductosVendedor(misProductos);
+      } else if (typeof renderizarProductos === 'function') {
+        renderizarProductos(misProductos); // Fallback si usas la misma vista
       }
       return;
     }
 
-    // 2. Si es para el catálogo público, filtramos comercios habilitados
+    // -------------------------------------------------------------
+    // CASO B: TIENDA PÚBLICA (COMPRADORES)
+    // -------------------------------------------------------------
     const { data: comerciosVisibles, error: errComercios } = await supabaseClient
       .from('comercios')
-      .select('email, fecha_vencimiento')
-      .eq('estado', 'aprobado')
-      .or('oculto.is.null,oculto.eq.false');
+      .select('email, estado, oculto, fecha_vencimiento');
 
     if (errComercios) throw errComercios;
 
     const ahora = new Date();
 
-    const emailsValidos = (comerciosVisibles || [])
+    // Obtener emails de comercios 100% habilitados (ignorando mayúsculas/minúsculas)
+    const emailsHabilitados = (comerciosVisibles || [])
       .filter(c => {
         if (!c.email) return false;
-        if (!c.fecha_vencimiento) return true;
-        return new Date(c.fecha_vencimiento) > ahora;
-      })
-      .map(c => c.email.toLowerCase());
+        
+        const esAprobado = c.estado === 'aprobado';
+        const noEstaOculto = !c.oculto;
+        const noEstaVencido = !c.fecha_vencimiento || new Date(c.fecha_vencimiento) > ahora;
 
-    const productosPublicos = (productos || []).filter(p => 
-      p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase())
+        return esAprobado && noEstaOculto && noEstaVencido;
+      })
+      .map(c => c.email.toLowerCase().trim());
+
+    // Filtrar productos públicos pertenecientes a comercios habilitados
+    const productosPublicos = listaProductos.filter(p => 
+      p.email_vendedor && emailsHabilitados.includes(p.email_vendedor.toLowerCase().trim())
     );
 
     if (typeof renderizarProductos === 'function') {
@@ -683,7 +720,7 @@ async function cargarProductosSupabase(emailVendedorLogueado = null) {
     console.error("Error al cargar productos:", err);
   }
 }
-// 10. ADMINISTRACIÓN Y MODERACIÓN
+  // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
   const contenedor = document.getElementById('tablaVendedoresAdmin');
   if (!contenedor) return;
@@ -858,6 +895,7 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
   `;
 }
 
+// Catálogo público para compradores (mantenemos la tuya)
 function renderizarProductos(lista) {
   const grid = document.getElementById('contenedorProductos');
   if (!grid) return;
@@ -868,11 +906,27 @@ function renderizarProductos(lista) {
   grid.innerHTML = lista.map(crearTarjetaHTML).join('');
 }
 
-function renderizarMisProductos() {
+// Panel privado para el vendedor / administrador
+function renderizarMisProductos(listaProductosPersonalizada = null) {
   const grid = document.getElementById('gridMisProductos');
   if (!grid) return;
-  const esAdmin = usuarioActualEmail && (usuarioActualEmail === ADMIN_EMAIL.toLowerCase());
-  const misProds = esAdmin ? productosGlobales : productosGlobales.filter(p => miComercioNombre && p.comercio && p.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase());
+
+  const emailSesion = typeof usuarioActualEmail !== 'undefined' ? usuarioActualEmail.toLowerCase().trim() : '';
+  const esAdmin = emailSesion && (emailSesion === ADMIN_EMAIL.toLowerCase());
+
+  // Si nos pasan una lista filtrada por Supabase la usamos; sino, filtramos de la global por email_vendedor
+  let misProds = [];
+
+  if (listaProductosPersonalizada) {
+    misProds = listaProductosPersonalizada;
+  } else if (esAdmin) {
+    misProds = productosGlobales || [];
+  } else {
+    misProds = (productosGlobales || []).filter(p => 
+      p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailSesion
+    );
+  }
+
   if (misProds.length === 0) {
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
@@ -885,9 +939,40 @@ function renderizarMisProductos() {
     `;
     return;
   }
-  grid.innerHTML = misProds.map(crearTarjetaHTML).join('');
-}
 
+  // Mapeamos y generamos las tarjetas del panel de gestión
+  grid.innerHTML = misProds.map(p => `
+    <div style="background: white; border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <img src="${p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen'}" 
+           alt="${p.nombre}" 
+           style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; flex-shrink: 0;"
+           onerror="this.src='https://via.placeholder.com/80?text=Error'" />
+
+      <div style="flex: 1; min-width: 0;">
+        <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${p.nombre}
+        </h4>
+        <p style="margin: 0; font-weight: bold; color: #d97706; font-size: 14px;">
+          $${Number(p.precio || 0).toLocaleString('es-AR')}
+        </p>
+        ${p.descripcion ? `<p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.descripcion}</p>` : ''}
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+        <button onclick="prepararEdicionProducto('${p.id}', '${encodeURIComponent(JSON.stringify(p))}')" 
+                class="btn btn-primary" 
+                style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto;">
+          ✏️ Editar
+        </button>
+        <button onclick="eliminarProducto('${p.id}')" 
+                class="btn btn-danger" 
+                style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
+          🗑️ Eliminar
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
 // 5. PUBLICACIÓN DE PRODUCTO
 async function publicarProducto(e) {
   e.preventDefault();
@@ -947,6 +1032,52 @@ async function publicarProducto(e) {
   }
 }
 
+  // --- PREPARAR EDICIÓN EN EL FORMULARIO ---
+function prepararEdicionProducto(id, prodEncoded) {
+  const prod = JSON.parse(decodeURIComponent(prodEncoded));
+
+  // Cargar valores en los inputs del formulario
+  if (document.getElementById('txtProdId')) document.getElementById('txtProdId').value = prod.id;
+  if (document.getElementById('txtProdNombre')) document.getElementById('txtProdNombre').value = prod.nombre || '';
+  if (document.getElementById('txtProdPrecio')) document.getElementById('txtProdPrecio').value = prod.precio || '';
+  if (document.getElementById('txtProdDesc')) document.getElementById('txtProdDesc').value = prod.descripcion || '';
+  if (document.getElementById('txtProdImagen')) document.getElementById('txtProdImagen').value = prod.imagen || '';
+
+  // Cambiar el texto del botón del formulario
+  const btnGuardar = document.getElementById('btnGuardarProducto');
+  if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
+
+  // Desplazar suavemente hasta el formulario
+  const formSection = document.getElementById('secFormProducto');
+  if (formSection) formSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- ELIMINAR PRODUCTO DE SUPABASE ---
+async function eliminarProducto(idProducto) {
+  if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+
+  try {
+    const { error } = await supabaseClient
+      .from('productos')
+      .delete()
+      .eq('id', idProducto);
+
+    if (error) throw error;
+
+    alert('✅ Producto eliminado correctamente.');
+
+    // Recargar productos usando el email del usuario activo
+    if (typeof usuarioActual !== 'undefined' && usuarioActual.email) {
+      await cargarProductosSupabase(usuarioActual.email);
+    } else {
+      await cargarProductosSupabase();
+    }
+
+  } catch (err) {
+    console.error('Error al eliminar producto:', err);
+    alert('Error al eliminar: ' + err.message);
+  }
+}
 // 6. NAVEGACIÓN Y SUBPESTAÑAS
 function navegarA(tabId, btn) {
   const secPerfil = document.getElementById('secSeleccionPerfil') || document.getElementById('roleSelectionSection');
