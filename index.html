@@ -2,14 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#d97706">
-<title>Pedí en Bragado - Promo Gastronómica</title>
-<!-- Manifest básico PWA integrador -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Pedienbragado%22%2C%22short_name%22%3A%22Pedienbragado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23d97706%22%7D">
-<!-- SDK Oficial de Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d97706">
+  <title>Pedí en Bragado - Promo Gastronómica</title>
+
+  <!-- Manifest básico PWA integrador -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Pedienbragado%22%2C%22short_name%22%3A%22Pedienbragado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23d97706%22%7D">
+
+  <!-- STEP 1: SDK Oficial de Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
   :root {
     --primary: #d97706;
     --primary-dark: #b45309;
@@ -120,11 +122,16 @@
 </head>
 <body>
 <header>
-  <h1>🍔 Pedienbragado</h1>
+ <h1>🍔 Pedienbragado</h1>
   <div class="user-badge">
     <span id="lblPerfil">Modo: Comprador</span>
     <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
   </div>
+  
+  <!-- Botón de instalación PWA -->
+  <button id="btnInstalarPWA" class="btn btn-primary" style="display: none; margin: 10px;" onclick="instalarPWA()">
+    📥 Instalar App
+  </button>
 </header>
 <main class="container" id="mainContent">
   <!-- Pantalla de Selección de Rol -->
@@ -1472,6 +1479,49 @@ async function abrirPanelVendedor(emailVendedor) {
   // Si está aprobado, cargamos sus productos propios
   await cargarProductosSupabase(emailVendedor);
 }
+  let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevenir que Chrome muestre el cartel automático por defecto
+  e.preventDefault();
+  // Guardar el evento para dispararlo cuando el usuario haga clic en el botón
+  deferredPrompt = e;
+  
+  // Mostrar nuestro botón de instalación
+  const btnInstalar = document.getElementById('btnInstalarPWA');
+  if (btnInstalar) {
+    btnInstalar.style.display = 'inline-block';
+  }
+});
+
+async function instalarPWA() {
+  if (!deferredPrompt) return;
+  
+  // Mostrar la ventana de diálogo de instalación del sistema
+  deferredPrompt.prompt();
+  
+  // Esperar la respuesta del usuario
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log(`Respuesta de instalación: ${outcome}`);
+  
+  // Limpiar el evento guardado
+  deferredPrompt = null;
+  
+  // Ocultar el botón si el usuario aceptó
+  const btnInstalar = document.getElementById('btnInstalarPWA');
+  if (btnInstalar) {
+    btnInstalar.style.display = 'none';
+  }
+}
+
+// Ocultar el botón si la app ya fue instalada
+window.addEventListener('appinstalled', () => {
+  console.log('✅ PWA instalada exitosamente');
+  const btnInstalar = document.getElementById('btnInstalarPWA');
+  if (btnInstalar) {
+    btnInstalar.style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
