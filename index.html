@@ -1573,32 +1573,7 @@ async function toggleOcultarComercio(comercioId, estadoActualOculto) {
     alert('Error al cambiar la visibilidad: ' + err.message);
   }
 }
-  async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
-  if (!fechaVencimientoActual) {
-    alert("El comercio no tiene una fecha de vencimiento asignada.");
-    return;
-  }
-
-  try {
-    const baseDate = new Date(fechaVencimientoActual);
-    baseDate.setMonth(baseDate.getMonth() - 1);
-
-    const { error } = await supabaseClient
-      .from('comercios')
-      .update({ 
-        fecha_vencimiento: baseDate.toISOString()
-      })
-      .eq('id', comercioId);
-
-    if (error) throw error;
-
-    alert("✅ Se restó 1 mes a la membresía.");
-    await cargarGestionVendedores();
-  } catch (err) {
-    alert('Error al restar la membresía: ' + err.message);
-  }
-}
-
+ 
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', async () => {
   await cargarProductosSupabase();
