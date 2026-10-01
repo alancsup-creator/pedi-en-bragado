@@ -652,7 +652,7 @@ if ('serviceWorker' in navigator) {
 
     if (data) {
       miComercioNombre = data.nombre || '';
-      document.getElementById('viewVendFoto').src = data.foto_perfil || 'https://via.placeholder.com/80?text=Perfil';
+      document.getElementById('viewVendFoto').src = data.foto_perfil || 'https://placehold.co/100x100?text=Comercio';
       document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
       document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
       document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
