@@ -1649,8 +1649,6 @@ async function obtenerEstadoComercio(email) {
     // Si está aprobado, cargamos sus productos propios
     await cargarProductosSupabase(emailVendedor);
   }
-
-});
   // Cierra el modal de edición
 function cerrarModalEdicion() {
   const modal = document.getElementById('modalEditarProducto');
