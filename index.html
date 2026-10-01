@@ -1199,13 +1199,13 @@ function renderizarMisProductos(misProdsInput = null) {
     }
   };
 
-  setInputValue(['txtProdId', 'editProdId'], id || prod.id);
+  // ✅ CORREGIDO: Se usa prod.id de forma segura en lugar de 'id' suelta
+  setInputValue(['txtProdId', 'editProdId'], prod.id || '');
   setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
   setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
   setInputValue(['txtProdCategoria', 'editProdCategoria', 'prodCategoria'], prod.categoria || '');
   setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
-  setInputValue(['txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
-
+  setInputValue(['editProdImagenActual', 'txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
   // 3. Cambiar texto del botón si existe
   const btnGuardar = document.getElementById('btnGuardarProducto');
   if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
