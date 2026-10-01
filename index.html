@@ -1781,7 +1781,6 @@ async function cargarPerfilComercio(email) {
     if(document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
   }
 }
- let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
