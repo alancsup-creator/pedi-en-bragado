@@ -1573,30 +1573,6 @@ async function toggleOcultarComercio(comercioId, estadoActualOculto) {
     alert('Error al cambiar la visibilidad: ' + err.message);
   }
 }
-// 2. Función para Renovar 1 Mes
-async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
-  try {
-    const baseDate = fechaVencimientoActual && new Date(fechaVencimientoActual) > new Date()
-      ? new Date(fechaVencimientoActual)
-      : new Date();
-
-    baseDate.setMonth(baseDate.getMonth() + 1);
-
-    const { error } = await supabaseClient
-      .from('comercios')
-      .update({ 
-        fecha_vencimiento: baseDate.toISOString(),
-        estado: 'aprobado' 
-      })
-      .eq('id', comercioId);
-
-    if (error) throw error;
-
-    cargarGestionVendedores();
-  } catch (err) {
-    alert('Error al renovar la membresía: ' + err.message);
-  }
-}
   async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
   if (!fechaVencimientoActual) {
     alert("El comercio no tiene una fecha de vencimiento asignada.");
