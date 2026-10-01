@@ -1631,10 +1631,13 @@ function ocultarFormularioComercio() {
   document.getElementById('formDatosComercio').style.display = 'none';
 }
 
-window.addEventListener('appinstalled', () => {
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
   const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) btnInstalar.style.display = 'none';
+  if (btnInstalar) btnInstalar.style.display = 'inline-block';
 });
+
 </script>
 </body>
 </html>
