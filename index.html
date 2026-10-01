@@ -1136,7 +1136,7 @@ function renderizarMisProductos(misProdsInput = null) {
   }
 
   // --- PREPARAR EDICIÓN EN EL FORMULARIO ---
-  function prepararEdicionProducto(id, param2, precio, categoria, descripcion, imagen) {
+  function prepararEdicionProducto(idParam, param2, precio, categoria, descripcion, imagen) {
   let prod = {};
 
   // 1. Detectar si el segundo parámetro es un objeto codificado (JSON) o un título/nombre directo
@@ -1151,7 +1151,7 @@ function renderizarMisProductos(misProdsInput = null) {
   } else {
     // Si viene como parámetros individuales sueltos
     prod = {
-      id: id,
+      id: idParam,
       titulo: param2,
       precio: precio,
       categoria: categoria,
@@ -1160,6 +1160,34 @@ function renderizarMisProductos(misProdsInput = null) {
     };
   }
 
+  // ID resguardado dentro del ámbito de la función
+  const idProducto = idParam || prod.id || '';
+
+  // 2. Función interna para asignar valores a los inputs
+  const setInputValue = (ids, value) => {
+    for (const elementId of ids) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.value = value !== undefined && value !== null ? value : '';
+        break;
+      }
+    }
+  };
+
+  setInputValue(['txtProdId', 'editProdId'], idProducto);
+  setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
+  setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
+  setInputValue(['txtProdCategoria', 'editProdCategoria', 'prodCategoria'], prod.categoria || '');
+  setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
+  setInputValue(['editProdImagenActual', 'txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
+
+  // 3. Abrir el modal si existe
+  const modal = document.getElementById('modalEditarProducto');
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
+} 
   // 2. Cargar valores en los inputs (cubriendo ambas variantes de IDs HTML)
   const setInputValue = (ids, value) => {
     for (const elementId of ids) {
