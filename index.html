@@ -1139,17 +1139,16 @@ function renderizarMisProductos(misProdsInput = null) {
   function prepararEdicionProducto(idParam, param2, precio, categoria, descripcion, imagen) {
   let prod = {};
 
-  // 1. Detectar si el segundo parámetro es un objeto codificado (JSON) o un título/nombre directo
+  // 1. Detectar si param2 viene como JSON codificado o como parámetros sueltos
   if (typeof param2 === 'string' && (param2.startsWith('{') || param2.includes('%7B'))) {
     try {
       prod = JSON.parse(decodeURIComponent(param2));
     } catch (e) {
-      prod = { titulo: param2, precio, categoria, descripcion, imagen };
+      prod = { id: idParam, titulo: param2, precio, categoria, descripcion, imagen };
     }
   } else if (typeof param2 === 'object' && param2 !== null) {
     prod = param2;
   } else {
-    // Si viene como parámetros individuales sueltos
     prod = {
       id: idParam,
       titulo: param2,
@@ -1160,10 +1159,10 @@ function renderizarMisProductos(misProdsInput = null) {
     };
   }
 
-  // ID resguardado dentro del ámbito de la función
-  const idProducto = idParam || prod.id || '';
+  // 2. Definir ID final asegurado
+  const idProducto = prod.id || idParam || '';
 
-  // 2. Función interna para asignar valores a los inputs
+  // 3. Función auxiliar interna para asignar valores a los campos
   const setInputValue = (ids, value) => {
     for (const elementId of ids) {
       const el = document.getElementById(elementId);
@@ -1174,6 +1173,7 @@ function renderizarMisProductos(misProdsInput = null) {
     }
   };
 
+  // 4. Asignar los valores a los inputs del formulario
   setInputValue(['txtProdId', 'editProdId'], idProducto);
   setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
   setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
@@ -1181,45 +1181,22 @@ function renderizarMisProductos(misProdsInput = null) {
   setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
   setInputValue(['editProdImagenActual', 'txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
 
-  // 3. Abrir el modal si existe
+  // 5. Cambiar texto del botón si existe
+  const btnGuardar = document.getElementById('btnGuardarProducto');
+  if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
+
+  // 6. Abrir modal o scroll al formulario
   const modal = document.getElementById('modalEditarProducto');
   if (modal) {
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
-  }
-} 
-  // 2. Cargar valores en los inputs (cubriendo ambas variantes de IDs HTML)
-  const setInputValue = (ids, value) => {
-    for (const elementId of ids) {
-      const el = document.getElementById(elementId);
-      if (el) {
-        el.value = value !== undefined && value !== null ? value : '';
-        break;
-      }
+  } else {
+    const formSection = document.getElementById('secFormProducto');
+    if (formSection) {
+      formSection.scrollIntoView({ behavior: 'smooth' });
     }
-  };
-
-  // ✅ CORREGIDO: Se usa prod.id de forma segura en lugar de 'id' suelta
-  setInputValue(['txtProdId', 'editProdId'], prod.id || '');
-  setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
-  setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
-  setInputValue(['txtProdCategoria', 'editProdCategoria', 'prodCategoria'], prod.categoria || '');
-  setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
-  setInputValue(['editProdImagenActual', 'txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
-  // 3. Cambiar texto del botón si existe
-  const btnGuardar = document.getElementById('btnGuardarProducto');
-  if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
-
-  // 4. Abrir modal si existe
-  const modal = document.getElementById('modalEditarProducto');
-  if (modal) modal.style.display = 'flex';
-
-  // 5. Desplazar suavemente hacia el formulario si no hay modal abierto
-  const formSection = document.getElementById('secFormProducto');
-  if (formSection && (!modal || modal.style.display === 'none')) {
-    formSection.scrollIntoView({ behavior: 'smooth' });
   }
-
+}
 // --- ELIMINAR PRODUCTO DE SUPABASE ---
 async function eliminarProducto(idProducto) {
   if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
