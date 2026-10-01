@@ -363,7 +363,7 @@
             <div style="font-size:28px;" class="stars">⭐ <span id="txtPromedioEstrellas">5.0</span></div>
             <div>
               <strong style="font-size:14px;">Reputación General</strong>
-              <p style="font-size:12px; color:#78350f;">Promedio calculated según valoraciones de tus clientes.</p>
+              <p style="font-size:12px; color:#78350f;">Promedio calculado según valoraciones de tus clientes.</p>
             </div>
           </div>
           <div id="listaOpinionesComercio">
@@ -371,7 +371,9 @@
           </div>
         </div>
       </div>
-      
+    </div> <!-- Cierre de #boxPanelVendedor -->
+  </section> <!-- Cierre correcto de #secVendedor -->
+
   <!-- VISTA 4: ADMINISTRADOR (OCULTO) -->
   <section id="secAdmin" class="tab-content">
     <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel de Control Administrador</h2>
@@ -462,50 +464,13 @@
   </div>
 </div>
 
-<!-- MODAL PARA EDITAR PRODUCTO -->
-<div id="modalEditarProducto" class="modal-overlay hidden">
-  <div class="modal-content">
-    <h3 style="margin-bottom: 12px; color: var(--primary);">✏️ Editar Producto</h3>
-    <form onsubmit="guardarEdicionProducto(event)">
-      <input type="hidden" id="editProdId">
-      <input type="hidden" id="editProdImagenActual">
-      <div class="form-group">
-        <label>Título:</label>
-        <input type="text" id="editProdTitulo" required>
-      </div>
-      <div class="form-group">
-        <label>Categoría:</label>
-        <select id="editProdCategoria" required>
-          <option value="plato_dia">Plato del día</option>
-          <option value="al_plato">Al plato</option>
-          <option value="sandwiches">Sándwiches</option>
-          <option value="postre">Postre</option>
-          <option value="bebida">Bebida</option>
-          <option value="combos">Combos</option>
-          <option value="promo">Promo</option>
-          <option value="fingerfood">Fingerfood</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Precio ($):</label>
-        <input type="number" id="editProdPrecio" required>
-      </div>
-      <div class="form-group">
-        <label>Cambiar Imagen (Opcional):</label>
-        <input type="file" id="editProdImagenFile" accept="image/*">
-      </div>
-      <div class="form-group">
-        <label>Descripción:</label>
-        <input type="text" id="editProdDesc">
-      </div>
-      <div style="display: flex; gap: 8px; margin-top: 16px;">
-        <button type="submit" id="btnGuardarEdit" class="btn btn-primary" style="flex:1;">Guardar Cambios</button>
-        <button type="button" onclick="cerrarModalEditar()" class="btn btn-outline" style="flex:1;">Cancelar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
+function cerrarModalEditar() {
+  const modal = document.getElementById('modalEditarProducto');
+  if (modal) {
+    modal.classList.add('hidden'); // Oculta el modal agregando la clase hidden
+    modal.style.display = 'none'; // Resguardo por si usás display inline
+  }
+}
 <!-- Barra de Navegación Inferior (Punto 4 corregido) -->
 <nav class="nav-bottom">
   <button class="nav-btn active" onclick="navegarA('secComprador', this)">🍕 Productos</button>
@@ -1085,37 +1050,46 @@ function renderizarMisProductos(misProdsInput = null) {
     return;
   }
 
-  grid.innerHTML = misProds.map(p => `
-    <div style="background: white; border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-      <img src="${p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen'}" 
-           alt="${p.nombre || p.titulo || ''}"
-           style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" 
-           onerror="this.src='https://via.placeholder.com/80?text=Error'" />
+  grid.innerHTML = misProds.map(p => {
+    // Definimos título y valores seguros escapando comillas simples
+    const tituloValido = (p.titulo || p.nombre || 'Sin título').replace(/'/g, "\\'");
+    const descValida = (p.descripcion || '').replace(/'/g, "\\'");
+    const catValida = (p.categoria || '').replace(/'/g, "\\'");
+    const imgValida = (p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen').replace(/'/g, "\\'");
+    const precioValido = Number(p.precio) || 0;
 
-      <div style="flex: 1; min-width: 0;">
-        <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${p.titulo || p.nombre}
-        </h4>
-        <p style="margin: 0; font-weight: bold; color: #d97706; font-size: 14px;">
-          $${Number(p.precio || 0).toLocaleString('es-AR')}
-        </p>
-        <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">⭐ ${p.estrellas || 5}/5</p>
-      </div>
+    return `
+      <div style="background: white; border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <img src="${imgValida}" 
+             alt="${tituloValido}"
+             style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" 
+             onerror="this.src='https://via.placeholder.com/80?text=Error'" />
 
-      <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
-        <button onclick="typeof abrirModalEditar === 'function' ? abrirModalEditar('${p.id}') : prepararEdicionProducto('${p.id}', '${encodeURIComponent(JSON.stringify(p))}')" 
-                class="btn btn-primary" 
-                style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto;">
-          ✏️ Editar
-        </button>
-        <button onclick="typeof eliminarProductoSupabase === 'function' ? eliminarProductoSupabase('${p.id}') : eliminarProducto('${p.id}')" 
-                class="btn btn-danger" 
-                style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
-          🗑️ Eliminar
-        </button>
+        <div style="flex: 1; min-width: 0;">
+          <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${p.titulo || p.nombre || 'Sin título'}
+          </h4>
+          <p style="margin: 0; font-weight: bold; color: #d97706; font-size: 14px;">
+            $${precioValido.toLocaleString('es-AR')}
+          </p>
+          <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">⭐ ${p.estrellas || 5}/5</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+          <button onclick="typeof abrirModalEditar === 'function' ? abrirModalEditar('${p.id}') : prepararEdicionProducto('${p.id}', '${tituloValido}', ${precioValido}, '${catValida}', '${descValida}', '${imgValida}')" 
+                  class="btn btn-primary" 
+                  style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto;">
+            ✏️ Editar
+          </button>
+          <button onclick="typeof eliminarProductoSupabase === 'function' ? eliminarProductoSupabase('${p.id}') : eliminarProducto('${p.id}')" 
+                  class="btn btn-danger" 
+                  style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
+            🗑️ Eliminar
+          </button>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
   // 5. PUBLICACIÓN DE PRODUCTO
   async function publicarProducto(e) {
@@ -1139,18 +1113,18 @@ function renderizarMisProductos(misProdsInput = null) {
         
       btnSubmit.innerText = "Guardando producto...";
       const nuevo = {
-        email_vendedor: usuarioActualEmail,
-        comercio: document.getElementById('vendNombre').value || "Mi Comercio",
-        titulo: document.getElementById('prodTitulo').value,
-        categoria: document.getElementById('prodCategoria').value,
-        precio: parseFloat(document.getElementById('prodPrecio').value),
-        imagen: publicUrlData.publicUrl,
-        descripcion: document.getElementById('prodDesc').value,
-        direccion: document.getElementById('vendDireccion').value || "Bragado",
-        telefono: document.getElementById('vendTelefono').value || "",
-        delivery: document.getElementById('vendDelivery').value,
-        estrellas: 5
-      };
+  email_vendedor: usuarioActualEmail,
+  comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
+  titulo: document.getElementById('prodTitulo').value.trim(),
+  categoria: document.getElementById('prodCategoria').value,
+  precio: parseFloat(document.getElementById('prodPrecio').value) || 0,
+  imagen: publicUrlData.publicUrl,
+  descripcion: (document.getElementById('prodDescripcion') || document.getElementById('prodDesc'))?.value.trim() || "",
+  direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
+  telefono: document.getElementById('vendTelefono')?.value.trim() || "",
+  delivery: document.getElementById('vendDelivery')?.value || "consultar",
+  estrellas: 5
+};
       
       const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
       if (insertError) throw insertError;
@@ -1168,24 +1142,61 @@ function renderizarMisProductos(misProdsInput = null) {
     }
   }
 
-  // --- PREPARAR EDICIÓN EN EL FORMULARIO ---
-function prepararEdicionProducto(id, prodEncoded) {
-  const prod = JSON.parse(decodeURIComponent(prodEncoded));
+  // --- PREPARAR EDICIÓN EN EL FORMULARIO ---function prepararEdicionProducto(id, param2, precio, categoria, descripcion, imagen) {
+  let prod = {};
 
-  // Cargar valores en los inputs del formulario
-  if (document.getElementById('txtProdId')) document.getElementById('txtProdId').value = prod.id;
-  if (document.getElementById('txtProdNombre')) document.getElementById('txtProdNombre').value = prod.nombre || '';
-  if (document.getElementById('txtProdPrecio')) document.getElementById('txtProdPrecio').value = prod.precio || '';
-  if (document.getElementById('txtProdDesc')) document.getElementById('txtProdDesc').value = prod.descripcion || '';
-  if (document.getElementById('txtProdImagen')) document.getElementById('txtProdImagen').value = prod.imagen || '';
+  // 1. Detectar si el segundo parámetro es un objeto codificado (JSON) o un título/nombre directo
+  if (typeof param2 === 'string' && (param2.startsWith('{') || param2.includes('%7B'))) {
+    try {
+      prod = JSON.parse(decodeURIComponent(param2));
+    } catch (e) {
+      prod = { titulo: param2, precio, categoria, descripcion, imagen };
+    }
+  } else if (typeof param2 === 'object' && param2 !== null) {
+    prod = param2;
+  } else {
+    // Si viene como parámetros individuales sueltos
+    prod = {
+      id: id,
+      titulo: param2,
+      precio: precio,
+      categoria: categoria,
+      descripcion: descripcion,
+      imagen: imagen
+    };
+  }
 
-  // Cambiar el texto del botón del formulario
+  // 2. Cargar valores en los inputs (cubriendo ambas variantes de IDs HTML)
+  const setInputValue = (ids, value) => {
+    for (const elementId of ids) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.value = value !== undefined && value !== null ? value : '';
+        break;
+      }
+    }
+  };
+
+  setInputValue(['txtProdId', 'editProdId'], id || prod.id);
+  setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
+  setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
+  setInputValue(['txtProdCategoria', 'editProdCategoria', 'prodCategoria'], prod.categoria || '');
+  setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
+  setInputValue(['txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
+
+  // 3. Cambiar texto del botón si existe
   const btnGuardar = document.getElementById('btnGuardarProducto');
   if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
 
-  // Desplazar suavemente hasta el formulario
+  // 4. Abrir modal si existe
+  const modal = document.getElementById('modalEditarProducto');
+  if (modal) modal.style.display = 'flex';
+
+  // 5. Desplazar suavemente hacia el formulario si no hay modal abierto
   const formSection = document.getElementById('secFormProducto');
-  if (formSection) formSection.scrollIntoView({ behavior: 'smooth' });
+  if (formSection && (!modal || modal.style.display === 'none')) {
+    formSection.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 // --- ELIMINAR PRODUCTO DE SUPABASE ---
@@ -1618,6 +1629,28 @@ async function abrirPanelVendedor(emailVendedor) {
   // Si está aprobado, cargamos sus productos propios
   await cargarProductosSupabase(emailVendedor);
 }
+  // Cierra el modal de edición
+function cerrarModalEdicion() {
+  const modal = document.getElementById('modalEditarProducto');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+// Cierra el modal al hacer clic en el fondo oscuro (fuera de la caja)
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('modalEditarProducto');
+  if (modal && event.target === modal) {
+    cerrarModalEdicion();
+  }
+});
+
+// Cierra el modal al presionar la tecla ESC
+window.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    cerrarModalEdicion();
+  }
+});
 </script>
 </body>
 </html>
