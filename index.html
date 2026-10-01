@@ -1631,37 +1631,6 @@ function ocultarFormularioComercio() {
   document.getElementById('formDatosComercio').style.display = 'none';
 }
 
-async function cargarPerfilComercio(email) {
-  const { data } = await supabaseClient
-    .from('comercios')
-    .select('*')
-    .ilike('email', email)
-    .maybeSingle();
-
-  if (data) {
-    // Rellenar Vista Lectura
-    document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
-    document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
-    document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
-    document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
-    document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
-
-    // Rellenar Formulario de Edición
-    if(document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
-    if(document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
-    if(document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
-    if(document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
-    if(document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
-  }
-}
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) btnInstalar.style.display = 'inline-block';
-});
-
 async function instalarPWA() {
   if (!deferredPrompt) {
     alert("Para instalar la App en tu dispositivo: Tocá 'Compartir' u 'Opciones' en el navegador y elegí 'Agregar a la pantalla de inicio'.");
