@@ -1,22 +1,25 @@
 const CACHE_NAME = 'comercio-app-v1';
 
-// Archivos estáticos principales que sí queremos en caché local
+// Archivos estáticos principales que queremos precachear
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json'
-  // Si tienes CSS o JS externos locales (ej: ./styles.css), agrégalos acá
 ];
 
-// 1. Instalación: Guardar recursos estáticos básicos
+// 1. Instalación: Guardar recursos estáticos básicos tolerando posibles fallos puntuales
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Forzar activación inmediata de la versión nueva
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.allSettled(
+        urlsToCache.map(url => cache.add(url))
+      );
+    })
   );
 });
 
-// 2. Activación: Limpieza de cachés antiguas si cambias la versión
+// 2. Activación: Limpieza de cachés antiguas
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -35,18 +38,27 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // REGLA CRÍTICA: NO cachear consultas a Supabase ni peticiones de la API
-  if (url.hostname.includes('supabase.co') || event.request.method !== 'GET') {
-    return; // Deja que pase directamente a la red sin interceptar
+  // Ignorar métodos que no sean GET
+  if (event.request.method !== 'GET') return;
+
+  // REGLA CRÍTICA: Ignorar Supabase y servicios de placeholders/APIs externas
+  if (
+    url.hostname.includes('supabase.co') ||
+    url.hostname.includes('via.placeholder.com')
+  ) {
+    return; // Pasa directamente a la red sin pasar por el SW
   }
 
-  // Para el resto de archivos estáticos (HTML, JS local, manifiesto):
-  // Estrategia: Red primero, respaldo en Caché si no hay conexión (Network First)
+  // Estrategia Network First para recursos locales
   event.respondWith(
     fetch(event.request)
       .then(networkResponse => {
-        // Si responde bien la red, actualizamos la caché y devolvemos la respuesta fresca
-        if (networkResponse && networkResponse.status === 200) {
+        // Solo guardamos en caché si la respuesta es válida y pertenece a nuestro origen o esquema HTTP/HTTPS
+        if (
+          networkResponse &&
+          networkResponse.status === 200 &&
+          networkResponse.type === 'basic'
+        ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
@@ -54,9 +66,17 @@ self.addEventListener('fetch', event => {
         }
         return networkResponse;
       })
-      .catch(() => {
-        // Si no hay internet, devolvemos la versión guardada en caché
-        return caches.match(event.request);
+      .catch(async () => {
+        // Intentar responder desde caché si la red falla
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        // Si es una navegación HTML y no hay red ni caché, devolver index.html guardado
+        if (event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
       })
   );
 });
