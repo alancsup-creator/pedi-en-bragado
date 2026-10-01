@@ -400,7 +400,6 @@
       </div>
     </div>
   </section>
-</main>
 
 <!-- MODALES DE AUTENTICACIÓN -->
 <div id="modalAuthComprador" class="modal-overlay hidden">
@@ -508,19 +507,17 @@
       
 <script>
   // Registro del Service Worker para PWA
- if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
     const swCode = `
       self.addEventListener('install', e => self.skipWaiting());
       self.addEventListener('activate', e => self.clients.claim());
       self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
     `;
     const blob = new Blob([swCode], { type: 'application/javascript' });
-    if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js')
-    .then(reg => console.log('SW registrado', reg))
-    .catch(err => console.error('SW error:', err));
-}
-
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registrado', reg))
+      .catch(err => console.error('SW error:', err));
+  }
   // CONFIGURACIÓN DE SUPABASE
   const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
@@ -1426,14 +1423,6 @@ async function procesarAuthComprador(e) {
   }
 }
 
-function abrirModalVendedor() {
-  document.getElementById('modalAuthVendedor').classList.remove('hidden');
-}
-
-function cerrarModalVendedor() {
-  document.getElementById('modalAuthVendedor').classList.add('hidden');
-}
-
 async function procesarAuthVendedor(e) {
   e.preventDefault();
   const email = document.getElementById('emailVendedor').value.trim().toLowerCase();
@@ -1620,24 +1609,6 @@ async function abrirPanelVendedor(emailVendedor) {
   // Si está aprobado, cargamos sus productos propios
   await cargarProductosSupabase(emailVendedor);
 }
-
-  function mostrarFormularioComercio() {
-  document.getElementById('vistaDatosComercio').style.display = 'none';
-  document.getElementById('formDatosComercio').style.display = 'block';
-}
-
-function ocultarFormularioComercio() {
-  document.getElementById('vistaDatosComercio').style.display = 'block';
-  document.getElementById('formDatosComercio').style.display = 'none';
-}
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btnInstalar = document.getElementById('btnInstalarPWA');
-  if (btnInstalar) btnInstalar.style.display = 'inline-block';
-});
-
 </script>
 </body>
 </html>
