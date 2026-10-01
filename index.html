@@ -1631,19 +1631,6 @@ function ocultarFormularioComercio() {
   document.getElementById('formDatosComercio').style.display = 'none';
 }
 
-async function instalarPWA() {
-  if (!deferredPrompt) {
-    alert("Para instalar la App en tu dispositivo: Tocá 'Compartir' u 'Opciones' en el navegador y elegí 'Agregar a la pantalla de inicio'.");
-    return;
-  }
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    document.getElementById('btnInstalarPWA').style.display = 'none';
-  }
-  deferredPrompt = null;
-}
-
 window.addEventListener('appinstalled', () => {
   const btnInstalar = document.getElementById('btnInstalarPWA');
   if (btnInstalar) btnInstalar.style.display = 'none';
