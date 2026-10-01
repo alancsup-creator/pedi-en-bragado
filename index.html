@@ -9,6 +9,9 @@
   <!-- Manifest básico PWA integrador -->
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Pedienbragado%22%2C%22short_name%22%3A%22Pedienbragado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23d97706%22%7D">
 
+ <!-- Favicon para la pestaña del navegador -->
+<link rel="icon" type="image/x-icon" href="./favicon.ico
+  
   <!-- STEP 1: SDK Oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -827,7 +830,7 @@ async function cargarMisProductosVendedor() {
 
     contenedor.innerHTML = comerciosGlobales.map(c => `
       <div class="card" style="padding:16px; text-align:center;">
-        <img src="${c.foto_perfil || 'https://via.placeholder.com/100?text=Comercio'}" class="profile-avatar" style="margin: 0 auto 12px auto;" />
+        <img src="${c.foto_perfil || 'https://placehold.co/100x100?text=Comercio'}" class="profile-avatar" style="margin: 0 auto 12px auto;" />
         <h3 style="font-size:16px; margin-bottom:4px;">${c.nombre || 'Comercio'}</h3>
         <p style="font-size:12px; color:#d97706; font-weight:bold; margin-bottom:8px;">⭐ ${c.estrellas || 5.0} / 5.0</p>
         <p style="font-size:13px; color:#475569; margin-bottom:8px;">${c.resena || 'Sin reseña disponible.'}</p>
