@@ -1632,7 +1632,8 @@ async function obtenerEstadoComercio(email) {
     return null;
   }
 }
-  // Ejemplo de uso al cargar el panel del comercio:async function abrirPanelVendedor(emailVendedor) {
+  // Ejemplo de uso al cargar el panel del comercio:
+  async function abrirPanelVendedor(emailVendedor) {
     const infoComercio = await obtenerEstadoComercio(emailVendedor);
 
     if (!infoComercio) {
