@@ -247,7 +247,7 @@
           <!-- 1. VISTA DE LECTURA -->
           <div id="vistaDatosComercio">
             <div class="info-box" style="background: #f1f5f9; border-radius: 8px; padding: 12px; margin-bottom: 12px; display:flex; gap:16px; align-items:center;">
-              <img id="viewVendFoto" src="https://via.placeholder.com/80?text=Perfil" class="profile-avatar" alt="Foto perfil">
+              <img id="viewVendFoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.8-1.04-4.83-2.62.03-.99 2.01-1.53 3.83-1.53 1.83 0 3.81.54 3.83 1.53C15.8 18.96 14.03 20 12 20z'/></svg>" class="profile-avatar" alt="Foto perfil">
               <div>
                 <div style="margin-bottom:4px;"><label style="font-weight:bold; font-size:11px; color:#475569;">NOMBRE DEL NEGOCIO:</label> <span id="viewVendNombre" style="font-weight:bold; font-size:16px;">-</span></div>
                 <div style="margin-bottom:4px;"><label style="font-weight:bold; font-size:11px; color:#475569;">RESEÑA / ESPECIALIDAD:</label> <span id="viewVendResena">-</span></div>
@@ -515,10 +515,11 @@
       self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
     `;
     const blob = new Blob([swCode], { type: 'application/javascript' });
-    navigator.serviceWorker.register(URL.createObjectURL(blob))
-      .then(() => console.log('SW PWA listo'))
-      .catch(err => console.log('SW error:', err));
-  }
+    if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(reg => console.log('SW registrado', reg))
+    .catch(err => console.error('SW error:', err));
+}
 
   // CONFIGURACIÓN DE SUPABASE
   const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
@@ -990,10 +991,19 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   
   // Verificación de permisos para mostrar acciones rápidas
-  const esAdmin = typeof usuarioActualEmail !== 'undefined' && typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-  const esDuenio = typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail && item.comercio && typeof miComercioNombre !== 'undefined' && item.comercio.trim().toLowerCase() === miComercioNombre.trim().toLowerCase();
-  const puedeGestionar = esAdmin || esDuenio;
+ // Proteger propiedades del producto evitando errores si vienen null
+  const titulo = (item.titulo || '').toLowerCase();
+  const comercioNombre = (item.comercio || '').trim().toLowerCase();
+  const categoria = (item.categoria || '').toLowerCase();
 
+  // Verificación segura de permisos
+  const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
+  const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
+  const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
+
+  const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
+  const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
+  const puedeGestionar = esAdmin || esDuenio;
   return `
     <div class="card">
       <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
