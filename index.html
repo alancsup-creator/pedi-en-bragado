@@ -147,62 +147,73 @@
 </header>
 <main class="container" id="mainContent">
   <!-- Pantalla de Selección de Rol -->
-  <section id="secSeleccionPerfil" style="text-align: center; padding: 20px 0;">
-    <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
-      <h2>¿Cómo querés ingresar hoy?</h2>
-      <p style="font-size: 14px; color: var(--text); margin: 12px 0 20px;">
-        Seleccioná el perfil con el que vas a operar en la plataforma.
-      </p>
-      <button onclick="seleccionarPerfil('vendedor')" class="btn btn-primary" style="margin-bottom: 12px; width: 100%;">
-        🏬 Acceder como Vendedor (Mi Negocio)
-      </button>
-      <button onclick="seleccionarPerfil('comprador')" class="btn btn-outline" style="width: 100%;">
-        🛒 Acceder como Comprador
-      </button>
+  <section id="secSeleccionPerfil" class="card tab-content active" style="text-align: center; margin-top: 20px;">
+  <h2 style="font-size: 18px; margin-bottom: 8px;">¡Hola! ¿Cómo querés ingresar hoy?</h2>
+  <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Elegí tu perfil para continuar</p>
+
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <button onclick="seleccionarPerfil('comprador')" class="btn btn-primary" style="padding: 16px; font-size: 15px;">
+      🛍️ Soy Comprador / Cliente
+    </button>
+    
+    <div style="margin: 10px 0; border-top: 1px solid #e2e8f0; position: relative;">
+      <span style="position: absolute; top: -10px; background: white; padding: 0 8px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #94a3b8;">O</span>
     </div>
-  </section>
+
+    <button onclick="seleccionarPerfil('vendedor')" class="btn btn-secondary" style="padding: 16px; font-size: 15px;">
+      🏪 Soy Vendedor / Comercio
+    </button>
+  </div>
+</section>
   
   <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
-  <section id="secComprador" class="tab-content active">
-    <!-- Banner Principal -->
-    <div class="hero-banner" id="heroBanner">
-      <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
-      <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
-    </div>
-    <!-- Destacado de la Semana -->
-    <div class="featured-card" id="boxDestacado">
-      <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
-      <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
-      <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
-    </div><!-- Buscador y Filtros (Punto 5) -->
-    <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
-      <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
-      
-      <select id="selectCatFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px;">
-        <option value="">Todas las Categorías</option>
-        <option value="plato_dia">Plato del día</option>
-        <option value="al_plato">Al plato</option>
-        <option value="sandwiches">Sándwiches</option>
-        <option value="postre">Postre</option>
-        <option value="bebida">Bebida</option>
-        <option value="combos">Combos</option>
-        <option value="promo">Promo</option>
-        <option value="fingerfood">Fingerfood</option>
-      </select>
+ <section id="secComprador" class="tab-content active">
+  <!-- Banner Principal -->
+  <div class="hero-banner" id="heroBanner">
+    <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
+    <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
+  </div>
 
-      <select id="selectOrdenFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px; font-weight:bold; background:#fff7ed;">
-        <option value="">🔍 Ordenar por...</option>
-        <option value="puntuados_prod">⭐ Productos mejores puntuados</option>
-        <option value="puntuados_com">🏬 Comercios mejores puntuados</option>
-      </select>
-    </div>
-    <!-- Listado de Productos / Locales -->
-    <div>
-      <h3 style="margin-bottom:12px; font-size:16px;">Ofertas y Menú del Día</h3>
-      <div class="grid" id="contenedorProductos"></div>
-    </div>
-  </section>
+  <!-- Destacado de la Semana -->
+  <div class="featured-card" id="boxDestacado">
+    <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
+    <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
+    <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
+  </div>
 
+  <!-- Buscador y Filtros -->
+  <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
+    
+    <select id="selectCatFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px;">
+      <option value="">Todas las Categorías</option>
+      <option value="plato_dia">Plato del día</option>
+      <option value="al_plato">Al plato</option>
+      <option value="sandwiches">Sándwiches</option>
+      <option value="postre">Postre</option>
+      <option value="bebida">Bebida</option>
+      <option value="combos">Combos</option>
+      <option value="promo">Promo</option>
+      <option value="fingerfood">Fingerfood</option>
+    </select>
+
+    <select id="selectOrdenFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px; font-weight:bold; background:#fff7ed;">
+      <option value="">🔍 Ordenar por...</option>
+      <option value="puntuados_prod">⭐ Productos mejores puntuados</option>
+      <option value="puntuados_com">🏬 Comercios mejores puntuados</option>
+    </select>
+  </div>
+
+  <!-- Listado de Productos / Locales (CON LA MEJORA APLICADA) -->
+  <div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:16px;" id="lblMenuTitulo">Ofertas y Menú del Día</h3>
+      <button id="btnVerTodos" onclick="mostrarTodosLosProductos()" class="btn btn-outline hidden" style="width:auto; padding:4px 8px; font-size:11px; margin:0;">👁️ Ver todos los productos</button>
+    </div>
+    <div class="grid" id="contenedorProductos"></div>
+  </div>
+</section>
+  
   <!-- VISTA 2: COMPRADOR - PERFILES DE VENDEDORES (Punto 4) -->
   <section id="secPerfiles" class="tab-content">
     <h2 style="margin-bottom: 12px; color: var(--primary);">👥 Perfiles de Comercios y Vendedores</h2>
@@ -459,7 +470,35 @@
         <label>Contraseña</label>
         <input type="password" id="passVendedor" required placeholder="******">
       </div>
-      <button type="submit" class="btn btn-primary" id="btnSubmitVendedor">Enviar Solicitud de Registro</button>
+<button type="submit" class="btn btn-primary" id="btnSubmitVendedor">Enviar Solicitud de Registro</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Calificación de Productos (AQUÍ LO PEGAS) -->
+<div id="modalOpinionProducto" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="cerrarModalOpinion()">&times;</button>
+    <h3 style="margin-bottom:8px; color:var(--primary);">Calificar Producto</h3>
+    <p id="txtProductoAOpinar" style="font-size:13px; font-weight:bold; color:#475569; margin-bottom:12px;"></p>
+    
+    <form onsubmit="guardarOpinionProducto(event)">
+      <input type="hidden" id="opinionProdId">
+      <div class="form-group">
+        <label>Puntuación:</label>
+        <select id="opinionEstrellas" style="padding:8px; font-size:14px; font-weight:bold;">
+          <option value="5">⭐⭐⭐⭐⭐ (5 / 5)</option>
+          <option value="4">⭐⭐⭐⭐ (4 / 5)</option>
+          <option value="3">⭐⭐⭐ (3 / 5)</option>
+          <option value="2">⭐⭐ (2 / 5)</option>
+          <option value="1">⭐ (1 / 5)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tu Opinión / Comentario:</label>
+        <textarea id="opinionTexto" rows="3" placeholder="¿Qué te pareció este producto o plato?" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar Calificación</button>
     </form>
   </div>
 </div>
@@ -469,11 +508,10 @@
   <button class="nav-btn active" onclick="navegarA('secComprador', this)">🍕 Productos</button>
   <button class="nav-btn" onclick="navegarA('secPerfiles', this)">👥 Perfiles</button>
   <button class="nav-btn" onclick="seleccionarRol('vendedor')">🏪 Mi Negocio</button>
-  <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
+  <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️️ Admin</button>
 </nav>
-      
-<script>
-  // Registro del Service Worker para PWA
+
+<script>  // Registro del Service Worker para PWA
 if ('serviceWorker' in navigator) {
     const swCode = `
       self.addEventListener('install', e => self.skipWaiting());
@@ -953,14 +991,10 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
 }  
   function crearTarjetaHTML(item) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
-  
-  // Verificación de permisos para mostrar acciones rápidas
- // Proteger propiedades del producto evitando errores si vienen null
-  const titulo = (item.titulo || '').toLowerCase();
-  const comercioNombre = (item.comercio || '').trim().toLowerCase();
-  const categoria = (item.categoria || '').toLowerCase();
+  const estrellas = item.estrellas || 5;
 
-  // Verificación segura de permisos
+  // Verificación de permisos para mostrar acciones rápidas de edición/borrado
+  const comercioNombre = (item.comercio || '').trim().toLowerCase();
   const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
   const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
   const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
@@ -968,6 +1002,7 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
   const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
   const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
   const puedeGestionar = esAdmin || esDuenio;
+
   return `
     <div class="card">
       <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
@@ -980,17 +1015,29 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
           <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
         </div>
         <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
-          🏪 ${item.comercio || 'Local'} | ⭐ ${item.estrellas || 5}/5
+          🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
         </p>
         <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
         <span class="badge badge-category">${item.categoria || 'Menú'}</span>
         
-        ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:8px;">📱 Pedir por WhatsApp</a>` : ''}
-        
+        <!-- Botón para filtrar por vendedor -->
+        <button onclick="filtrarPorVendedor('${(item.comercio || '').replace(/'/g, "\\'")}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
+          🏪 Ver más productos del vendedor
+        </button>
+
+        <!-- Botón para calificar u opinar sobre el producto -->
+        <button onclick="abrirModalOpinion('${item.id}', '${(item.titulo || item.nombre).replace(/'/g, "\\'")}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
+          ⭐ Calificar u opinar
+        </button>
+
+        <!-- Pedido por WhatsApp -->
+        ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
+
+        <!-- Acciones exclusivas para Dueño o Admin -->
         ${puedeGestionar ? `
-          <div style="display:flex; gap:4px; margin-top:8px;">
-            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px;">✏️ Editar</button>
-            <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px;">🗑️ Borrar</button>
+          <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
+            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏️️ Editar</button>
+            <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
           </div>
         ` : ''}
       </div>
