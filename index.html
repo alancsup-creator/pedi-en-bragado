@@ -8,11 +8,11 @@
   <!-- Manifest PWA -->
   <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Pedienbragado%22%2C%22short_name%22%3A%22Pedienbragado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23d97706%22%7D">
 
-  <!-- Favicon correcto -->
- <link rel="icon" type="image/png" href="./icon-192.png">
- <link rel="apple-touch-icon" href="./icon-192.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   
-  <!-- STEP 1: SDK Oficial de Supabase -->
+  <!-- SDK Oficial de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
   :root {
@@ -27,19 +27,20 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
   body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
+  
  /* Encabezado Principal */
-  header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+ header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   header h1 { font-size: 18px; font-weight: bold; }
   .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
-
+    
   /* Contenedores y Navegación */
-  .container { max-width: 800px; margin: 0 auto; padding: 16px; padding-bottom: 80px; }
+ .container { max-width: 800px; margin: 0 auto; padding: 16px; padding-bottom: 80px; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   .hidden { display: none !important; }
 
   /* Barra de Navegación Inferior Móvil */
-  .bottom-nav, nav.nav-bottom { 
+.bottom-nav, nav.nav-bottom { 
     position: fixed; 
     bottom: 0; 
     left: 0; 
@@ -76,7 +77,7 @@
   }
 
   /* Banner Promocional y Destacados */
-  .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
+    .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
   .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
 
   /* Tarjetas de Productos y Negocios */
@@ -104,11 +105,11 @@
   .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
   /* Formulario y Filtros */
-  .form-group { margin-bottom: 12px; }
+ .form-group { margin-bottom: 12px; }
   .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
   .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
 
-  /* Sub-navegación general */
+    /* Sub-navegación general */
   .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
   .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
   .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
@@ -117,122 +118,113 @@
   .stars { color: #f59e0b; font-size: 14px; }
 
   /* Modales */
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 16px; }
   .modal-overlay:not(.hidden) { display: flex; }
   .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; }
   .modal-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 20px; cursor: pointer; }
 
     /* Foto de perfil redonda */
   .profile-avatar { 
-  width: 120px; 
-  height: 120px; 
-  border-radius: 50%; 
-  object-fit: cover; 
-  border: 2px solid var(--primary); 
-}
+    width: 120px; 
+    height: 120px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid var(--primary); 
+  }
   </style>
 </head>
 <body>
 <header>
  <h1>🍔 Pedienbragado</h1>
   <div class="user-badge">
-    <span id="lblPerfil">Modo: Comprador</span>
+    <span id="lblPerfil">Iniciá sesión para ingresar</span>
     <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
   </div>
   
   <!-- Agregalo en tu <header> junto a las acciones de usuario -->
-<button id="btnInstalarPWA" class="btn btn-warning" style="padding: 4px 10px; font-size: 12px; margin: 0; width: auto;" onclick="instalarPWA()">
+ <button id="btnInstalarPWA" class="btn btn-warning" style="padding: 4px 10px; font-size: 12px; margin: 0; width: auto; display:none;" onclick="instalarPWA()">
     📥 Instalar App
   </button>
 </header>
+
 <main class="container" id="mainContent">
-  <!-- Pantalla de Selección de Rol -->
-  <section id="secSeleccionPerfil" class="card tab-content active" style="text-align: center; margin-top: 20px;">
-  <h2 style="font-size: 18px; margin-bottom: 8px;">¡Hola! ¿Cómo querés ingresar hoy?</h2>
-  <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">Elegí tu perfil para continuar</p>
-
-  <div style="display: flex; flex-direction: column; gap: 12px;">
-    <button onclick="seleccionarPerfil('comprador')" class="btn btn-primary" style="padding: 16px; font-size: 15px;">
-      🛍️ Soy Comprador / Cliente
-    </button>
-    
-    <div style="margin: 10px 0; border-top: 1px solid #e2e8f0; position: relative;">
-      <span style="position: absolute; top: -10px; background: white; padding: 0 8px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #94a3b8;">O</span>
+  <!-- PANTALLA EXCLUSIVA DE INICIO DE SESIÓN Y SELECCIÓN DE ROL (PUNTO 5 Y 6) -->
+  <section id="secSeleccionPerfil" style="text-align: center; padding: 20px 0;">
+    <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
+      <h2>Bienvenido a Pedienbragado</h2>
+      <p style="font-size: 14px; color: var(--text); margin: 12px 0 20px;">
+        Iniciá sesión con tu cuenta para acceder a los comercios o gestionar tu negocio.
+      </p>
+      <button onclick="seleccionarPerfil('comprador')" class="btn btn-primary" style="margin-bottom: 12px; width: 100%;">
+        🛒 Ingresar como Comprador
+      </button>
+      <button onclick="seleccionarPerfil('vendedor')" class="btn btn-outline" style="width: 100%;">
+        🏬 Acceder como Vendedor (Mi Negocio)
+      </button>
+    </div>
+  </section>
+  
+  <!-- VISTA 1: COMPRADOR (REQUIERE SESIÓN) -->
+  <section id="secComprador" class="tab-content">
+    <div class="hero-banner" id="heroBanner">
+      <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
+      <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
     </div>
 
-    <button onclick="seleccionarPerfil('vendedor')" class="btn btn-secondary" style="padding: 16px; font-size: 15px;">
-      🏪 Soy Vendedor / Comercio
-    </button>
-  </div>
-</section>
-  
-  <!-- VISTA 1: COMPRADOR (PÚBLICA) -->
- <section id="secComprador" class="tab-content active">
-  <!-- Banner Principal -->
-  <div class="hero-banner" id="heroBanner">
-    <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
-    <p id="txtBannerSub">Pedí directo a los comercios locales sin comisiones.</p>
-  </div>
-
-  <!-- Destacado de la Semana -->
-  <div class="featured-card" id="boxDestacado">
-    <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
-    <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
-    <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
-  </div>
-
-  <!-- Buscador y Filtros -->
-  <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
-    <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
-    
-    <select id="selectCatFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px;">
-      <option value="">Todas las Categorías</option>
-      <option value="plato_dia">Plato del día</option>
-      <option value="al_plato">Al plato</option>
-      <option value="sandwiches">Sándwiches</option>
-      <option value="postre">Postre</option>
-      <option value="bebida">Bebida</option>
-      <option value="combos">Combos</option>
-      <option value="promo">Promo</option>
-      <option value="fingerfood">Fingerfood</option>
-    </select>
-
-    <select id="selectOrdenFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px; font-weight:bold; background:#fff7ed;">
-      <option value="">🔍 Ordenar por...</option>
-      <option value="puntuados_prod">⭐ Productos mejores puntuados</option>
-      <option value="puntuados_com">🏬 Comercios mejores puntuados</option>
-    </select>
-  </div>
-
-  <!-- Listado de Productos / Locales (CON LA MEJORA APLICADA) -->
-  <div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 style="font-size:16px;" id="lblMenuTitulo">Ofertas y Menú del Día</h3>
-      <button id="btnVerTodos" onclick="mostrarTodosLosProductos()" class="btn btn-outline hidden" style="width:auto; padding:4px 8px; font-size:11px; margin:0;">👁️ Ver todos los productos</button>
+    <div class="featured-card" id="boxDestacado">
+      <span class="badge" style="background:#f59e0b; color:white;">⭐ DESTACADO DE LA SEMANA</span>
+      <h3 style="margin-top:6px;" id="txtNombreDestacado">Rotisería El Buen Gusto</h3>
+      <p style="font-size:13px; color:#78350f;" id="txtDescDestacado">Las mejores empanadas tucumanas y minutas al plato.</p>
     </div>
-    <div class="grid" id="contenedorProductos"></div>
-  </div>
-</section>
+
+    <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <input type="text" id="inputBuscar" onkeyup="filtrarContenido()" placeholder="🔍 Buscar plato o negocio..." style="flex:2; padding:8px; border:1px solid var(--border); border-radius:6px;">
+      
+      <select id="selectCatFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px;">
+        <option value="">Todas las Categorías</option>
+        <option value="plato_dia">Plato del día</option>
+        <option value="al_plato">Al plato</option>
+        <option value="sandwiches">Sándwiches</option>
+        <option value="postre">Postre</option>
+        <option value="bebida">Bebida</option>
+        <option value="combos">Combos</option>
+        <option value="promo">Promo</option>
+        <option value="fingerfood">Fingerfood</option>
+      </select>
+
+      <select id="selectOrdenFiltro" onchange="filtrarContenido()" style="flex:1; padding:8px; border:1px solid var(--border); border-radius:6px; font-weight:bold; background:#fff7ed;">
+        <option value="">🔍 Ordenar por...</option>
+        <option value="puntuados_prod">⭐ Productos mejores puntuados</option>
+        <option value="puntuados_com">🏬 Comercios mejores puntuados</option>
+      </select>
+    </div>
+
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:16px;" id="lblMenuTitulo">Ofertas y Menú del Día</h3>
+        <button id="btnVerTodos" onclick="mostrarTodosLosProductos()" class="btn btn-outline hidden" style="width:auto; padding:4px 8px; font-size:11px; margin:0;">👁️ Ver todos los productos</button>
+      </div>
+      <div class="grid" id="contenedorProductos"></div>
+    </div>
+  </section>
   
-  <!-- VISTA 2: COMPRADOR - PERFILES DE VENDEDORES (Punto 4) -->
+  <!-- VISTA 2: COMPRADOR - PERFILES DE VENDEDORES (PUNTO 4) -->
   <section id="secPerfiles" class="tab-content">
     <h2 style="margin-bottom: 12px; color: var(--primary);">👥 Perfiles de Comercios y Vendedores</h2>
     <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">Conocé la información de contacto, reseñas e historial de cada comercio local.</p>
     <div class="grid" id="contenedorPerfilesComercios"></div>
   </section>
-
-  <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
+   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
-    <!-- ACCESO Y LOGIN -->
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
-      <h2 style="margin-bottom:8px; color:var(--primary);">Acceso a Pedienbragado</h2>
-      <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión de forma rápida y segura con tu cuenta de Google para gestionar tu comercio o tus pedidos.</p>
+      <h2 style="margin-bottom:8px; color:var(--primary);">Acceso Vendedor</h2>
+      <p style="font-size:13px; color:#64748b; margin-bottom:16px;">Iniciá sesión para gestionar tu comercio o tus ofertas.</p>
       <button onclick="iniciarSesionConGoogle()" class="btn btn-google">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
-        Continuar con Google (Gmail)
+        Continuar con Google
       </button>
       <div style="margin: 16px 0; border-top: 1px solid var(--border); position: relative;">
-        <span style="position: absolute; top: -10px; background: white; padding: 0 8px; font-size: 11px; color: #94a3b8; left: 50%; transform: translateX(-50%);">O acceso manual</span>
+        <span style="position: absolute; top: -10px; background: white; padding: 0 8px; font-size: 11px; color: #94a3b8; left: 50%; transform: translateX(-50%);">O ingreso directo</span>
       </div>
       <form onsubmit="autenticarVendedorManual(event)">
         <div class="form-group" style="text-align:left;">
@@ -246,17 +238,15 @@
       </p>
     </div>
 
-    <!-- PANEL DE CONTROL DEL VENDEDOR CON PESTAÑAS -->
+    <!-- PANEL VENDEDOR -->
     <div id="boxPanelVendedor" style="display:none;">
-      <!-- Navegación de Subsecciones para Mi Negocio -->
       <div class="subnav">
         <button class="subnav-btn active" onclick="cambiarSubtabNegocio('subMiComercio', this)">🏪 Mi Comercio</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subPublicarProducto', this)">➕ Publicar Producto / Oferta</button>
         <button class="subnav-btn" onclick="cambiarSubtabNegocio('subMisProductos', this)">📋 Mis Productos Publicados</button>
-        <button class="subnav-btn" onclick="cambiarSubtabNegocio('subOpiniones', this)">💬 Opiniones y Valoraciones</button> <!-- Punto 3 -->
+        <button class="subnav-btn" onclick="cambiarSubtabNegocio('subOpiniones', this)">💬 Opiniones y Valoraciones</button>
       </div>
 
-      <!-- PESTAÑA 1: MI COMERCIO -->
       <div id="subMiComercio" class="subtab-negocio-content">
         <div class="card" style="padding:16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -264,10 +254,9 @@
             <span class="badge badge-delivery">HABILITADO</span>
           </div>
 
-          <!-- 1. VISTA DE LECTURA -->
           <div id="vistaDatosComercio">
             <div class="info-box" style="background: #f1f5f9; border-radius: 8px; padding: 12px; margin-bottom: 12px; display:flex; gap:16px; align-items:center;">
-              <img id="viewVendFoto" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%2394a3b8'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.8-1.04-4.83-2.62.03-.99 2.01-1.53 3.83-1.53 1.83 0 3.81.54 3.83 1.53C15.8 18.96 14.03 20 12 20z'/></svg>" class="profile-avatar" alt="Foto perfil">
+              <img id="viewVendFoto" src="https://placehold.co/100x100?text=Comercio" class="profile-avatar" alt="Foto perfil">
               <div>
                 <div style="margin-bottom:4px;"><label style="font-weight:bold; font-size:11px; color:#475569;">NOMBRE DEL NEGOCIO:</label> <span id="viewVendNombre" style="font-weight:bold; font-size:16px;">-</span></div>
                 <div style="margin-bottom:4px;"><label style="font-weight:bold; font-size:11px; color:#475569;">RESEÑA / ESPECIALIDAD:</label> <span id="viewVendResena">-</span></div>
@@ -279,7 +268,6 @@
             <button onclick="mostrarFormularioComercio()" class="btn btn-primary">✏️ Editar Datos del Comercio</button>
           </div>
 
-          <!-- 2. FORMULARIO DE EDICIÓN (Punto 2) -->
           <form id="formDatosComercio" onsubmit="guardarPerfilComercio(event)" style="display:none;">
             <div class="form-group">
               <label>Foto de Perfil del Comercio:</label>
@@ -316,11 +304,9 @@
         </div>
       </div>
       
-      <!-- PESTAÑA 2: PUBLICAR PRODUCTO / OFERTA -->
       <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
           <h3>➕ Publicar Nuevo Producto / Oferta</h3>
-          <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Los datos del comercio y contacto se adjuntarán automáticamente a esta publicación.</p>
           <form onsubmit="publicarProducto(event)">
             <div class="form-group">
               <label>Título del Producto:</label>
@@ -344,7 +330,7 @@
               <input type="number" id="prodPrecio" required placeholder="8500">
             </div>
             <div class="form-group">
-              <label>Imagen del Producto (Subir archivo):</label>
+              <label>Imagen del Producto:</label>
               <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
             </div>
             <div class="form-group">
@@ -356,17 +342,14 @@
         </div>
       </div>
 
-      <!-- PESTAÑA 3: MIS PRODUCTOS PUBLICADOS (Punto 1) -->
       <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3>📋 Control de Mis Publicaciones</h3>
           <button onclick="cargarMisProductosVendedor()" class="btn btn-outline" style="width:auto; padding:4px 10px; font-size:12px; margin:0;">🔄 Refrescar</button>
         </div>
-        <p style="font-size:12px; color:#64748b; margin-bottom:12px;">A continuación puedes revisar, modificar precios/fotos o dar de baja tus artículos activos.</p>
         <div class="grid" id="gridMisProductos"></div>
       </div>
 
-      <!-- PESTAÑA 4: OPINIONES Y ESTRELLAS (Punto 3) -->
       <div id="subOpiniones" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
           <h3>💬 Opiniones y Valoraciones Recibidas</h3>
@@ -382,15 +365,14 @@
           </div>
         </div>
       </div>
-    </div> <!-- Cierre de #boxPanelVendedor -->
-  </section> <!-- Cierre correcto de #secVendedor -->
+    </div>
+  </section>
 
-  <!-- VISTA 4: ADMINISTRADOR (OCULTO) -->
+  <!-- VISTA 4: ADMIN -->
   <section id="secAdmin" class="tab-content">
-    <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel de Control Administrador</h2>
-    <!-- Configuración Visual -->
+    <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel Administrador</h2>
     <div class="card" style="padding:16px; margin-bottom:20px;">
-      <h3>🖼️️ Banner y Destacados</h3>
+      <h3>🖼 Banner y Destacados</h3>
       <div class="form-group">
         <label>Título del Banner Principal:</label>
         <input type="text" id="adminBannerTitulo" value="¡Las mejores comidas de tu ciudad!">
@@ -401,11 +383,10 @@
       </div>
       <button onclick="guardarConfigAdmin()" class="btn btn-primary">Guardar Cambios Visuales</button>
     </div>
-    <!-- Gestión y Aprobación de Vendedores -->
     <div class="card" style="padding:16px; margin-bottom:20px;">
-      <h3>🏪 Gestión y Solicitudes de Vendedores</h3>
+      <h3>🏪 Gestión de Vendedores</h3>
       <div style="overflow-x: auto;">
-        <table class="admin-table" style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
+        <table style="width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;">
           <thead>
             <tr style="text-align:left; border-bottom: 2px solid #ddd; background:#f1f5f9;">
               <th style="padding:8px;">Comercio / Email</th>
@@ -415,19 +396,31 @@
               <th style="padding:8px;">Acciones</th>
             </tr>
           </thead>
-          <tbody id="tablaVendedoresAdmin">
-            <!-- Se carga dinámicamente -->
-          </tbody>
+          <tbody id="tablaVendedoresAdmin"></tbody>
         </table>
       </div>
     </div>
   </section>
+</main>
 
 <!-- MODALES DE AUTENTICACIÓN -->
+<!-- MODAL LOGIN / REGISTRO COMPRADOR -->
 <div id="modalAuthComprador" class="modal-overlay hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="cerrarModalComprador()">&times;</button>
-    <h3 id="authTitleComprador">Iniciar Sesión / Registrarse</h3>
+    <h3 id="authTitleComprador" style="margin-bottom:12px; text-align:center; color:var(--primary);">Iniciar Sesión Comprador</h3>
+    
+    <!-- Botón de Login con Google -->
+    <button onclick="iniciarSesionConGoogle()" class="btn btn-google" style="margin-bottom:16px;">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Ingresar con Google
+    </button>
+
+    <div style="margin: 12px 0; border-top: 1px solid var(--border); position: relative;">
+      <span style="position: absolute; top: -10px; background: white; padding: 0 8px; font-size: 11px; color: #94a3b8; left: 50%; transform: translateX(-50%);">O acceso por correo</span>
+    </div>
+
+    <!-- Formulario Supabase / Email -->
     <form id="formAuthComprador" onsubmit="procesarAuthComprador(event)">
       <div id="grupoNombreComprador" class="form-group hidden">
         <label>Nombre y Apellido</label>
@@ -443,19 +436,20 @@
       </div>
       <button type="submit" class="btn btn-primary" id="btnSubmitComprador">Ingresar</button>
     </form>
-    <p style="margin-top: 10px; text-align: center; font-size:12px;">
+    <p style="margin-top: 12px; text-align: center; font-size:12px;">
       <a href="#" id="toggleAuthComprador" onclick="alternarModoAuthComprador(event)">¿No tienes cuenta? Regístrate</a>
     </p>
   </div>
 </div>
 
+<!-- MODAL REGISTRO DE VENDEDOR / COMERCIO -->
 <div id="modalAuthVendedor" class="modal-overlay hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="cerrarModalVendedor()">&times;</button>
     <h3>Registro de Comercio / Vendedor</h3>
     <form id="formAuthVendedor" onsubmit="procesarAuthVendedor(event)">
       <div class="form-group">
-        <label>Nombre del Comercio o Nombre Comercial</label>
+        <label>Nombre del Comercio</label>
         <input type="text" id="nombreComercio" required placeholder="Ej: Panadería El Sol">
       </div>
       <div class="form-group">
@@ -470,12 +464,12 @@
         <label>Contraseña</label>
         <input type="password" id="passVendedor" required placeholder="******">
       </div>
-<button type="submit" class="btn btn-primary" id="btnSubmitVendedor">Enviar Solicitud de Registro</button>
+      <button type="submit" class="btn btn-primary" id="btnSubmitVendedor">Enviar Solicitud</button>
     </form>
   </div>
 </div>
 
-<!-- Modal Calificación de Productos (AQUÍ LO PEGAS) -->
+<!-- MODAL VALORACIÓN Y OPINIONES DE PRODUCTOS -->
 <div id="modalOpinionProducto" class="modal-overlay hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="cerrarModalOpinion()">&times;</button>
@@ -485,7 +479,7 @@
     <form onsubmit="guardarOpinionProducto(event)">
       <input type="hidden" id="opinionProdId">
       <div class="form-group">
-        <label>Puntuación:</label>
+        <label>Puntuación (Estrellas):</label>
         <select id="opinionEstrellas" style="padding:8px; font-size:14px; font-weight:bold;">
           <option value="5">⭐⭐⭐⭐⭐ (5 / 5)</option>
           <option value="4">⭐⭐⭐⭐ (4 / 5)</option>
@@ -498,17 +492,16 @@
         <label>Tu Opinión / Comentario:</label>
         <textarea id="opinionTexto" rows="3" placeholder="¿Qué te pareció este producto o plato?" required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary">Enviar Calificación</button>
+      <button type="submit" id="btnEnviarOpinion" class="btn btn-primary">Enviar Calificación</button>
     </form>
   </div>
 </div>
-
-<!-- Barra de Navegación Inferior (Punto 4 corregido) -->
+  <!-- Barra de Navegación Inferior (Punto 4 corregido) -->
 <nav class="nav-bottom">
-  <button class="nav-btn active" onclick="navegarA('secComprador', this)">🍕 Productos</button>
+  <button class="nav-btn" onclick="navegarA('secComprador', this)">🍕 Productos</button>
   <button class="nav-btn" onclick="navegarA('secPerfiles', this)">👥 Perfiles</button>
-  <button class="nav-btn" onclick="seleccionarRol('vendedor')">🏪 Mi Negocio</button>
-  <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️️ Admin</button>
+  <button class="nav-btn" onclick="seleccionarPerfil('vendedor')">🏪 Mi Negocio</button>
+  <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
 </nav>
 
 <script>  // Registro del Service Worker para PWA
@@ -524,7 +517,7 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('SW error:', err));
   }
   // CONFIGURACIÓN DE SUPABASE
-  const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
+   const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const ADMIN_EMAIL = 'alan.csup@gmail.com';
@@ -536,7 +529,7 @@ if ('serviceWorker' in navigator) {
   let usuarioActualEmail = null;
   let miComercioNombre = "";
   let esModoRegistroComprador = false;
-  let deferredPrompt = null;
+  let vendedorFiltroActual = null;
 
   // PWA CONTROLLER (Punto 6)
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -559,45 +552,96 @@ if ('serviceWorker' in navigator) {
     }
   }
 
-  // ROLES Y NAVEGACIÓN
-  async function seleccionarRol(rol) {
-    rolActivo = rol;
-    const { data: { session } } = await supabaseClient.auth.getSession();
+// INICIALIZACIÓN
+document.addEventListener('DOMContentLoaded', async () => {
+  await verificarSesionActiva();
+});
 
+async function verificarSesionActiva() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session) {
+    usuarioActualEmail = session.user.email.toLowerCase().trim();
+    actualizarInterfazUsuario();
+    await cargarProductosSupabase();
+  } else {
+    // Pantalla de inicio de sesión obligatoria
+    usuarioActualEmail = null;
+    const lbl = document.getElementById('lblPerfil');
+    if (lbl) lbl.textContent = "Iniciá sesión para ingresar";
+    const btnCerrar = document.getElementById('btnCerrarSesion');
+    if (btnCerrar) btnCerrar.style.display = 'none';
+    mostrarPantallaInicio();
+  }
+}
+
+function mostrarPantallaInicio() {
+  const secPerfil = document.getElementById('secSeleccionPerfil');
+  if (secPerfil) secPerfil.style.display = 'block';
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+async function seleccionarPerfil(rol) {
+  rolActivo = rol;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
     if (rol === 'comprador') {
-      const btnNav = document.querySelectorAll('.nav-btn')[0];
-      if (btnNav) navegarA('secComprador', btnNav);
-    } else if (rol === 'vendedor') {
-      if (!session) {
-        // Muestra login del vendedor
-        document.getElementById('boxLoginVendedor').style.display = 'block';
-        document.getElementById('boxPanelVendedor').style.display = 'none';
-      }
-      const btnNav = document.querySelectorAll('.nav-btn')[2];
-      if (btnNav) navegarA('secVendedor', btnNav);
-    }
-
-    const secPerfil = document.getElementById('secSeleccionPerfil');
-    if (secPerfil) secPerfil.style.display = 'none';
-    actualizarInterfaz();
-  }
-
-  function seleccionarPerfil(rol) {
-    seleccionarRol(rol);
-  }
-
-  async function actualizarInterfaz() {
-    const lblPerfil = document.getElementById('lblPerfil');
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    if (session) {
-      usuarioActualEmail = session.user.email.toLowerCase().trim();
-      if (lblPerfil) lblPerfil.textContent = `${usuarioActualEmail} (${rolActivo ? rolActivo.toUpperCase() : 'USUARIO'})`;
-      activarInterfazUsuario(usuarioActualEmail);
+      abrirModalComprador();
     } else {
-      if (lblPerfil) lblPerfil.textContent = `Invitado (${rolActivo ? rolActivo.toUpperCase() : 'COMPRADOR'})`;
+      const secPerfil = document.getElementById('secSeleccionPerfil');
+      if (secPerfil) secPerfil.style.display = 'none';
+      navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
     }
+    return;
   }
+
+  const secPerfil = document.getElementById('secSeleccionPerfil');
+  if (secPerfil) secPerfil.style.display = 'none';
+
+  if (rol === 'comprador') {
+    navegarA('secComprador', document.querySelectorAll('.nav-btn')[0]);
+  } else {
+    navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
+  }
+}
+
+// Alias por si alguna otra función antigua llama a seleccionarRol()
+function seleccionarRol(rol) {
+  seleccionarPerfil(rol);
+}
+
+function actualizarInterfazUsuario() {
+  if (!usuarioActualEmail) return;
+  
+  const lbl = document.getElementById('lblPerfil');
+  if (lbl) lbl.innerText = `${usuarioActualEmail}`;
+  
+  const btnCerrar = document.getElementById('btnCerrarSesion');
+  if (btnCerrar) btnCerrar.style.display = 'inline';
+  
+  const boxLogin = document.getElementById('boxLoginVendedor');
+  if (boxLogin) boxLogin.style.display = 'none';
+  
+  const boxPanel = document.getElementById('boxPanelVendedor');
+  if (boxPanel) boxPanel.style.display = 'block';
+
+  const btnAdmin = document.getElementById('btnNavAdmin');
+  if (typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
+    if (btnAdmin) btnAdmin.style.display = 'flex';
+    if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
+  } else {
+    if (btnAdmin) btnAdmin.style.display = 'none';
+  }
+
+  if (typeof cargarPerfilComercio === 'function') cargarPerfilComercio(usuarioActualEmail);
+  if (typeof cargarMisProductosVendedor === 'function') cargarMisProductosVendedor();
+}
+
+// Alias para mantener compatibilidad con llamadas a actualizarInterfaz()
+function actualizarInterfaz() {
+  actualizarInterfazUsuario();
+}
   
   async function iniciarSesionConGoogle() {
     const redirectUrl = window.location.href.split('?')[0].split('#')[0];
@@ -605,7 +649,7 @@ if ('serviceWorker' in navigator) {
       provider: 'google',
       options: { redirectTo: redirectUrl }
     });
-    if (error) alert("Error al conectar con Google: " + error.message);
+    if (error) alert("Error con Google: " + error.message);
   }
 
   function activarInterfazUsuario(emailUsuario) {
@@ -628,108 +672,122 @@ if ('serviceWorker' in navigator) {
     cargarMisProductosVendedor();
   }
   
-  async function cerrarSesion() {
-    try {
-      await supabaseClient.auth.signOut();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      localStorage.removeItem('rolActivo');
-      location.reload();
-    }
+   async function cerrarSesion() {
+    await supabaseClient.auth.signOut();
+    usuarioActualEmail = null;
+    location.reload();
   }
 
   function autenticarVendedorManual(e) {
     e.preventDefault();
     const emailInput = document.getElementById('authEmail');
-    if (!emailInput || !emailInput.value) return;
-    activarInterfazUsuario(emailInput.value.trim().toLowerCase());
+    if (emailInput && emailInput.value) {
+      usuarioActualEmail = emailInput.value.trim().toLowerCase();
+      actualizarInterfazUsuario();
+    }
   }
-
+  
   // GESTIÓN DEL PERFIL DE COMERCIO (Punto 2)
-  async function cargarPerfilComercio(email) {
-    if (!email) return;
-    const { data } = await supabaseClient
-      .from('comercios')
-      .select('*')
-      .ilike('email', email)
-      .maybeSingle();
+async function cargarPerfilComercio(email) {
+  if (!email) return;
 
-    if (data) {
-      miComercioNombre = data.nombre || '';
-      document.getElementById('viewVendFoto').src = data.foto_perfil || 'https://placehold.co/100x100?text=Comercio';
-      document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
-      document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
-      document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
-      document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
-      document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
+  const { data } = await supabaseClient
+    .from('comercios')
+    .select('*')
+    .ilike('email', email)
+    .maybeSingle();
 
-      if (document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
-      if (document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
-      if (document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
-      if (document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
-      if (document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
-    }
+  if (data) {
+    miComercioNombre = data.nombre || '';
+    
+    // Actualizar vista pública/privada
+    const imgFoto = document.getElementById('viewVendFoto');
+    if (imgFoto) imgFoto.src = data.foto_perfil || 'https://placehold.co/100x100?text=Comercio';
+    
+    if (document.getElementById('viewVendNombre')) document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
+    if (document.getElementById('viewVendResena')) document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
+    if (document.getElementById('viewVendDireccion')) document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
+    if (document.getElementById('viewVendTelefono')) document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
+    if (document.getElementById('viewVendDelivery')) document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
+
+    // Rellenar formulario de edición
+    if (document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
+    if (document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
+    if (document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
+    if (document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
+    if (document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
+  }
+}
+
+async function guardarPerfilComercio(e) {
+  e.preventDefault();
+  if (!usuarioActualEmail) {
+    alert("Debes iniciar sesión primero.");
+    return;
   }
 
-  async function guardarPerfilComercio(e) {
-    e.preventDefault();
-    if (!usuarioActualEmail) {
-      alert("Debes iniciar sesión primero.");
-      return;
-    }
-
-    const btn = document.getElementById('btnGuardarComercio');
+  const btn = document.getElementById('btnGuardarComercio');
+  if (btn) {
     btn.disabled = true;
     btn.innerText = "Guardando...";
+  }
 
-    try {
-      let fotoUrl = document.getElementById('viewVendFoto').src;
-      const fotoFile = document.getElementById('vendFotoFile')?.files[0];
+  try {
+    let fotoUrl = document.getElementById('viewVendFoto')?.src || '';
+    const fotoFile = document.getElementById('vendFotoFile')?.files[0];
 
-      if (fotoFile) {
-        const fileExt = fotoFile.name.split('.').pop();
-        const fileName = `perfil_${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, fotoFile);
-        if (!uploadError) {
-          const { data: publicData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-          fotoUrl = publicData.publicUrl;
-        }
+    if (fotoFile) {
+      const fileExt = fotoFile.name.split('.').pop();
+      const fileName = `perfil_${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, fotoFile);
+      
+      if (!uploadError) {
+        const { data: publicData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+        fotoUrl = publicData.publicUrl;
       }
+    }
 
-      const payload = {
-        email: usuarioActualEmail,
-        nombre: document.getElementById('vendNombre').value,
-        resena: document.getElementById('vendResena').value,
-        direccion: document.getElementById('vendDireccion').value,
-        telefono: document.getElementById('vendTelefono').value,
-        delivery: document.getElementById('vendDelivery').value,
-        foto_perfil: fotoUrl
-      };
+    const payload = {
+      email: usuarioActualEmail,
+      nombre: document.getElementById('vendNombre')?.value || '',
+      resena: document.getElementById('vendResena')?.value || '',
+      direccion: document.getElementById('vendDireccion')?.value || '',
+      telefono: document.getElementById('vendTelefono')?.value || '',
+      delivery: document.getElementById('vendDelivery')?.value || 'si',
+      foto_perfil: fotoUrl
+    };
 
-      const { error } = await supabaseClient.from('comercios').upsert([payload], { onConflict: 'email' });
-      if (error) throw error;
+    const { error } = await supabaseClient.from('comercios').upsert([payload], { onConflict: 'email' });
+    if (error) throw error;
 
-      alert("✅ Datos del comercio y foto actualizados correctamente.");
-      ocultarFormularioComercio();
-      await cargarPerfilComercio(usuarioActualEmail);
-      await cargarComerciosPerfiles();
-    } catch (err) {
-      alert("Error al guardar perfil: " + err.message);
-    } finally {
+    alert("✅ Datos del comercio y foto actualizados correctamente.");
+    ocultarFormularioComercio();
+    await cargarPerfilComercio(usuarioActualEmail);
+    if (typeof cargarComerciosPerfiles === 'function') await cargarComerciosPerfiles();
+
+  } catch (err) {
+    alert("Error al guardar perfil: " + err.message);
+  } finally {
+    if (btn) {
       btn.disabled = false;
       btn.innerText = "💾 Guardar Cambios";
     }
   }
-  function mostrarFormularioComercio() {
-    document.getElementById('vistaDatosComercio').style.display = 'none';
-    document.getElementById('formDatosComercio').style.display = 'block';
-  }
+}
 
-  function ocultarFormularioComercio() {
-    document.getElementById('vistaDatosComercio').style.display = 'block';
-    document.getElementById('formDatosComercio').style.display = 'none';
-  }
+function mostrarFormularioComercio() {
+  const vista = document.getElementById('vistaDatosComercio');
+  const form = document.getElementById('formDatosComercio');
+  if (vista) vista.style.display = 'none';
+  if (form) form.style.display = 'block';
+}
+
+function ocultarFormularioComercio() {
+  const vista = document.getElementById('vistaDatosComercio');
+  const form = document.getElementById('formDatosComercio');
+  if (vista) vista.style.display = 'block';
+  if (form) form.style.display = 'none';
+}
 // CARGAR PRODUCTOS Y COMERCIOS
 async function cargarProductosSupabase(emailVendedorLogueado = null) {
   try {
@@ -777,10 +835,10 @@ async function cargarProductosSupabase(emailVendedorLogueado = null) {
       cargarComerciosPerfiles();
     }
   } catch (err) {
-    console.error("Error cargando productos:", err);
+    console.error("Error cargando productos de Supabase:", err);
   }
 }
-// CARGAR PRODUCTOS PROPIOS DE VENDEDOR
+  // CARGAR PRODUCTOS PROPIOS DE VENDEDOR
 async function cargarMisProductosVendedor() {
   if (!usuarioActualEmail) return;
   try {
@@ -822,25 +880,35 @@ async function cargarMisProductosVendedor() {
   }
 // RENDERIZAR PERFILES PARA COMPRADOR (Punto 4)
   function cargarComerciosPerfiles() {
-    const contenedor = document.getElementById('contenedorPerfilesComercios');
-    if (!contenedor) return;
+  const contenedor = document.getElementById('contenedorPerfilesComercios');
+  if (!contenedor) return;
 
-    if (!comerciosGlobales.length) {
-      contenedor.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center;">No hay perfiles de comercio registrados.</p>';
-      return;
-    }
+  if (!comerciosGlobales || !comerciosGlobales.length) {
+    contenedor.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center;">No hay comercios registrados.</p>';
+    return;
+  }
 
-    contenedor.innerHTML = comerciosGlobales.map(c => `
+  contenedor.innerHTML = comerciosGlobales.map(c => {
+    const nombreLimpio = (c.nombre || '').replace(/'/g, "\\'");
+    
+    return `
       <div class="card" style="padding:16px; text-align:center;">
         <img src="${c.foto_perfil || 'https://placehold.co/100x100?text=Comercio'}" class="profile-avatar" style="margin: 0 auto 12px auto;" />
         <h3 style="font-size:16px; margin-bottom:4px;">${c.nombre || 'Comercio'}</h3>
         <p style="font-size:12px; color:#d97706; font-weight:bold; margin-bottom:8px;">⭐ ${c.estrellas || 5.0} / 5.0</p>
         <p style="font-size:13px; color:#475569; margin-bottom:8px;">${c.resena || 'Sin reseña disponible.'}</p>
-        <p style="font-size:12px; color:#64748b; margin-bottom:4px;">📍 ${c.direccion || 'Bragado'}</p>
-        ${c.telefono ? `<a href="https://wa.me/549${c.telefono}" target="_blank" class="btn btn-primary" style="margin-top:8px;">📱 Contactar WhatsApp</a>` : ''}
+        <p style="font-size:12px; color:#64748b; margin-bottom:8px;">📍 ${c.direccion || 'Bragado'}</p>
+        
+        <!-- Opción Ver Productos -->
+        <button onclick="filtrarPorVendedor('${nombreLimpio}')" class="btn btn-primary" style="margin-bottom:6px; width:100%;">
+          🛍️ Ver Productos
+        </button>
+
+        ${c.telefono ? `<a href="https://wa.me/549${c.telefono}" target="_blank" class="btn btn-outline" style="width:100%;">📱 Contactar WhatsApp</a>` : ''}
       </div>
-    `).join('');
-  }
+    `;
+  }).join('');
+}
   // 10. ADMINISTRACIÓN Y MODERACIÓN
 async function cargarGestionVendedores() {
   const contenedor = document.getElementById('tablaVendedoresAdmin');
@@ -993,7 +1061,11 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
   const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
   const estrellas = item.estrellas || 5;
 
-  // Verificación de permisos para mostrar acciones rápidas de edición/borrado
+  // Normalización de textos y escape de comillas para funciones inline
+  const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
+  const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
+
+  // Verificación de permisos para acciones de edición/borrado
   const comercioNombre = (item.comercio || '').trim().toLowerCase();
   const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
   const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
@@ -1020,13 +1092,13 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
         <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
         <span class="badge badge-category">${item.categoria || 'Menú'}</span>
         
-        <!-- Botón para filtrar por vendedor -->
-        <button onclick="filtrarPorVendedor('${(item.comercio || '').replace(/'/g, "\\'")}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
+        <!-- Filtrar por vendedor -->
+        <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
           🏪 Ver más productos del vendedor
         </button>
 
-        <!-- Botón para calificar u opinar sobre el producto -->
-        <button onclick="abrirModalOpinion('${item.id}', '${(item.titulo || item.nombre).replace(/'/g, "\\'")}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
+        <!-- Calificar u opinar -->
+        <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
           ⭐ Calificar u opinar
         </button>
 
@@ -1036,7 +1108,7 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
         <!-- Acciones exclusivas para Dueño o Admin -->
         ${puedeGestionar ? `
           <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
-            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏️️ Editar</button>
+            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
             <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
           </div>
         ` : ''}
@@ -1044,17 +1116,106 @@ async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
     </div>
   `;
 }
-// Catálogo público para compradores (mantenemos la tuya)
+  
+// SISTEMA DE CALIFICACIONES Y RESEÑAS
+function abrirModalOpinion(idProducto, titulo) {
+  if (!usuarioActualEmail) {
+    alert("Debes iniciar sesión para opinar.");
+    if (typeof abrirModalComprador === 'function') abrirModalComprador();
+    return;
+  }
+  
+  const inputId = document.getElementById('opinionProdId');
+  const txtTitulo = document.getElementById('txtProductoAOpinar');
+  const modal = document.getElementById('modalOpinionProducto');
 
+  if (inputId) inputId.value = idProducto;
+  if (txtTitulo) txtTitulo.innerText = titulo;
+  if (modal) modal.classList.remove('hidden');
+}
 
-  function renderizarProductos(lista) {
-    const grid = document.getElementById('contenedorProductos');
-    if (!grid) return;
-    if (!lista || lista.length === 0) {
-      grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron ofertas o productos disponibles.</p>';
-      return;
+function cerrarModalOpinion() {
+  const modal = document.getElementById('modalOpinionProducto');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function guardarOpinionProducto(e) {
+  e.preventDefault();
+  const id = document.getElementById('opinionProdId').value;
+  const estrellas = parseInt(document.getElementById('opinionEstrellas').value);
+  const texto = document.getElementById('opinionTexto').value.trim();
+
+  try {
+    const { data: prod, error: fetchErr } = await supabaseClient
+      .from('productos')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr) throw fetchErr;
+
+    if (prod) {
+      const descActual = prod.descripcion || '';
+      const nuevaDesc = `${descActual} | Reseña (${usuarioActualEmail}): "${texto}" ⭐${estrellas}/5`;
+
+      const { error: updateErr } = await supabaseClient
+        .from('productos')
+        .update({
+          estrellas: estrellas,
+          descripcion: nuevaDesc
+        })
+        .eq('id', id);
+
+      if (updateErr) throw updateErr;
+
+      alert("✅ Gracias. Tu calificación ha sido registrada.");
+      cerrarModalOpinion();
+      
+      if (typeof cargarProductosSupabase === 'function') {
+        await cargarProductosSupabase();
+      }
     }
-    grid.innerHTML = lista.map(crearTarjetaHTML).join('');
+  } catch (err) {
+    alert("Error guardando calificación: " + err.message);
+  }
+}
+  
+function renderizarProductos(lista) {
+  const grid = document.getElementById('contenedorProductos');
+  if (!grid) return;
+  
+  let aMostrar = lista || [];
+  const lblTitulo = document.getElementById('lblMenuTitulo');
+  const btnVerTodos = document.getElementById('btnVerTodos');
+
+  if (vendedorFiltroActual) {
+    aMostrar = aMostrar.filter(p => 
+      (p.comercio || '').toLowerCase() === vendedorFiltroActual.toLowerCase() || 
+      (p.email_vendedor || '').toLowerCase() === vendedorFiltroActual.toLowerCase()
+    );
+    if (lblTitulo) lblTitulo.innerText = `Productos de: ${vendedorFiltroActual}`;
+    if (btnVerTodos) btnVerTodos.classList.remove('hidden');
+  } else {
+    if (lblTitulo) lblTitulo.innerText = "Ofertas y Menú del Día";
+    if (btnVerTodos) btnVerTodos.classList.add('hidden');
+  }
+
+  if (aMostrar.length === 0) {
+    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron productos disponibles.</p>';
+    return;
+  }
+
+  grid.innerHTML = aMostrar.map(crearTarjetaHTML).join('');
+}
+    function filtrarPorVendedor(nombreComercio) {
+    vendedorFiltroActual = nombreComercio;
+    const btnNav = document.querySelectorAll('.nav-btn')[0];
+    navegarA('secComprador', btnNav);
+    renderizarProductos(productosGlobales);
+  }
+    function mostrarTodosLosProductos() {
+    vendedorFiltroActual = null;
+    renderizarProductos(productosGlobales);
   }
 
 // Panel privado para el vendedor / administrador
@@ -1132,55 +1293,77 @@ function renderizarMisProductos(misProdsInput = null) {
   }).join('');
 }
   // 5. PUBLICACIÓN DE PRODUCTO
-  async function publicarProducto(e) {
-    e.preventDefault();
-    const btnSubmit = document.getElementById('btnPublicarProd');
-    const fileInput = document.getElementById('prodImagenFile');
-    const archivo = fileInput?.files[0];
-    if (!archivo) {
-      alert("Por favor, seleccioná una imagen para el producto.");
-      return;
-    }
-    try {
+ async function publicarProducto(e) {
+  e.preventDefault();
+  
+  if (!usuarioActualEmail) {
+    alert("Debes iniciar sesión para publicar.");
+    return;
+  }
+
+  const btnSubmit = document.getElementById('btnPublicarProd');
+  const fileInput = document.getElementById('prodImagenFile');
+  const archivo = fileInput?.files[0];
+
+  if (!archivo) {
+    alert("Por favor, seleccioná una imagen para el producto.");
+    return;
+  }
+
+  try {
+    if (btnSubmit) {
       btnSubmit.disabled = true;
       btnSubmit.innerText = "Subiendo imagen...";
-      const fileExt = archivo.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
-      if (uploadError) throw uploadError;
-      
-      const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-        
-      btnSubmit.innerText = "Guardando producto...";
-      const nuevo = {
-  email_vendedor: usuarioActualEmail,
-  comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
-  titulo: document.getElementById('prodTitulo').value.trim(),
-  categoria: document.getElementById('prodCategoria').value,
-  precio: parseFloat(document.getElementById('prodPrecio').value) || 0,
-  imagen: publicUrlData.publicUrl,
-  descripcion: (document.getElementById('prodDescripcion') || document.getElementById('prodDesc'))?.value.trim() || "",
-  direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
-  telefono: document.getElementById('vendTelefono')?.value.trim() || "",
-  delivery: document.getElementById('vendDelivery')?.value || "consultar",
-  estrellas: 5
-};
-      
-      const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
-      if (insertError) throw insertError;
-      
-      alert("✅ Producto publicado con éxito.");
-      e.target.reset();
-      await cargarProductosSupabase();
-      await cargarMisProductosVendedor();
-      cambiarSubtabNegocio('subMisProductos', document.querySelectorAll('#secVendedor .subnav-btn')[2]);
-    } catch (err) {
-      alert("Error al publicar el producto: " + err.message);
-    } finally {
+    }
+
+    // Nombre de archivo seguro e único
+    const fileExt = archivo.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    
+    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
+    if (uploadError) throw uploadError;
+
+    const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+
+    if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
+
+    const nuevo = {
+      email_vendedor: usuarioActualEmail,
+      comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
+      titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
+      categoria: document.getElementById('prodCategoria')?.value || "Menú",
+      precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
+      imagen: publicUrlData.publicUrl,
+      descripcion: (document.getElementById('prodDescripcion') || document.getElementById('prodDesc'))?.value.trim() || "",
+      direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
+      telefono: document.getElementById('vendTelefono')?.value.trim() || "",
+      delivery: document.getElementById('vendDelivery')?.value || "consultar",
+      estrellas: 5
+    };
+
+    const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
+    if (insertError) throw insertError;
+
+    alert("✅ Producto publicado con éxito.");
+    e.target.reset();
+
+    if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
+    if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
+
+    if (typeof cambiarSubtabNegocio === 'function') {
+      const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
+      cambiarSubtabNegocio('subMisProductos', btnMisProd);
+    }
+
+  } catch (err) {
+    alert("Error al publicar el producto: " + err.message);
+  } finally {
+    if (btnSubmit) {
       btnSubmit.disabled = false;
       btnSubmit.innerText = "Publicar en la Plataforma";
     }
   }
+}
 
   // --- PREPARAR EDICIÓN EN EL FORMULARIO ---
   function prepararEdicionProducto(idParam, param2, precio, categoria, descripcion, imagen) {
@@ -1245,7 +1428,7 @@ function renderizarMisProductos(misProdsInput = null) {
   }
 }
 // --- ELIMINAR PRODUCTO DE SUPABASE ---
-async function eliminarProducto(idProducto) {
+async function eliminarProductoSupabase(idProducto) {
   if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
 
   try {
@@ -1258,23 +1441,28 @@ async function eliminarProducto(idProducto) {
 
     alert('✅ Producto eliminado correctamente.');
 
-    // Recargar productos usando el email del usuario activo
-    if (typeof usuarioActual !== 'undefined' && usuarioActual.email) {
-      await cargarProductosSupabase(usuarioActual.email);
-    } else {
+    // Recargar el catálogo general
+    if (typeof cargarProductosSupabase === 'function') {
       await cargarProductosSupabase();
+    }
+
+    // Recargar la lista del vendedor
+    if (typeof cargarMisProductosVendedor === 'function') {
+      await cargarMisProductosVendedor();
     }
 
   } catch (err) {
     console.error('Error al eliminar producto:', err);
-    alert('Error al eliminar: ' + err.message);
+    alert('Error al eliminar el producto: ' + err.message);
   }
 }
-// 6. NAVEGACIÓN Y SUBPESTAÑAS
+  // 6. NAVEGACIÓN Y SUBPESTAÑAS
 function navegarA(tabId, btn) {
+  // Manejo seguro del contenedor de selección de perfil
   const secPerfil = document.getElementById('secSeleccionPerfil') || document.getElementById('roleSelectionSection');
   if (secPerfil) secPerfil.style.display = 'none';
 
+  // Cambio visual de pestañas
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   
@@ -1282,10 +1470,11 @@ function navegarA(tabId, btn) {
   if (tab) tab.classList.add('active');
   if (btn) btn.classList.add('active');
 
+  // Carga dinámica de contenido según la pestaña activa
   if (tabId === 'secVendedor') {
     if (typeof cargarMisProductosVendedor === 'function') {
       cargarMisProductosVendedor();
-    } else {
+    } else if (typeof renderizarMisProductos === 'function') {
       renderizarMisProductos();
     }
   } else if (tabId === 'secPerfiles') {
@@ -1303,10 +1492,11 @@ function cambiarSubtabNegocio(subtabId, btn) {
   if (targetSubtab) targetSubtab.style.display = 'block';
   if (btn) btn.classList.add('active');
 
+  // Recarga de mis productos al hacer clic en la subpestaña
   if (subtabId === 'subMisProductos') {
     if (typeof cargarMisProductosVendedor === 'function') {
       cargarMisProductosVendedor();
-    } else {
+    } else if (typeof renderizarMisProductos === 'function') {
       renderizarMisProductos();
     }
   }
@@ -1387,13 +1577,14 @@ async function eliminarProductoSupabase(id) {
 // 8. FAVORITOS Y FILTROS
 function toggleFavorito(id) {
   const strId = id.toString();
-  if (idsFavoritos.includes(strId)) {
-    idsFavoritos = idsFavoritos.filter(item => item !== strId);
-  } else {
-    idsFavoritos.push(strId);
-  }
+  idsFavoritos = idsFavoritos.includes(strId) 
+    ? idsFavoritos.filter(item => item !== strId) 
+    : [...idsFavoritos, strId];
+    
   localStorage.setItem('sl_favoritos', JSON.stringify(idsFavoritos));
-  renderizarProductos(productosGlobales);
+  if (typeof renderizarProductos === 'function') {
+    renderizarProductos(typeof productosGlobales !== 'undefined' ? productosGlobales : []);
+  }
 }
 
 function filtrarContenido() {
@@ -1401,7 +1592,7 @@ function filtrarContenido() {
   const selectCat = document.getElementById('selectCatFiltro');
   const selectOrden = document.getElementById('selectOrdenFiltro');
 
-  const busqueda = inputBuscar ? inputBuscar.value.toLowerCase() : '';
+  const busqueda = inputBuscar ? inputBuscar.value.toLowerCase().trim() : '';
   const cat = selectCat ? selectCat.value : '';
   const orden = selectOrden ? selectOrden.value : '';
 
@@ -1415,6 +1606,7 @@ function filtrarContenido() {
     return coincideTexto && coincideCat;
   });
 
+  // Ordenamiento
   if (orden === 'puntuados_prod') {
     filtrados.sort((a, b) => (b.estrellas || 0) - (a.estrellas || 0));
   } else if (orden === 'puntuados_com') {
@@ -1473,11 +1665,19 @@ async function procesarAuthComprador(e) {
       });
       if (error) throw error;
       alert('Registro exitoso. Si tienes activada la confirmación por correo, revisa tu casilla antes de ingresar.');
+      alternarModoAuthComprador(e);
     } else {
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) throw error;
       cerrarModalComprador();
-      seleccionarRol('comprador');
+      if (typeof verificarSesionActiva === 'function') {
+        await verificarSesionActiva();
+      }
+      if (typeof seleccionarPerfil === 'function') {
+        seleccionarPerfil('comprador');
+      } else if (typeof seleccionarRol === 'function') {
+        seleccionarRol('comprador');
+      }
     }
   } catch (err) {
     if (err.message && err.message.includes("Invalid login credentials")) {
@@ -1554,7 +1754,6 @@ async function procesarAuthVendedor(e) {
     }
   }
 }
-
 async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
   try {
     const emailNormalizado = emailTarget.toLowerCase().trim();
