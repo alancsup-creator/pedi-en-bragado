@@ -496,6 +496,50 @@
     </form>
   </div>
 </div>
+
+  <!-- MODAL EDITAR PRODUCTO -->
+<div id="modalEditarProducto" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="cerrarModalEdicion()">&times;</button>
+    <h3 style="margin-bottom: 12px; color: var(--primary);">Editar Producto</h3>
+    <form id="formEditarProducto" onsubmit="guardarEdicionProducto(event)">
+      <input type="hidden" id="editProdId">
+      <input type="hidden" id="editProdImagenActual">
+      
+      <div class="form-group">
+        <label>Título del Producto:</label>
+        <input type="text" id="editProdTitulo" required>
+      </div>
+      <div class="form-group">
+        <label>Categoría:</label>
+        <select id="editProdCategoria" required>
+          <option value="plato_dia">Plato del día</option>
+          <option value="al_plato">Al plato</option>
+          <option value="sandwiches">Sándwiches</option>
+          <option value="postre">Postre</option>
+          <option value="bebida">Bebida</option>
+          <option value="combos">Combos</option>
+          <option value="promo">Promo</option>
+          <option value="fingerfood">Fingerfood</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Precio ($):</label>
+        <input type="number" id="editProdPrecio" required>
+      </div>
+      <div class="form-group">
+        <label>Cambiar Imagen (opcional):</label>
+        <input type="file" id="editProdImagenFile" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Descripción:</label>
+        <textarea id="editProdDesc" rows="3"></textarea>
+      </div>
+      <button type="submit" id="btnGuardarEdit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+  </div>
+</div>
+  
   <!-- Barra de Navegación Inferior (Punto 4 corregido) -->
 <nav class="nav-bottom">
   <button class="nav-btn" onclick="navegarA('secComprador', this)">🍕 Productos</button>
@@ -540,17 +584,18 @@ if ('serviceWorker' in navigator) {
   });
 
   async function instalarPWA() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        document.getElementById('btnInstalarPWA').style.display = 'none';
-      }
-      deferredPrompt = null;
-    } else {
-      alert("Para instalar la App en tu dispositivo:\n\n1. En Android/Chrome: Tocá el menú de 3 puntos (⋮) y seleccioná 'Agregar a la pantalla principal'.\n2. En iPhone/Safari: Tocá el botón 'Compartir' (󰄬) y elegí 'Agregar al inicio'.");
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      const btnInstalar = document.getElementById('btnInstalarPWA');
+      if (btnInstalar) btnInstalar.style.display = 'none';
     }
+    deferredPrompt = null;
+  } else {
+    alert("Para instalar la App en tu dispositivo:\n\n1. En Android/Chrome: Tocá el menú de 3 puntos (⋮) y seleccioná 'Agregar a la pantalla principal'.\n2. En iPhone/Safari: Tocá el botón 'Compartir' y elegí 'Agregar a inicio'.");
   }
+}
 
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1826,12 +1871,6 @@ async function toggleOcultarComercio(comercioId, estadoActualOculto) {
     alert('Error al cambiar la visibilidad: ' + err.message);
   }
 }
- 
-// INICIALIZACIÓN
-document.addEventListener('DOMContentLoaded', async () => {
-  await cargarProductosSupabase();
-  await actualizarInterfaz();
-});
 
   // Función para verificar el estado actualizado del comercio en Supabase
 async function obtenerEstadoComercio(email) {
