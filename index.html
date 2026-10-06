@@ -358,7 +358,7 @@
 
       <div id="subOpiniones" class="subtab-negocio-content" style="display:none;">
         <div class="card" style="padding:16px;">
-          <h3>💬 Opiniones y Valoraciones Recibidas</h3>
+          <h3>💬 Opiniones y Valoraciones Recibidas (Anónimas)</h3>
           <div style="margin: 12px 0; background:#fef3c7; padding:12px; border-radius:8px; display:flex; align-items:center; gap:12px;">
             <div style="font-size:28px;" class="stars">⭐ <span id="txtPromedioEstrellas">5.0</span></div>
             <div>
@@ -382,6 +382,7 @@
       <!-- Sub-pestañas de navegación interna -->
       <div class="subnav" style="margin-bottom:16px;">
         <button class="subnav-btn active" onclick="cambiarSubTabPerfil('favoritos', this)">❤️ Mis Favoritos</button>
+        <button class="subnav-btn" onclick="cambiarSubTabPerfil('puntuaciones', this)">📊 Mis Puntuaciones</button>
         <button class="subnav-btn" onclick="cambiarSubTabPerfil('valoraciones', this)">⭐ Mis Valoraciones</button>
       </div>
 
@@ -393,9 +394,18 @@
         </div>
       </div>
 
-      <!-- Contenido: Mis Puntuaciones y Valoraciones -->
+      <!-- Contenido: Mis Puntuaciones -->
+      <div id="subtab-puntuaciones" class="subtab-profile-content" style="display: none;">
+        <h3>Mis Puntuaciones</h3>
+        <p style="font-size:13px; color:#64748b; margin-top:8px;">Resumen numérico de las calificaciones otorgadas.</p>
+        <div id="lista-mis-puntuaciones-container" style="margin-top:12px;">
+          <!-- Se cargan las puntuaciones -->
+        </div>
+      </div>
+
+      <!-- Contenido: Mis Valoraciones -->
       <div id="subtab-valoraciones" class="subtab-profile-content" style="display: none;">
-        <h3>Opiniones que dejaste</h3>
+        <h3>Opiniones y Reseñas</h3>
         <div id="lista-mis-opiniones-container" style="margin-top:12px;">
           <!-- Se cargan las valoraciones -->
         </div>
@@ -403,9 +413,9 @@
     </div>
   </section>
   
-  <!-- VISTA 4: ADMIN -->
+  <!-- VISTA 5: ADMIN -->
   <section id="secAdmin" class="tab-content">
-    <h2 style="color:var(--primary); margin-bottom:16px;">⚙️️ Panel Administrador</h2>
+    <h2 style="color:var(--primary); margin-bottom:16px;">⚙ Panel Administrador</h2>
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🖼 Banner y Destacados</h3>
       <div class="form-group">
@@ -577,7 +587,8 @@
 <nav class="nav-bottom">
   <button class="nav-btn" onclick="navegarA('secComprador', this)">🍕 Productos</button>
   <button class="nav-btn" onclick="navegarA('secPerfiles', this)">👥 Perfiles</button>
-  <button class="nav-btn" onclick="seleccionarPerfil('vendedor')">🏪 Mi Negocio</button>
+  <button class="nav-btn" id="btnNavVendedor" onclick="seleccionarPerfil('vendedor')">🏪 Mi Negocio</button>
+  <button class="nav-btn" id="btnNavMiPerfil" style="display:none;" onclick="navegarA('secMiPerfil', this)">👤 Mi Perfil</button>
   <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
 </nav>
 
@@ -606,6 +617,7 @@
   let comerciosGlobales = [];
   let idsFavoritos = JSON.parse(localStorage.getItem('sl_favoritos')) || [];
   let usuarioActualEmail = null;
+  let usuarioActualId = null;
   let miComercioNombre = "";
   let esModoRegistroComprador = false;
   let vendedorFiltroActual = null;
@@ -642,10 +654,12 @@
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
       usuarioActualEmail = session.user.email.toLowerCase().trim();
+      usuarioActualId = session.user.id;
       actualizarInterfazUsuario();
       await cargarProductosSupabase();
     } else {
       usuarioActualEmail = null;
+      usuarioActualId = null;
       const lbl = document.getElementById('lblPerfil');
       if (lbl) lbl.textContent = "Iniciá sesión para ingresar";
       const btnCerrar = document.getElementById('btnCerrarSesion');
@@ -671,7 +685,7 @@
       } else {
         const secPerfil = document.getElementById('secSeleccionPerfil');
         if (secPerfil) secPerfil.style.display = 'none';
-        navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
+        navegarA('secVendedor', document.getElementById('btnNavVendedor'));
       }
       return;
     }
@@ -679,14 +693,16 @@
     const secPerfil = document.getElementById('secSeleccionPerfil');
     if (secPerfil) secPerfil.style.display = 'none';
 
+    actualizarInterfazUsuario();
+
     if (rol === 'comprador') {
       navegarA('secComprador', document.querySelectorAll('.nav-btn')[0]);
     } else {
-      navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
+      navegarA('secVendedor', document.getElementById('btnNavVendedor'));
     }
   }
 
- function seleccionarRol(rol) {
+  function seleccionarRol(rol) {
     seleccionarPerfil(rol);
   }
 
@@ -705,20 +721,17 @@
     const boxPanel = document.getElementById('boxPanelVendedor');
     if (boxPanel) boxPanel.style.display = 'block';
 
-    // --- INTEGRACIÓN DE PESTAÑAS SEGÚN ROL / PERFIL ---
-    const tabNegocio = document.getElementById('tab-mi-negocio') || document.getElementById('btnNavVendedor');
-    const tabPerfil = document.getElementById('tab-mi-perfil') || document.getElementById('btnNavMiPerfil');
+    // AJUSTE DE VISIBILIDAD DE PESTAÑAS SEGÚN ROL
+    const btnNavVendedor = document.getElementById('btnNavVendedor');
+    const btnNavMiPerfil = document.getElementById('btnNavMiPerfil');
 
-    if (typeof rolActual !== 'undefined') {
-      if (rolActual === 'comprador') {
-        if (tabNegocio) tabNegocio.style.display = 'none';
-        if (tabPerfil) tabPerfil.style.display = 'block';
-      } else if (rolActual === 'vendedor') {
-        if (tabNegocio) tabNegocio.style.display = 'block';
-        if (tabPerfil) tabPerfil.style.display = 'block';
-      }
+    if (rolActivo === 'comprador') {
+      if (btnNavVendedor) btnNavVendedor.style.display = 'none';
+      if (btnNavMiPerfil) btnNavMiPerfil.style.display = 'flex';
+    } else if (rolActivo === 'vendedor') {
+      if (btnNavVendedor) btnNavVendedor.style.display = 'flex';
+      if (btnNavMiPerfil) btnNavMiPerfil.style.display = 'flex';
     }
-    // --------------------------------------------------
 
     const btnAdmin = document.getElementById('btnNavAdmin');
     if (typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
@@ -744,9 +757,11 @@
     });
     if (error) alert("Error con Google: " + error.message);
   }
+
   async function cerrarSesion() {
     await supabaseClient.auth.signOut();
     usuarioActualEmail = null;
+    usuarioActualId = null;
     location.reload();
   }
 
@@ -929,7 +944,6 @@
   }
 
   async function cargarMisValoraciones(userId) {
-    // Usamos supabaseClient para mantener coherencia con el resto de tu app
     const clienteSupabase = typeof supabaseClient !== 'undefined' ? supabaseClient : supabase;
 
     const { data: opiniones, error } = await clienteSupabase
@@ -948,7 +962,7 @@
     container.innerHTML = '';
 
     if (!opiniones || opiniones.length === 0) {
-      container.innerHTML = '<p>Todavía no dejaste ninguna valoración.</p>';
+      container.innerHTML = '<p style="color:#64748b; font-size:13px;">Todavía no dejaste ninguna valoración.</p>';
       return;
     }
 
@@ -964,25 +978,75 @@
     });
   }
 
-  // Función complementaria para alternar las subpestañas del perfil
-  function cambiarSubTabPerfil(subtab) {
+  async function cargarMisPuntuaciones(userId) {
+    const clienteSupabase = typeof supabaseClient !== 'undefined' ? supabaseClient : supabase;
+
+    const { data: puntuaciones, error } = await clienteSupabase
+      .from('valoraciones')
+      .select('puntuacion, productos(nombre), comercios(nombre)')
+      .eq('user_id', userId);
+
+    const container = document.getElementById('lista-mis-puntuaciones-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (error || !puntuaciones || puntuaciones.length === 0) {
+      container.innerHTML = '<p style="color:#64748b; font-size:13px;">Aún no realizaste puntuaciones.</p>';
+      return;
+    }
+
+    puntuaciones.forEach(p => {
+      container.innerHTML += `
+        <div style="border-bottom: 1px solid #e2e8f0; padding: 8px 0; font-size: 13px;">
+          <strong>${p.productos?.nombre || p.comercios?.nombre || 'Producto/Comercio'}</strong>: ⭐ ${p.puntuacion}/5
+        </div>
+      `;
+    });
+  }
+
+  function cargarMisFavoritos() {
+    const container = document.getElementById('lista-favoritos-container');
+    if (!container) return;
+
+    if (!idsFavoritos || idsFavoritos.length === 0) {
+      container.innerHTML = '<p style="color:#64748b; font-size:13px; grid-column:1/-1;">No tenés productos o comercios guardados como favoritos.</p>';
+      return;
+    }
+
+    const favs = productosGlobales.filter(p => idsFavoritos.includes(p.id.toString()));
+    if (favs.length === 0) {
+      container.innerHTML = '<p style="color:#64748b; font-size:13px; grid-column:1/-1;">No se encontraron tus favoritos guardados.</p>';
+      return;
+    }
+
+    container.innerHTML = favs.map(crearTarjetaHTML).join('');
+  }
+
+  // Alternar subpestañas del perfil
+  function cambiarSubTabPerfil(subtab, btn) {
+    document.querySelectorAll('.subtab-profile-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('#secMiPerfil .subnav-btn').forEach(b => b.classList.remove('active'));
+
+    if (btn) btn.classList.add('active');
+
     const tabFav = document.getElementById('subtab-favoritos');
+    const tabPunt = document.getElementById('subtab-puntuaciones');
     const tabVal = document.getElementById('subtab-valoraciones');
     
     if (subtab === 'favoritos') {
       if (tabFav) tabFav.style.display = 'block';
-      if (tabVal) tabVal.style.display = 'none';
+      cargarMisFavoritos();
+    } else if (subtab === 'puntuaciones') {
+      if (tabPunt) tabPunt.style.display = 'block';
+      if (usuarioActualId) cargarMisPuntuaciones(usuarioActualId);
     } else if (subtab === 'valoraciones') {
-      if (tabFav) tabFav.style.display = 'none';
       if (tabVal) tabVal.style.display = 'block';
-      // Carga las valoraciones si el usuario está autenticado
-      if (typeof usuarioActualId !== 'undefined' && usuarioActualId) {
-        cargarMisValoraciones(usuarioActualId);
-      }
+      if (usuarioActualId) cargarMisValoraciones(usuarioActualId);
     }
   }
 
-  // CÁLCULO DE OPINIONES Y ESTRELLAS
+  // CÁLCULO DE OPINIONES Y ESTRELLAS (ANÓNIMO PARA EL VENDEDOR)
   function calcularPromedioOpiniones(misProductos) {
     if (!misProductos.length) return;
     const totalEstrellas = misProductos.reduce((acc, p) => acc + (p.estrellas || 5), 0);
@@ -995,7 +1059,7 @@
     if (lista) {
       lista.innerHTML = misProductos.map(p => `
         <div style="padding: 8px; border-bottom: 1px solid var(--border); font-size: 13px;">
-          <strong>${p.titulo}</strong> - ⭐ ${p.estrellas || 5}/5
+          <strong>${p.titulo || p.nombre || 'Producto'}</strong> - ⭐ ${p.estrellas || 5}/5
           <p style="color: #64748b; font-size: 12px;">"${p.descripcion || 'Sin comentarios registrados por compradores.'}"</p>
         </div>
       `).join('');
@@ -1181,62 +1245,61 @@
   }  
 
   function crearTarjetaHTML(item) {
-  const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
-  const estrellas = item.estrellas || 5;
+    const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
+    const estrellas = item.estrellas || 5;
 
-  const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
-  const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
+    const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
+    const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
 
-  const comercioNombre = (item.comercio || '').trim().toLowerCase();
-  const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
-  const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
-  const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
+    const comercioNombre = (item.comercio || '').trim().toLowerCase();
+    const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
+    const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
+    const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
 
-  const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
-  const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
-  const puedeGestionar = esAdmin || esDuenio;
+    const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
+    const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
+    const puedeGestionar = esAdmin || esDuenio;
 
-  return `
-    <div class="card">
-      <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
-        ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
-      </button>
-      <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
-      <div class="card-body">
-        <div class="card-title">
-          <span>${item.titulo || item.nombre}</span>
-          <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
-        </div>
-
-        <!-- Muestra el tiempo de entrega si existe -->
-        ${item.tiempo_entrega ? `<p style="font-size:11px; color:#16a34a; font-weight:bold; margin-bottom:4px;">⏱️️ Entrega: ${item.tiempo_entrega}</p>` : ''}
-
-        <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
-          🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
-        </p>
-        <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-        <span class="badge badge-category">${item.categoria || 'Menú'}</span>
-        
-        <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
-          🏪 Ver más productos del vendedor
+    return `
+      <div class="card">
+        <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
+          ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
         </button>
-
-        <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
-          ⭐ Calificar u opinar
-        </button>
-
-        ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
-
-        ${puedeGestionar ? `
-          <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
-            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
-            <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
+        <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
+        <div class="card-body">
+          <div class="card-title">
+            <span>${item.titulo || item.nombre}</span>
+            <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
           </div>
-        ` : ''}
+
+          ${item.tiempo_entrega ? `<p style="font-size:11px; color:#16a34a; font-weight:bold; margin-bottom:4px;">⏱ Entrega: ${item.tiempo_entrega}</p>` : ''}
+
+          <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
+            🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
+          </p>
+          <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
+          <span class="badge badge-category">${item.categoria || 'Menú'}</span>
+          
+          <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
+            🏪 Ver más productos del vendedor
+          </button>
+
+          <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
+            ⭐ Calificar u opinar
+          </button>
+
+          ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
+
+          ${puedeGestionar ? `
+            <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
+              <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
+              <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
+            </div>
+          ` : ''}
+        </div>
       </div>
-    </div>
-  `;
-}
+    `;
+  }
   
   // SISTEMA DE CALIFICACIONES Y RESEÑAS
   function abrirModalOpinion(idProducto, titulo) {
@@ -1277,7 +1340,8 @@
 
       if (prod) {
         const descActual = prod.descripcion || '';
-        const nuevaDesc = `${descActual} | Reseña (${usuarioActualEmail}): "${texto}" ⭐${estrellas}/5`;
+        // CORRECCIÓN: Reseña guardada en modo anónimo sin exponer usuarioActualEmail
+        const nuevaDesc = `${descActual} | Reseña anónima: "${texto}" ⭐${estrellas}/5`;
 
         const { error: updateErr } = await supabaseClient
           .from('productos')
@@ -1288,6 +1352,13 @@
           .eq('id', id);
 
         if (updateErr) throw updateErr;
+
+        // Registrar valoración en tabla 'valoraciones' si existe
+        if (usuarioActualId) {
+          await supabaseClient
+            .from('valoraciones')
+            .insert([{ user_id: usuarioActualId, producto_id: id, puntuacion: estrellas, comentario: texto, created_at: new Date().toISOString() }]);
+        }
 
         alert("✅ Gracias. Tu calificación ha sido registrada.");
         cerrarModalOpinion();
@@ -1375,8 +1446,6 @@
 
     grid.innerHTML = misProds.map(p => {
       const tituloValido = (p.titulo || p.nombre || 'Sin título').replace(/'/g, "\\'");
-      const descValida = (p.descripcion || '').replace(/'/g, "\\'");
-      const catValida = (p.categoria || '').replace(/'/g, "\\'");
       const imgValida = (p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen').replace(/'/g, "\\'");
       const precioValido = Number(p.precio) || 0;
 
@@ -1406,7 +1475,7 @@
             <button onclick="eliminarProductoSupabase('${p.id}')" 
                     class="btn btn-danger" 
                     style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
-              🗑️ Eliminar
+              🗑️️ Eliminar
             </button>
           </div>
         </div>
@@ -1416,76 +1485,76 @@
 
   // PUBLICACIÓN DE PRODUCTO
   async function publicarProducto(e) {
-  e.preventDefault();
-  
-  if (!usuarioActualEmail) {
-    alert("Debes iniciar sesión para publicar.");
-    return;
-  }
-
-  const btnSubmit = document.getElementById('btnPublicarProd');
-  const fileInput = document.getElementById('prodImagenFile');
-  const archivo = fileInput?.files[0];
-
-  if (!archivo) {
-    alert("Por favor, seleccioná una imagen para el producto.");
-    return;
-  }
-
-  try {
-    if (btnSubmit) {
-      btnSubmit.disabled = true;
-      btnSubmit.innerText = "Subiendo imagen...";
-    }
-
-    const fileExt = archivo.name.split('.').pop();
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    e.preventDefault();
     
-    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
-    if (uploadError) throw uploadError;
-
-    const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-
-    if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
-
-    const nuevo = {
-      email_vendedor: usuarioActualEmail,
-      comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
-      titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
-      categoria: document.getElementById('prodCategoria')?.value || "Menú",
-      precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
-      imagen: publicUrlData.publicUrl,
-      descripcion: document.getElementById('prodDesc')?.value.trim() || "",
-      tiempo_entrega: document.getElementById('prodTiempo')?.value.trim() || "Consultar", // <- Agregado aquí
-      direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
-      telefono: document.getElementById('vendTelefono')?.value.trim() || "",
-      delivery: document.getElementById('vendDelivery')?.value || "consultar",
-      estrellas: 5
-    };
-
-    const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
-    if (insertError) throw insertError;
-
-    alert("✅ Producto publicado con éxito.");
-    e.target.reset();
-
-    if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
-    if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
-
-    if (typeof cambiarSubtabNegocio === 'function') {
-      const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
-      cambiarSubtabNegocio('subMisProductos', btnMisProd);
+    if (!usuarioActualEmail) {
+      alert("Debes iniciar sesión para publicar.");
+      return;
     }
 
-  } catch (err) {
-    alert("Error al publicar el producto: " + err.message);
-  } finally {
-    if (btnSubmit) {
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = "Publicar en la Plataforma";
+    const btnSubmit = document.getElementById('btnPublicarProd');
+    const fileInput = document.getElementById('prodImagenFile');
+    const archivo = fileInput?.files[0];
+
+    if (!archivo) {
+      alert("Por favor, seleccioná una imagen para el producto.");
+      return;
+    }
+
+    try {
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Subiendo imagen...";
+      }
+
+      const fileExt = archivo.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      
+      const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+
+      if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
+
+      const nuevo = {
+        email_vendedor: usuarioActualEmail,
+        comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
+        titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
+        categoria: document.getElementById('prodCategoria')?.value || "Menú",
+        precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
+        imagen: publicUrlData.publicUrl,
+        descripcion: document.getElementById('prodDesc')?.value.trim() || "",
+        tiempo_entrega: document.getElementById('prodTiempo')?.value.trim() || "Consultar",
+        direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
+        telefono: document.getElementById('vendTelefono')?.value.trim() || "",
+        delivery: document.getElementById('vendDelivery')?.value || "consultar",
+        estrellas: 5
+      };
+
+      const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
+      if (insertError) throw insertError;
+
+      alert("✅ Producto publicado con éxito.");
+      e.target.reset();
+
+      if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
+      if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
+
+      if (typeof cambiarSubtabNegocio === 'function') {
+        const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
+        cambiarSubtabNegocio('subMisProductos', btnMisProd);
+      }
+
+    } catch (err) {
+      alert("Error al publicar el producto: " + err.message);
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Publicar en la Plataforma";
+      }
     }
   }
-}
 
   // NAVEGACIÓN Y SUBPESTAÑAS
   function navegarA(tabId, btn) {
@@ -1505,6 +1574,8 @@
       }
     } else if (tabId === 'secPerfiles') {
       if (typeof cargarComerciosPerfiles === 'function') cargarComerciosPerfiles();
+    } else if (tabId === 'secMiPerfil') {
+      cambiarSubTabPerfil('favoritos', document.querySelectorAll('#secMiPerfil .subnav-btn')[0]);
     } else if (tabId === 'secAdmin') {
       if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
     }
