@@ -304,44 +304,51 @@
         </div>
       </div>
       
-      <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
-        <div class="card" style="padding:16px;">
-          <h3>➕ Publicar Nuevo Producto / Oferta</h3>
-          <form onsubmit="publicarProducto(event)">
-            <div class="form-group">
-              <label>Título del Producto:</label>
-              <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
-            </div>
-            <div class="form-group">
-              <label>Categoría:</label>
-              <select id="prodCategoria" required>
-                <option value="plato_dia">Plato del día</option>
-                <option value="al_plato">Al plato</option>
-                <option value="sandwiches">Sándwiches</option>
-                <option value="postre">Postre</option>
-                <option value="bebida">Bebida</option>
-                <option value="combos">Combos</option>
-                <option value="promo">Promo</option>
-                <option value="fingerfood">Fingerfood</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Precio ($):</label>
-              <input type="number" id="prodPrecio" required placeholder="8500">
-            </div>
-            <div class="form-group">
-              <label>Imagen del Producto:</label>
-              <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
-            </div>
-            <div class="form-group">
-              <label>Descripción Corta:</label>
-              <input type="text" id="prodDesc" placeholder="Ej: Incluye papas fritas individuales">
-            </div>
-            <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
-          </form>
-        </div>
+     <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
+  <div class="card" style="padding:16px;">
+    <h3>➕ Publicar Nuevo Producto / Oferta</h3>
+    <form onsubmit="publicarProducto(event)">
+      <div class="form-group">
+        <label>Título del Producto:</label>
+        <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
+      </div>
+      <div class="form-group">
+        <label>Categoría:</label>
+        <select id="prodCategoria" required>
+          <option value="plato_dia">Plato del día</option>
+          <option value="al_plato">Al plato</option>
+          <option value="sandwiches">Sándwiches</option>
+          <option value="postre">Postre</option>
+          <option value="bebida">Bebida</option>
+          <option value="combos">Combos</option>
+          <option value="promo">Promo</option>
+          <option value="fingerfood">Fingerfood</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Precio ($):</label>
+        <input type="number" id="prodPrecio" required placeholder="8500">
+      </div>
+      <div class="form-group">
+        <label>Imagen del Producto:</label>
+        <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
+      </div>
+      <div class="form-group">
+        <label>Descripción Corta:</label>
+        <input type="text" id="prodDesc" placeholder="Ej: Incluye papas fritas individuales">
+      </div>
+      
+      <!-- Campo agregado -->
+      <div class="form-group">
+        <label>Tiempo estimado de entrega:</label>
+        <input type="text" id="prodTiempo" placeholder="Ej: 30-45 min">
       </div>
 
+      <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
+    </form>
+  </div>
+</div>
+      
       <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3>📋 Control de Mis Publicaciones</h3>
@@ -1078,58 +1085,62 @@
   }  
 
   function crearTarjetaHTML(item) {
-    const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
-    const estrellas = item.estrellas || 5;
+  const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
+  const estrellas = item.estrellas || 5;
 
-    const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
-    const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
+  const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
+  const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
 
-    const comercioNombre = (item.comercio || '').trim().toLowerCase();
-    const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
-    const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
-    const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
+  const comercioNombre = (item.comercio || '').trim().toLowerCase();
+  const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
+  const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
+  const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
 
-    const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
-    const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
-    const puedeGestionar = esAdmin || esDuenio;
+  const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
+  const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
+  const puedeGestionar = esAdmin || esDuenio;
 
-    return `
-      <div class="card">
-        <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
-          ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
-        </button>
-        <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
-        <div class="card-body">
-          <div class="card-title">
-            <span>${item.titulo || item.nombre}</span>
-            <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
-          </div>
-          <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
-            🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
-          </p>
-          <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-          <span class="badge badge-category">${item.categoria || 'Menú'}</span>
-          
-          <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
-            🏪 Ver más productos del vendedor
-          </button>
-
-          <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
-            ⭐ Calificar u opinar
-          </button>
-
-          ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
-
-          ${puedeGestionar ? `
-            <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
-              <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
-              <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
-            </div>
-          ` : ''}
+  return `
+    <div class="card">
+      <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
+        ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
+      </button>
+      <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
+      <div class="card-body">
+        <div class="card-title">
+          <span>${item.titulo || item.nombre}</span>
+          <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
         </div>
+
+        <!-- Muestra el tiempo de entrega si existe -->
+        ${item.tiempo_entrega ? `<p style="font-size:11px; color:#16a34a; font-weight:bold; margin-bottom:4px;">⏱️️ Entrega: ${item.tiempo_entrega}</p>` : ''}
+
+        <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
+          🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
+        </p>
+        <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
+        <span class="badge badge-category">${item.categoria || 'Menú'}</span>
+        
+        <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
+          🏪 Ver más productos del vendedor
+        </button>
+
+        <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
+          ⭐ Calificar u opinar
+        </button>
+
+        ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
+
+        ${puedeGestionar ? `
+          <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
+            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
+            <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
+          </div>
+        ` : ''}
       </div>
-    `;
-  }
+    </div>
+  `;
+}
   
   // SISTEMA DE CALIFICACIONES Y RESEÑAS
   function abrirModalOpinion(idProducto, titulo) {
@@ -1309,75 +1320,76 @@
 
   // PUBLICACIÓN DE PRODUCTO
   async function publicarProducto(e) {
-    e.preventDefault();
+  e.preventDefault();
+  
+  if (!usuarioActualEmail) {
+    alert("Debes iniciar sesión para publicar.");
+    return;
+  }
+
+  const btnSubmit = document.getElementById('btnPublicarProd');
+  const fileInput = document.getElementById('prodImagenFile');
+  const archivo = fileInput?.files[0];
+
+  if (!archivo) {
+    alert("Por favor, seleccioná una imagen para el producto.");
+    return;
+  }
+
+  try {
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Subiendo imagen...";
+    }
+
+    const fileExt = archivo.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
     
-    if (!usuarioActualEmail) {
-      alert("Debes iniciar sesión para publicar.");
-      return;
+    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
+    if (uploadError) throw uploadError;
+
+    const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+
+    if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
+
+    const nuevo = {
+      email_vendedor: usuarioActualEmail,
+      comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
+      titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
+      categoria: document.getElementById('prodCategoria')?.value || "Menú",
+      precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
+      imagen: publicUrlData.publicUrl,
+      descripcion: document.getElementById('prodDesc')?.value.trim() || "",
+      tiempo_entrega: document.getElementById('prodTiempo')?.value.trim() || "Consultar", // <- Agregado aquí
+      direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
+      telefono: document.getElementById('vendTelefono')?.value.trim() || "",
+      delivery: document.getElementById('vendDelivery')?.value || "consultar",
+      estrellas: 5
+    };
+
+    const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
+    if (insertError) throw insertError;
+
+    alert("✅ Producto publicado con éxito.");
+    e.target.reset();
+
+    if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
+    if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
+
+    if (typeof cambiarSubtabNegocio === 'function') {
+      const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
+      cambiarSubtabNegocio('subMisProductos', btnMisProd);
     }
 
-    const btnSubmit = document.getElementById('btnPublicarProd');
-    const fileInput = document.getElementById('prodImagenFile');
-    const archivo = fileInput?.files[0];
-
-    if (!archivo) {
-      alert("Por favor, seleccioná una imagen para el producto.");
-      return;
-    }
-
-    try {
-      if (btnSubmit) {
-        btnSubmit.disabled = true;
-        btnSubmit.innerText = "Subiendo imagen...";
-      }
-
-      const fileExt = archivo.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      
-      const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-
-      if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
-
-      const nuevo = {
-        email_vendedor: usuarioActualEmail,
-        comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
-        titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
-        categoria: document.getElementById('prodCategoria')?.value || "Menú",
-        precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
-        imagen: publicUrlData.publicUrl,
-        descripcion: document.getElementById('prodDesc')?.value.trim() || "",
-        direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
-        telefono: document.getElementById('vendTelefono')?.value.trim() || "",
-        delivery: document.getElementById('vendDelivery')?.value || "consultar",
-        estrellas: 5
-      };
-
-      const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
-      if (insertError) throw insertError;
-
-      alert("✅ Producto publicado con éxito.");
-      e.target.reset();
-
-      if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
-      if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
-
-      if (typeof cambiarSubtabNegocio === 'function') {
-        const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
-        cambiarSubtabNegocio('subMisProductos', btnMisProd);
-      }
-
-    } catch (err) {
-      alert("Error al publicar el producto: " + err.message);
-    } finally {
-      if (btnSubmit) {
-        btnSubmit.disabled = false;
-        btnSubmit.innerText = "Publicar en la Plataforma";
-      }
+  } catch (err) {
+    alert("Error al publicar el producto: " + err.message);
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.innerText = "Publicar en la Plataforma";
     }
   }
+}
 
   // NAVEGACIÓN Y SUBPESTAÑAS
   function navegarA(tabId, btn) {
