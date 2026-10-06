@@ -304,50 +304,49 @@
         </div>
       </div>
       
-     <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
-  <div class="card" style="padding:16px;">
-    <h3>➕ Publicar Nuevo Producto / Oferta</h3>
-    <form onsubmit="publicarProducto(event)">
-      <div class="form-group">
-        <label>Título del Producto:</label>
-        <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
-      </div>
-      <div class="form-group">
-        <label>Categoría:</label>
-        <select id="prodCategoria" required>
-          <option value="plato_dia">Plato del día</option>
-          <option value="al_plato">Al plato</option>
-          <option value="sandwiches">Sándwiches</option>
-          <option value="postre">Postre</option>
-          <option value="bebida">Bebida</option>
-          <option value="combos">Combos</option>
-          <option value="promo">Promo</option>
-          <option value="fingerfood">Fingerfood</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Precio ($):</label>
-        <input type="number" id="prodPrecio" required placeholder="8500">
-      </div>
-      <div class="form-group">
-        <label>Imagen del Producto:</label>
-        <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
-      </div>
-      <div class="form-group">
-        <label>Descripción Corta:</label>
-        <input type="text" id="prodDesc" placeholder="Ej: Incluye papas fritas individuales">
-      </div>
-      
-      <!-- Campo agregado -->
-      <div class="form-group">
-        <label>Tiempo estimado de entrega:</label>
-        <input type="text" id="prodTiempo" placeholder="Ej: 30-45 min">
-      </div>
+      <div id="subPublicarProducto" class="subtab-negocio-content" style="display:none;">
+        <div class="card" style="padding:16px;">
+          <h3>➕ Publicar Nuevo Producto / Oferta</h3>
+          <form onsubmit="publicarProducto(event)">
+            <div class="form-group">
+              <label>Título del Producto:</label>
+              <input type="text" id="prodTitulo" required placeholder="Ej: Milanesa a la Napolitana con Papas">
+            </div>
+            <div class="form-group">
+              <label>Categoría:</label>
+              <select id="prodCategoria" required>
+                <option value="plato_dia">Plato del día</option>
+                <option value="al_plato">Al plato</option>
+                <option value="sandwiches">Sándwiches</option>
+                <option value="postre">Postre</option>
+                <option value="bebida">Bebida</option>
+                <option value="combos">Combos</option>
+                <option value="promo">Promo</option>
+                <option value="fingerfood">Fingerfood</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Precio ($):</label>
+              <input type="number" id="prodPrecio" required placeholder="8500">
+            </div>
+            <div class="form-group">
+              <label>Imagen del Producto:</label>
+              <input type="file" id="prodImagenFile" accept="image/*" required style="padding: 6px; background: white;">
+            </div>
+            <div class="form-group">
+              <label>Descripción Corta:</label>
+              <input type="text" id="prodDesc" placeholder="Ej: Incluye papas fritas individuales">
+            </div>
+            
+            <div class="form-group">
+              <label>Tiempo estimado de entrega:</label>
+              <input type="text" id="prodTiempo" placeholder="Ej: 30-45 min">
+            </div>
 
-      <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
-    </form>
-  </div>
-</div>
+            <button type="submit" id="btnPublicarProd" class="btn btn-primary">Publicar en la Plataforma</button>
+          </form>
+        </div>
+      </div>
       
       <div id="subMisProductos" class="subtab-negocio-content" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -375,6 +374,35 @@
     </div>
   </section>
 
+  <!-- VISTA 4: MI PERFIL (COMPRADOR / MI CUENTA) -->
+  <section id="secMiPerfil" class="tab-content" style="display:none;">
+    <div class="card" style="padding:16px;">
+      <h2 style="margin-bottom: 12px; color: var(--primary);">👤 Mi Perfil</h2>
+
+      <!-- Sub-pestañas de navegación interna -->
+      <div class="subnav" style="margin-bottom:16px;">
+        <button class="subnav-btn active" onclick="cambiarSubTabPerfil('favoritos', this)">❤️ Mis Favoritos</button>
+        <button class="subnav-btn" onclick="cambiarSubTabPerfil('valoraciones', this)">⭐ Mis Valoraciones</button>
+      </div>
+
+      <!-- Contenido: Mis Favoritos -->
+      <div id="subtab-favoritos" class="subtab-profile-content">
+        <h3>Productos y Comercios Guardados</h3>
+        <div id="lista-favoritos-container" class="grid" style="margin-top:12px;">
+          <!-- Se carga dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Contenido: Mis Puntuaciones y Valoraciones -->
+      <div id="subtab-valoraciones" class="subtab-profile-content" style="display: none;">
+        <h3>Opiniones que dejaste</h3>
+        <div id="lista-mis-opiniones-container" style="margin-top:12px;">
+          <!-- Se cargan las valoraciones -->
+        </div>
+      </div>
+    </div>
+  </section>
+  
   <!-- VISTA 4: ADMIN -->
   <section id="secAdmin" class="tab-content">
     <h2 style="color:var(--primary); margin-bottom:16px;">⚙️️ Panel Administrador</h2>
@@ -658,7 +686,7 @@
     }
   }
 
-  function seleccionarRol(rol) {
+ function seleccionarRol(rol) {
     seleccionarPerfil(rol);
   }
 
@@ -676,6 +704,21 @@
     
     const boxPanel = document.getElementById('boxPanelVendedor');
     if (boxPanel) boxPanel.style.display = 'block';
+
+    // --- INTEGRACIÓN DE PESTAÑAS SEGÚN ROL / PERFIL ---
+    const tabNegocio = document.getElementById('tab-mi-negocio') || document.getElementById('btnNavVendedor');
+    const tabPerfil = document.getElementById('tab-mi-perfil') || document.getElementById('btnNavMiPerfil');
+
+    if (typeof rolActual !== 'undefined') {
+      if (rolActual === 'comprador') {
+        if (tabNegocio) tabNegocio.style.display = 'none';
+        if (tabPerfil) tabPerfil.style.display = 'block';
+      } else if (rolActual === 'vendedor') {
+        if (tabNegocio) tabNegocio.style.display = 'block';
+        if (tabPerfil) tabPerfil.style.display = 'block';
+      }
+    }
+    // --------------------------------------------------
 
     const btnAdmin = document.getElementById('btnNavAdmin');
     if (typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
@@ -701,7 +744,6 @@
     });
     if (error) alert("Error con Google: " + error.message);
   }
-
   async function cerrarSesion() {
     await supabaseClient.auth.signOut();
     usuarioActualEmail = null;
@@ -883,6 +925,60 @@
       }
     } catch (err) {
       console.error("Error al traer productos de vendedor:", err);
+    }
+  }
+
+  async function cargarMisValoraciones(userId) {
+    // Usamos supabaseClient para mantener coherencia con el resto de tu app
+    const clienteSupabase = typeof supabaseClient !== 'undefined' ? supabaseClient : supabase;
+
+    const { data: opiniones, error } = await clienteSupabase
+      .from('valoraciones')
+      .select('*, productos(nombre), comercios(nombre)')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error al obtener mis valoraciones:', error);
+      return;
+    }
+
+    const container = document.getElementById('lista-mis-opiniones-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!opiniones || opiniones.length === 0) {
+      container.innerHTML = '<p>Todavía no dejaste ninguna valoración.</p>';
+      return;
+    }
+
+    opiniones.forEach(op => {
+      container.innerHTML += `
+        <div class="card-opinion-propia" style="border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+          <strong>${op.productos?.nombre || op.comercios?.nombre || 'Comercio/Producto'}</strong>
+          <div>Calificación: ${'⭐'.repeat(op.puntuacion || 5)}</div>
+          <p style="margin: 4px 0; color: #334155;">"${op.comentario || ''}"</p>
+          <small style="color: #64748b;">Fecha: ${new Date(op.created_at).toLocaleDateString()}</small>
+        </div>
+      `;
+    });
+  }
+
+  // Función complementaria para alternar las subpestañas del perfil
+  function cambiarSubTabPerfil(subtab) {
+    const tabFav = document.getElementById('subtab-favoritos');
+    const tabVal = document.getElementById('subtab-valoraciones');
+    
+    if (subtab === 'favoritos') {
+      if (tabFav) tabFav.style.display = 'block';
+      if (tabVal) tabVal.style.display = 'none';
+    } else if (subtab === 'valoraciones') {
+      if (tabFav) tabFav.style.display = 'none';
+      if (tabVal) tabVal.style.display = 'block';
+      // Carga las valoraciones si el usuario está autenticado
+      if (typeof usuarioActualId !== 'undefined' && usuarioActualId) {
+        cargarMisValoraciones(usuarioActualId);
+      }
     }
   }
 
