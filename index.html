@@ -28,19 +28,19 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
   body { background: var(--bg); color: var(--text); padding-bottom: 75px; }
   
- /* Encabezado Principal */
- header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  /* Encabezado Principal */
+  header { background: var(--primary); color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   header h1 { font-size: 18px; font-weight: bold; }
   .user-badge { font-size: 12px; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; display: flex; align-items: center; gap: 6px; }
     
   /* Contenedores y Navegación */
- .container { max-width: 800px; margin: 0 auto; padding: 16px; padding-bottom: 80px; }
+  .container { max-width: 800px; margin: 0 auto; padding: 16px; padding-bottom: 80px; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   .hidden { display: none !important; }
 
   /* Barra de Navegación Inferior Móvil */
-.bottom-nav, nav.nav-bottom { 
+  .bottom-nav, nav.nav-bottom { 
     position: fixed; 
     bottom: 0; 
     left: 0; 
@@ -77,7 +77,7 @@
   }
 
   /* Banner Promocional y Destacados */
-    .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
+  .hero-banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80'); background-size: cover; color: white; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px; }
   .featured-card { background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
 
   /* Tarjetas de Productos y Negocios */
@@ -105,11 +105,11 @@
   .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
   /* Formulario y Filtros */
- .form-group { margin-bottom: 12px; }
+  .form-group { margin-bottom: 12px; }
   .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
   .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; }
 
-    /* Sub-navegación general */
+  /* Sub-navegación general */
   .subnav { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto; }
   .subnav-btn { background: none; border: none; padding: 6px 12px; font-size: 13px; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 6px; white-space: nowrap; }
   .subnav-btn.active { background: #fef3c7; color: var(--primary-dark); }
@@ -123,7 +123,7 @@
   .modal-content { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; }
   .modal-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 20px; cursor: pointer; }
 
-    /* Foto de perfil redonda */
+  /* Foto de perfil redonda */
   .profile-avatar { 
     width: 120px; 
     height: 120px; 
@@ -135,19 +135,19 @@
 </head>
 <body>
 <header>
- <h1>🍔 Pedienbragado</h1>
+  <h1>🍔 Pedienbragado</h1>
   <div class="user-badge">
     <span id="lblPerfil">Iniciá sesión para ingresar</span>
     <button id="btnCerrarSesion" onclick="cerrarSesion()" style="display:none; background:none; border:none; color:white; cursor:pointer; font-size:11px; text-decoration:underline; margin-left:4px;">(Salir)</button>
   </div>
   
- <button id="btnInstalarPWA" class="btn btn-warning" style="padding: 4px 10px; font-size: 12px; margin: 0; width: auto; display:none;" onclick="instalarPWA()">
+  <button id="btnInstalarPWA" class="btn btn-warning" style="padding: 4px 10px; font-size: 12px; margin: 0; width: auto; display:none;" onclick="instalarPWA()">
     📥 Instalar App
   </button>
 </header>
 
 <main class="container" id="mainContent">
-  <!-- PANTALLA EXCLUSIVA DE INICIO DE SESIÓN Y SELECCIÓN DE ROL (PUNTO 5 Y 6) -->
+  <!-- PANTALLA EXCLUSIVA DE INICIO DE SESIÓN Y SELECCIÓN DE ROL -->
   <section id="secSeleccionPerfil" style="text-align: center; padding: 20px 0;">
     <div class="card" style="padding: 24px; max-width: 400px; margin: 0 auto;">
       <h2>Bienvenido a Pedienbragado</h2>
@@ -163,7 +163,7 @@
     </div>
   </section>
   
-  <!-- VISTA 1: COMPRADOR (REQUIERE SESIÓN) -->
+  <!-- VISTA 1: COMPRADOR -->
   <section id="secComprador" class="tab-content">
     <div class="hero-banner" id="heroBanner">
       <h2 id="txtBannerTitulo">¡Las mejores comidas de tu ciudad!</h2>
@@ -207,13 +207,14 @@
     </div>
   </section>
   
-  <!-- VISTA 2: COMPRADOR - PERFILES DE VENDEDORES (PUNTO 4) -->
+  <!-- VISTA 2: PERFILES DE VENDEDORES -->
   <section id="secPerfiles" class="tab-content">
     <h2 style="margin-bottom: 12px; color: var(--primary);">👥 Perfiles de Comercios y Vendedores</h2>
     <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">Conocé la información de contacto, reseñas e historial de cada comercio local.</p>
     <div class="grid" id="contenedorPerfilesComercios"></div>
   </section>
-   <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
+
+  <!-- VISTA 3: VENDEDOR (GESTIÓN) -->
   <section id="secVendedor" class="tab-content">
     <div id="boxLoginVendedor" class="card" style="padding:20px; max-width:400px; margin:0 auto; text-align:center;">
       <h2 style="margin-bottom:8px; color:var(--primary);">Acceso Vendedor</h2>
@@ -369,7 +370,7 @@
 
   <!-- VISTA 4: ADMIN -->
   <section id="secAdmin" class="tab-content">
-    <h2 style="color:var(--primary); margin-bottom:16px;">⚙️ Panel Administrador</h2>
+    <h2 style="color:var(--primary); margin-bottom:16px;">⚙️️ Panel Administrador</h2>
     <div class="card" style="padding:16px; margin-bottom:20px;">
       <h3>🖼 Banner y Destacados</h3>
       <div class="form-group">
@@ -409,7 +410,6 @@
     <button class="modal-close" onclick="cerrarModalComprador()">&times;</button>
     <h3 id="authTitleComprador" style="margin-bottom:12px; text-align:center; color:var(--primary);">Iniciar Sesión Comprador</h3>
     
-    <!-- Botón de Login con Google -->
     <button onclick="iniciarSesionConGoogle()" class="btn btn-google" style="margin-bottom:16px;">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
       Ingresar con Google
@@ -419,7 +419,6 @@
       <span style="position: absolute; top: -10px; background: white; padding: 0 8px; font-size: 11px; color: #94a3b8; left: 50%; transform: translateX(-50%);">O acceso por correo</span>
     </div>
 
-    <!-- Formulario Supabase / Email -->
     <form id="formAuthComprador" onsubmit="procesarAuthComprador(event)">
       <div id="grupoNombreComprador" class="form-group hidden">
         <label>Nombre y Apellido</label>
@@ -496,7 +495,7 @@
   </div>
 </div>
 
-  <!-- MODAL EDITAR PRODUCTO -->
+<!-- MODAL EDITAR PRODUCTO -->
 <div id="modalEditarProducto" class="modal-overlay hidden">
   <div class="modal-content">
     <button class="modal-close" onclick="cerrarModalEdicion()">&times;</button>
@@ -539,7 +538,7 @@
   </div>
 </div>
   
-  <!-- Barra de Navegación Inferior (Punto 4 corregido) -->
+<!-- Barra de Navegación Inferior -->
 <nav class="nav-bottom">
   <button class="nav-btn" onclick="navegarA('secComprador', this)">🍕 Productos</button>
   <button class="nav-btn" onclick="navegarA('secPerfiles', this)">👥 Perfiles</button>
@@ -547,8 +546,9 @@
   <button class="nav-btn" id="btnNavAdmin" style="display:none;" onclick="navegarA('secAdmin', this)">⚙️ Admin</button>
 </nav>
 
-<script>  // Registro del Service Worker para PWA
-if ('serviceWorker' in navigator) {
+<script>
+  // Registro del Service Worker para PWA
+  if ('serviceWorker' in navigator) {
     const swCode = `
       self.addEventListener('install', e => self.skipWaiting());
       self.addEventListener('activate', e => self.clients.claim());
@@ -559,8 +559,9 @@ if ('serviceWorker' in navigator) {
       .then(reg => console.log('SW registrado', reg))
       .catch(err => console.error('SW error:', err));
   }
+
   // CONFIGURACIÓN DE SUPABASE
-   const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
+  const SUPABASE_URL = 'https://otosptqitpnzrklvkklh.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90b3NwdHFpdHBuenJrbHZra2xoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTc5ODcsImV4cCI6MjEwNTkzMzk4N30.VQRvuIxzwcNGSyKybd70zNkPFPV1joUZyu13Hbz2oiY';
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const ADMIN_EMAIL = 'alan.csup@gmail.com';
@@ -573,8 +574,9 @@ if ('serviceWorker' in navigator) {
   let miComercioNombre = "";
   let esModoRegistroComprador = false;
   let vendedorFiltroActual = null;
+  let deferredPrompt = null;
 
-  // PWA CONTROLLER (Punto 6)
+  // PWA CONTROLLER
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
@@ -583,110 +585,107 @@ if ('serviceWorker' in navigator) {
   });
 
   async function instalarPWA() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      const btnInstalar = document.getElementById('btnInstalarPWA');
-      if (btnInstalar) btnInstalar.style.display = 'none';
-    }
-    deferredPrompt = null;
-  } else {
-    alert("Para instalar la App en tu dispositivo:\n\n1. En Android/Chrome: Tocá el menú de 3 puntos (⋮) y seleccioná 'Agregar a la pantalla principal'.\n2. En iPhone/Safari: Tocá el botón 'Compartir' y elegí 'Agregar a inicio'.");
-  }
-}
-
-// INICIALIZACIÓN
-document.addEventListener('DOMContentLoaded', async () => {
-  await verificarSesionActiva();
-});
-
-async function verificarSesionActiva() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    usuarioActualEmail = session.user.email.toLowerCase().trim();
-    actualizarInterfazUsuario();
-    await cargarProductosSupabase();
-  } else {
-    // Pantalla de inicio de sesión obligatoria
-    usuarioActualEmail = null;
-    const lbl = document.getElementById('lblPerfil');
-    if (lbl) lbl.textContent = "Iniciá sesión para ingresar";
-    const btnCerrar = document.getElementById('btnCerrarSesion');
-    if (btnCerrar) btnCerrar.style.display = 'none';
-    mostrarPantallaInicio();
-  }
-}
-
-function mostrarPantallaInicio() {
-  const secPerfil = document.getElementById('secSeleccionPerfil');
-  if (secPerfil) secPerfil.style.display = 'block';
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-}
-
-async function seleccionarPerfil(rol) {
-  rolActivo = rol;
-  const { data: { session } } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    if (rol === 'comprador') {
-      abrirModalComprador();
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        const btnInstalar = document.getElementById('btnInstalarPWA');
+        if (btnInstalar) btnInstalar.style.display = 'none';
+      }
+      deferredPrompt = null;
     } else {
-      const secPerfil = document.getElementById('secSeleccionPerfil');
-      if (secPerfil) secPerfil.style.display = 'none';
+      alert("Para instalar la App en tu dispositivo:\n\n1. En Android/Chrome: Tocá el menú de 3 puntos (⋮) y seleccioná 'Agregar a la pantalla principal'.\n2. En iPhone/Safari: Tocá el botón 'Compartir' y elegí 'Agregar a inicio'.");
+    }
+  }
+
+  // INICIALIZACIÓN
+  document.addEventListener('DOMContentLoaded', async () => {
+    await verificarSesionActiva();
+  });
+
+  async function verificarSesionActiva() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      usuarioActualEmail = session.user.email.toLowerCase().trim();
+      actualizarInterfazUsuario();
+      await cargarProductosSupabase();
+    } else {
+      usuarioActualEmail = null;
+      const lbl = document.getElementById('lblPerfil');
+      if (lbl) lbl.textContent = "Iniciá sesión para ingresar";
+      const btnCerrar = document.getElementById('btnCerrarSesion');
+      if (btnCerrar) btnCerrar.style.display = 'none';
+      mostrarPantallaInicio();
+    }
+  }
+
+  function mostrarPantallaInicio() {
+    const secPerfil = document.getElementById('secSeleccionPerfil');
+    if (secPerfil) secPerfil.style.display = 'block';
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  }
+
+  async function seleccionarPerfil(rol) {
+    rolActivo = rol;
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      if (rol === 'comprador') {
+        abrirModalComprador();
+      } else {
+        const secPerfil = document.getElementById('secSeleccionPerfil');
+        if (secPerfil) secPerfil.style.display = 'none';
+        navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
+      }
+      return;
+    }
+
+    const secPerfil = document.getElementById('secSeleccionPerfil');
+    if (secPerfil) secPerfil.style.display = 'none';
+
+    if (rol === 'comprador') {
+      navegarA('secComprador', document.querySelectorAll('.nav-btn')[0]);
+    } else {
       navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
     }
-    return;
   }
 
-  const secPerfil = document.getElementById('secSeleccionPerfil');
-  if (secPerfil) secPerfil.style.display = 'none';
-
-  if (rol === 'comprador') {
-    navegarA('secComprador', document.querySelectorAll('.nav-btn')[0]);
-  } else {
-    navegarA('secVendedor', document.querySelectorAll('.nav-btn')[2]);
-  }
-}
-
-// Alias por si alguna otra función antigua llama a seleccionarRol()
-function seleccionarRol(rol) {
-  seleccionarPerfil(rol);
-}
-
-function actualizarInterfazUsuario() {
-  if (!usuarioActualEmail) return;
-  
-  const lbl = document.getElementById('lblPerfil');
-  if (lbl) lbl.innerText = `${usuarioActualEmail}`;
-  
-  const btnCerrar = document.getElementById('btnCerrarSesion');
-  if (btnCerrar) btnCerrar.style.display = 'inline';
-  
-  const boxLogin = document.getElementById('boxLoginVendedor');
-  if (boxLogin) boxLogin.style.display = 'none';
-  
-  const boxPanel = document.getElementById('boxPanelVendedor');
-  if (boxPanel) boxPanel.style.display = 'block';
-
-  const btnAdmin = document.getElementById('btnNavAdmin');
-  if (typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
-    if (btnAdmin) btnAdmin.style.display = 'flex';
-    if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
-  } else {
-    if (btnAdmin) btnAdmin.style.display = 'none';
+  function seleccionarRol(rol) {
+    seleccionarPerfil(rol);
   }
 
-  if (typeof cargarPerfilComercio === 'function') cargarPerfilComercio(usuarioActualEmail);
-  if (typeof cargarMisProductosVendedor === 'function') cargarMisProductosVendedor();
-}
+  function actualizarInterfazUsuario() {
+    if (!usuarioActualEmail) return;
+    
+    const lbl = document.getElementById('lblPerfil');
+    if (lbl) lbl.innerText = `${usuarioActualEmail}`;
+    
+    const btnCerrar = document.getElementById('btnCerrarSesion');
+    if (btnCerrar) btnCerrar.style.display = 'inline';
+    
+    const boxLogin = document.getElementById('boxLoginVendedor');
+    if (boxLogin) boxLogin.style.display = 'none';
+    
+    const boxPanel = document.getElementById('boxPanelVendedor');
+    if (boxPanel) boxPanel.style.display = 'block';
 
-// Alias para mantener compatibilidad con llamadas a actualizarInterfaz()
-function actualizarInterfaz() {
-  actualizarInterfazUsuario();
-}
-  
+    const btnAdmin = document.getElementById('btnNavAdmin');
+    if (typeof ADMIN_EMAIL !== 'undefined' && usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
+      if (btnAdmin) btnAdmin.style.display = 'flex';
+      if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
+    } else {
+      if (btnAdmin) btnAdmin.style.display = 'none';
+    }
+
+    if (typeof cargarPerfilComercio === 'function') cargarPerfilComercio(usuarioActualEmail);
+    if (typeof cargarMisProductosVendedor === 'function') cargarMisProductosVendedor();
+  }
+
+  function actualizarInterfaz() {
+    actualizarInterfazUsuario();
+  }
+    
   async function iniciarSesionConGoogle() {
     const redirectUrl = window.location.href.split('?')[0].split('#')[0];
     const { error } = await supabaseClient.auth.signInWithOAuth({
@@ -696,27 +695,7 @@ function actualizarInterfaz() {
     if (error) alert("Error con Google: " + error.message);
   }
 
-  function activarInterfazUsuario(emailUsuario) {
-    usuarioActualEmail = emailUsuario.toLowerCase().trim();
-    document.getElementById('lblPerfil').innerText = `Sesión: ${usuarioActualEmail}`;
-    document.getElementById('btnCerrarSesion').style.display = 'inline';
-    document.getElementById('boxLoginVendedor').style.display = 'none';
-    document.getElementById('boxPanelVendedor').style.display = 'block';
-    
-    if (usuarioActualEmail === ADMIN_EMAIL.toLowerCase()) {
-      const btnAdmin = document.getElementById('btnNavAdmin');
-      if (btnAdmin) btnAdmin.style.display = 'flex';
-      cargarGestionVendedores();
-    } else {
-      const btnAdmin = document.getElementById('btnNavAdmin');
-      if (btnAdmin) btnAdmin.style.display = 'none';
-    }
-    
-    cargarPerfilComercio(usuarioActualEmail);
-    cargarMisProductosVendedor();
-  }
-  
-   async function cerrarSesion() {
+  async function cerrarSesion() {
     await supabaseClient.auth.signOut();
     usuarioActualEmail = null;
     location.reload();
@@ -731,179 +710,176 @@ function actualizarInterfaz() {
     }
   }
   
-  // GESTIÓN DEL PERFIL DE COMERCIO (Punto 2)
-async function cargarPerfilComercio(email) {
-  if (!email) return;
+  // GESTIÓN DEL PERFIL DE COMERCIO
+  async function cargarPerfilComercio(email) {
+    if (!email) return;
 
-  const { data } = await supabaseClient
-    .from('comercios')
-    .select('*')
-    .ilike('email', email)
-    .maybeSingle();
+    const { data } = await supabaseClient
+      .from('comercios')
+      .select('*')
+      .ilike('email', email)
+      .maybeSingle();
 
-  if (data) {
-    miComercioNombre = data.nombre || '';
-    
-    // Actualizar vista pública/privada
-    const imgFoto = document.getElementById('viewVendFoto');
-    if (imgFoto) imgFoto.src = data.foto_perfil || 'https://placehold.co/100x100?text=Comercio';
-    
-    if (document.getElementById('viewVendNombre')) document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
-    if (document.getElementById('viewVendResena')) document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
-    if (document.getElementById('viewVendDireccion')) document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
-    if (document.getElementById('viewVendTelefono')) document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
-    if (document.getElementById('viewVendDelivery')) document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
-
-    // Rellenar formulario de edición
-    if (document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
-    if (document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
-    if (document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
-    if (document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
-    if (document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
-  }
-}
-
-async function guardarPerfilComercio(e) {
-  e.preventDefault();
-  if (!usuarioActualEmail) {
-    alert("Debes iniciar sesión primero.");
-    return;
-  }
-
-  const btn = document.getElementById('btnGuardarComercio');
-  if (btn) {
-    btn.disabled = true;
-    btn.innerText = "Guardando...";
-  }
-
-  try {
-    let fotoUrl = document.getElementById('viewVendFoto')?.src || '';
-    const fotoFile = document.getElementById('vendFotoFile')?.files[0];
-
-    if (fotoFile) {
-      const fileExt = fotoFile.name.split('.').pop();
-      const fileName = `perfil_${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, fotoFile);
+    if (data) {
+      miComercioNombre = data.nombre || '';
       
-      if (!uploadError) {
-        const { data: publicData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-        fotoUrl = publicData.publicUrl;
-      }
-    }
+      const imgFoto = document.getElementById('viewVendFoto');
+      if (imgFoto) imgFoto.src = data.foto_perfil || 'https://placehold.co/100x100?text=Comercio';
+      
+      if (document.getElementById('viewVendNombre')) document.getElementById('viewVendNombre').innerText = data.nombre || 'Sin configurar';
+      if (document.getElementById('viewVendResena')) document.getElementById('viewVendResena').innerText = data.resena || 'Sin descripción';
+      if (document.getElementById('viewVendDireccion')) document.getElementById('viewVendDireccion').innerText = data.direccion || 'Sin dirección';
+      if (document.getElementById('viewVendTelefono')) document.getElementById('viewVendTelefono').innerText = data.telefono || 'Sin teléfono';
+      if (document.getElementById('viewVendDelivery')) document.getElementById('viewVendDelivery').innerText = data.delivery === 'si' ? 'Sí, cuenta con delivery' : 'No, solo retiro en local';
 
-    const payload = {
-      email: usuarioActualEmail,
-      nombre: document.getElementById('vendNombre')?.value || '',
-      resena: document.getElementById('vendResena')?.value || '',
-      direccion: document.getElementById('vendDireccion')?.value || '',
-      telefono: document.getElementById('vendTelefono')?.value || '',
-      delivery: document.getElementById('vendDelivery')?.value || 'si',
-      foto_perfil: fotoUrl
-    };
-
-    const { error } = await supabaseClient.from('comercios').upsert([payload], { onConflict: 'email' });
-    if (error) throw error;
-
-    alert("✅ Datos del comercio y foto actualizados correctamente.");
-    ocultarFormularioComercio();
-    await cargarPerfilComercio(usuarioActualEmail);
-    if (typeof cargarComerciosPerfiles === 'function') await cargarComerciosPerfiles();
-
-  } catch (err) {
-    alert("Error al guardar perfil: " + err.message);
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerText = "💾 Guardar Cambios";
+      if (document.getElementById('vendNombre')) document.getElementById('vendNombre').value = data.nombre || '';
+      if (document.getElementById('vendResena')) document.getElementById('vendResena').value = data.resena || '';
+      if (document.getElementById('vendDireccion')) document.getElementById('vendDireccion').value = data.direccion || '';
+      if (document.getElementById('vendTelefono')) document.getElementById('vendTelefono').value = data.telefono || '';
+      if (document.getElementById('vendDelivery')) document.getElementById('vendDelivery').value = data.delivery || 'si';
     }
   }
-}
 
-function mostrarFormularioComercio() {
-  const vista = document.getElementById('vistaDatosComercio');
-  const form = document.getElementById('formDatosComercio');
-  if (vista) vista.style.display = 'none';
-  if (form) form.style.display = 'block';
-}
-
-function ocultarFormularioComercio() {
-  const vista = document.getElementById('vistaDatosComercio');
-  const form = document.getElementById('formDatosComercio');
-  if (vista) vista.style.display = 'block';
-  if (form) form.style.display = 'none';
-}
-// CARGAR PRODUCTOS Y COMERCIOS
-async function cargarProductosSupabase(emailVendedorLogueado = null) {
-  try {
-    const { data: productos, error: errProd } = await supabaseClient.from('productos').select('*');
-    if (errProd) throw errProd;
-    
-    productosGlobales = productos || [];
-
-    // CASO A: Vendedor viendo su propio panel
-    if (emailVendedorLogueado) {
-      const emailClean = emailVendedorLogueado.toLowerCase().trim();
-      const misProductos = productosGlobales.filter(p => 
-        p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailClean
-      );
-
-      if (typeof renderizarProductosVendedor === 'function') {
-        renderizarProductosVendedor(misProductos);
-      } else if (typeof renderizarProductos === 'function') {
-        renderizarProductos(misProductos);
-      }
+  async function guardarPerfilComercio(e) {
+    e.preventDefault();
+    if (!usuarioActualEmail) {
+      alert("Debes iniciar sesión primero.");
       return;
     }
 
-    // CASO B: Tienda Pública (Compradores)
-    const { data: comercios, error: errCom } = await supabaseClient.from('comercios').select('*');
-    if (errCom) throw errCom;
-
-    comerciosGlobales = comercios || [];
-
-    const ahora = new Date();
-    const comerciosValidos = comerciosGlobales.filter(c => 
-      c.estado === 'aprobado' && !c.oculto && (!c.fecha_vencimiento || new Date(c.fecha_vencimiento) > ahora)
-    );
-    const emailsValidos = comerciosValidos.map(c => c.email ? c.email.toLowerCase().trim() : '');
-
-    const productosPublicos = productosGlobales.filter(p => 
-      p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase().trim())
-    );
-    
-    if (typeof renderizarProductos === 'function') {
-      renderizarProductos(productosPublicos);
+    const btn = document.getElementById('btnGuardarComercio');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerText = "Guardando...";
     }
 
-    if (typeof cargarComerciosPerfiles === 'function') {
-      cargarComerciosPerfiles();
+    try {
+      let fotoUrl = document.getElementById('viewVendFoto')?.src || '';
+      const fotoFile = document.getElementById('vendFotoFile')?.files[0];
+
+      if (fotoFile) {
+        const fileExt = fotoFile.name.split('.').pop();
+        const fileName = `perfil_${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, fotoFile);
+        
+        if (!uploadError) {
+          const { data: publicData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+          fotoUrl = publicData.publicUrl;
+        }
+      }
+
+      const payload = {
+        email: usuarioActualEmail,
+        nombre: document.getElementById('vendNombre')?.value || '',
+        resena: document.getElementById('vendResena')?.value || '',
+        direccion: document.getElementById('vendDireccion')?.value || '',
+        telefono: document.getElementById('vendTelefono')?.value || '',
+        delivery: document.getElementById('vendDelivery')?.value || 'si',
+        foto_perfil: fotoUrl
+      };
+
+      const { error } = await supabaseClient.from('comercios').upsert([payload], { onConflict: 'email' });
+      if (error) throw error;
+
+      alert("✅ Datos del comercio y foto actualizados correctamente.");
+      ocultarFormularioComercio();
+      await cargarPerfilComercio(usuarioActualEmail);
+      if (typeof cargarComerciosPerfiles === 'function') await cargarComerciosPerfiles();
+
+    } catch (err) {
+      alert("Error al guardar perfil: " + err.message);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "💾 Guardar Cambios";
+      }
     }
-  } catch (err) {
-    console.error("Error cargando productos de Supabase:", err);
   }
-}
+
+  function mostrarFormularioComercio() {
+    const vista = document.getElementById('vistaDatosComercio');
+    const form = document.getElementById('formDatosComercio');
+    if (vista) vista.style.display = 'none';
+    if (form) form.style.display = 'block';
+  }
+
+  function ocultarFormularioComercio() {
+    const vista = document.getElementById('vistaDatosComercio');
+    const form = document.getElementById('formDatosComercio');
+    if (vista) vista.style.display = 'block';
+    if (form) form.style.display = 'none';
+  }
+
+  // CARGAR PRODUCTOS Y COMERCIOS
+  async function cargarProductosSupabase(emailVendedorLogueado = null) {
+    try {
+      const { data: productos, error: errProd } = await supabaseClient.from('productos').select('*');
+      if (errProd) throw errProd;
+      
+      productosGlobales = productos || [];
+
+      if (emailVendedorLogueado) {
+        const emailClean = emailVendedorLogueado.toLowerCase().trim();
+        const misProductos = productosGlobales.filter(p => 
+          p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailClean
+        );
+
+        if (typeof renderizarMisProductos === 'function') {
+          renderizarMisProductos(misProductos);
+        }
+        return;
+      }
+
+      const { data: comercios, error: errCom } = await supabaseClient.from('comercios').select('*');
+      if (errCom) throw errCom;
+
+      comerciosGlobales = comercios || [];
+
+      const ahora = new Date();
+      const comerciosValidos = comerciosGlobales.filter(c => 
+        c.estado === 'aprobado' && !c.oculto && (!c.fecha_vencimiento || new Date(c.fecha_vencimiento) > ahora)
+      );
+      const emailsValidos = comerciosValidos.map(c => c.email ? c.email.toLowerCase().trim() : '');
+
+      const productosPublicos = productosGlobales.filter(p => 
+        p.email_vendedor && emailsValidos.includes(p.email_vendedor.toLowerCase().trim())
+      );
+      
+      if (typeof renderizarProductos === 'function') {
+        renderizarProductos(productosPublicos);
+      }
+
+      if (typeof cargarComerciosPerfiles === 'function') {
+        cargarComerciosPerfiles();
+      }
+    } catch (err) {
+      console.error("Error cargando productos de Supabase:", err);
+    }
+  }
+
   // CARGAR PRODUCTOS PROPIOS DE VENDEDOR
-async function cargarMisProductosVendedor() {
-  if (!usuarioActualEmail) return;
-  try {
-    const { data, error } = await supabaseClient
-      .from('productos')
-      .select('*')
-      .ilike('email_vendedor', usuarioActualEmail);
+  async function cargarMisProductosVendedor() {
+    if (!usuarioActualEmail) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .ilike('email_vendedor', usuarioActualEmail);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    const lista = data || [];
-    renderizarMisProductos(lista);
+      const lista = data || [];
+      renderizarMisProductos(lista);
 
-    if (typeof calcularPromedioOpiniones === 'function') {
-      calcularPromedioOpiniones(lista);
+      if (typeof calcularPromedioOpiniones === 'function') {
+        calcularPromedioOpiniones(lista);
+      }
+    } catch (err) {
+      console.error("Error al traer productos de vendedor:", err);
     }
-  } catch (err) {
-    console.error("Error al traer productos de vendedor:", err);
   }
-}
-  // CÁLCULO DE OPINIONES Y ESTRELLAS (Punto 3)
+
+  // CÁLCULO DE OPINIONES Y ESTRELLAS
   function calcularPromedioOpiniones(misProductos) {
     if (!misProductos.length) return;
     const totalEstrellas = misProductos.reduce((acc, p) => acc + (p.estrellas || 5), 0);
@@ -922,1016 +898,889 @@ async function cargarMisProductosVendedor() {
       `).join('');
     }
   }
-// RENDERIZAR PERFILES PARA COMPRADOR (Punto 4)
+
+  // RENDERIZAR PERFILES PARA COMPRADOR
   function cargarComerciosPerfiles() {
-  const contenedor = document.getElementById('contenedorPerfilesComercios');
-  if (!contenedor) return;
+    const contenedor = document.getElementById('contenedorPerfilesComercios');
+    if (!contenedor) return;
 
-  if (!comerciosGlobales || !comerciosGlobales.length) {
-    contenedor.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center;">No hay comercios registrados.</p>';
-    return;
-  }
-
-  contenedor.innerHTML = comerciosGlobales.map(c => {
-    const nombreLimpio = (c.nombre || '').replace(/'/g, "\\'");
-    
-    return `
-      <div class="card" style="padding:16px; text-align:center;">
-        <img src="${c.foto_perfil || 'https://placehold.co/100x100?text=Comercio'}" class="profile-avatar" style="margin: 0 auto 12px auto;" />
-        <h3 style="font-size:16px; margin-bottom:4px;">${c.nombre || 'Comercio'}</h3>
-        <p style="font-size:12px; color:#d97706; font-weight:bold; margin-bottom:8px;">⭐ ${c.estrellas || 5.0} / 5.0</p>
-        <p style="font-size:13px; color:#475569; margin-bottom:8px;">${c.resena || 'Sin reseña disponible.'}</p>
-        <p style="font-size:12px; color:#64748b; margin-bottom:8px;">📍 ${c.direccion || 'Bragado'}</p>
-        
-        <!-- Opción Ver Productos -->
-        <button onclick="filtrarPorVendedor('${nombreLimpio}')" class="btn btn-primary" style="margin-bottom:6px; width:100%;">
-          🛍️ Ver Productos
-        </button>
-
-        ${c.telefono ? `<a href="https://wa.me/549${c.telefono}" target="_blank" class="btn btn-outline" style="width:100%;">📱 Contactar WhatsApp</a>` : ''}
-      </div>
-    `;
-  }).join('');
-}
-  // 10. ADMINISTRACIÓN Y MODERACIÓN
-async function cargarGestionVendedores() {
-  const contenedor = document.getElementById('tablaVendedoresAdmin');
-  if (!contenedor) return;
-
-  try {
-    const { data: perfiles, error: errPerfiles } = await supabaseClient
-      .from('perfiles')
-      .select('*');
-
-    if (errPerfiles) console.error("Error al traer perfiles:", errPerfiles);
-
-    const { data: comercios, error: errComercios } = await supabaseClient
-      .from('comercios')
-      .select('*');
-
-    if (errComercios) console.error("Error al traer comercios:", errComercios);
-
-    const mapaSolicitudes = new Map();
-
-    (comercios || []).forEach(c => {
-      if (c.email) {
-        mapaSolicitudes.set(c.email.toLowerCase(), {
-          id: c.id,
-          email: c.email.toLowerCase(),
-          nombre_comercio: c.nombre || 'Sin nombre',
-          telefono: c.telefono || 'Sin teléfono',
-          estado: c.estado || 'pendiente',
-          oculto: c.oculto || false,
-          fecha_vencimiento: c.fecha_vencimiento || null
-        });
-      }
-    });
-
-    (perfiles || []).forEach(p => {
-      if (p.email) {
-        const mail = p.email.toLowerCase();
-        const existente = mapaSolicitudes.get(mail) || {};
-        mapaSolicitudes.set(mail, {
-          ...existente,
-          id: existente.id || p.id,
-          email: mail,
-          nombre_comercio: p.nombre_comercio || existente.nombre_comercio || 'Sin nombre',
-          telefono: p.telefono || existente.telefono || 'Sin teléfono',
-          estado: p.estado || existente.estado || 'pendiente',
-          oculto: existente.oculto || false,
-          fecha_vencimiento: p.fecha_vencimiento || existente.fecha_vencimiento || null
-        });
-      }
-    });
-
-    const todasLasSolicitudes = Array.from(mapaSolicitudes.values());
-
-    if (todasLasSolicitudes.length === 0) {
-      contenedor.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">No hay solicitudes ni comercios registrados aún.</td></tr>';
+    if (!comerciosGlobales || !comerciosGlobales.length) {
+      contenedor.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center;">No hay comercios registrados.</p>';
       return;
     }
 
-    const ahora = new Date();
-
-    contenedor.innerHTML = todasLasSolicitudes.map(sol => {
-      const estaVencido = sol.fecha_vencimiento && new Date(sol.fecha_vencimiento) < ahora;
-
+    contenedor.innerHTML = comerciosGlobales.map(c => {
+      const nombreLimpio = (c.nombre || '').replace(/'/g, "\\'");
+      
       return `
-        <tr style="border-bottom:1px solid #e2e8f0;">
-          <td style="padding:8px;">
-            <strong>${sol.nombre_comercio}</strong><br>
-            <small style="color:#64748b;">${sol.email}</small>
-          </td>
-          <td style="padding:8px;">${sol.telefono}</td>
-          <td style="padding:8px;">
-            <span class="badge ${sol.estado === 'aprobado' ? 'badge-aprobado' : 'badge-pendiente'}">
-              ${sol.estado.toUpperCase()}
-            </span>
-            ${sol.oculto ? '<br><span class="badge badge-suspendido" style="margin-top:4px;">OCULTO</span>' : ''}
-            ${estaVencido ? '<br><span class="badge badge-danger" style="margin-top:4px; background-color:#ef4444; color:white;">VENCIDO</span>' : ''}
-          </td>
-          <td style="padding:8px;">${sol.fecha_vencimiento ? sol.fecha_vencimiento.split('T')[0] : 'Sin fecha'}</td>
-          <td style="padding:8px; display:flex; gap:4px; flex-wrap:wrap;">
-            <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Aprobar</button>
-            <button onclick="renovarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-success" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">+1 Mes</button>
-            <button onclick="quitarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-secondary" style="padding:4px 8px; font-size:11px; margin:0; width:auto; background-color:#64748b; color:white;">-1 Mes</button>
-            <button onclick="toggleOcultarComercio('${sol.id}', ${sol.oculto})" class="btn btn-warning" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">${sol.oculto ? '👁️ Mostrar' : '🙈 Ocultar'}</button>
-            <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Rechazar</button>
-          </td>
-        </tr>
+        <div class="card" style="padding:16px; text-align:center;">
+          <img src="${c.foto_perfil || 'https://placehold.co/100x100?text=Comercio'}" class="profile-avatar" style="margin: 0 auto 12px auto;" />
+          <h3 style="font-size:16px; margin-bottom:4px;">${c.nombre || 'Comercio'}</h3>
+          <p style="font-size:12px; color:#d97706; font-weight:bold; margin-bottom:8px;">⭐ ${c.estrellas || 5.0} / 5.0</p>
+          <p style="font-size:13px; color:#475569; margin-bottom:8px;">${c.resena || 'Sin reseña disponible.'}</p>
+          <p style="font-size:12px; color:#64748b; margin-bottom:8px;">📍 ${c.direccion || 'Bragado'}</p>
+          
+          <button onclick="filtrarPorVendedor('${nombreLimpio}')" class="btn btn-primary" style="margin-bottom:6px; width:100%;">
+            🛍️ Ver Productos
+          </button>
+
+          ${c.telefono ? `<a href="https://wa.me/549${c.telefono}" target="_blank" class="btn btn-outline" style="width:100%;">📱 Contactar WhatsApp</a>` : ''}
+        </div>
       `;
     }).join('');
-
-  } catch (err) {
-    console.error("Error al cargar gestión de vendedores:", err);
-    contenedor.innerHTML = '<tr><td colspan="5" style="color:red; padding:20px; text-align:center;">Error al cargar las solicitudes.</td></tr>';
-  }
-}
-
-// Renovar +1 Mes
-async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
-  try {
-    const baseDate = fechaVencimientoActual && new Date(fechaVencimientoActual) > new Date()
-      ? new Date(fechaVencimientoActual)
-      : new Date();
-
-    baseDate.setMonth(baseDate.getMonth() + 1);
-
-    const { error } = await supabaseClient
-      .from('comercios')
-      .update({ 
-        fecha_vencimiento: baseDate.toISOString(),
-        estado: 'aprobado' 
-      })
-      .eq('id', comercioId);
-
-    if (error) throw error;
-
-    await cargarGestionVendedores();
-    await cargarProductosSupabase();
-  } catch (err) {
-    alert('Error al renovar la membresía: ' + err.message);
-  }
-}
-
-// Deshacer / Restar -1 Mes
-async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
-  if (!fechaVencimientoActual || fechaVencimientoActual === 'null') {
-    alert("El comercio no tiene una fecha de vencimiento configurada.");
-    return;
   }
 
-  try {
-    const baseDate = new Date(fechaVencimientoActual);
-    baseDate.setMonth(baseDate.getMonth() - 1);
+  // ADMINISTRACIÓN Y MODERACIÓN
+  async function cargarGestionVendedores() {
+    const contenedor = document.getElementById('tablaVendedoresAdmin');
+    if (!contenedor) return;
 
-    const { error } = await supabaseClient
-      .from('comercios')
-      .update({ 
-        fecha_vencimiento: baseDate.toISOString()
-      })
-      .eq('id', comercioId);
+    try {
+      const { data: perfiles, error: errPerfiles } = await supabaseClient
+        .from('perfiles')
+        .select('*');
 
-    if (error) throw error;
+      if (errPerfiles) console.error("Error al traer perfiles:", errPerfiles);
 
-    alert("✅ Se restó 1 mes a la membresía.");
-    await cargarGestionVendedores();
-    await cargarProductosSupabase();
-  } catch (err) {
-    alert('Error al restar la membresía: ' + err.message);
-  }
-}  
-  function crearTarjetaHTML(item) {
-  const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
-  const estrellas = item.estrellas || 5;
+      const { data: comercios, error: errComercios } = await supabaseClient
+        .from('comercios')
+        .select('*');
 
-  // Normalización de textos y escape de comillas para funciones inline
-  const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
-  const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
+      if (errComercios) console.error("Error al traer comercios:", errComercios);
 
-  // Verificación de permisos para acciones de edición/borrado
-  const comercioNombre = (item.comercio || '').trim().toLowerCase();
-  const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
-  const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
-  const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
+      const mapaSolicitudes = new Map();
 
-  const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
-  const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
-  const puedeGestionar = esAdmin || esDuenio;
+      (comercios || []).forEach(c => {
+        if (c.email) {
+          mapaSolicitudes.set(c.email.toLowerCase(), {
+            id: c.id,
+            email: c.email.toLowerCase(),
+            nombre_comercio: c.nombre || 'Sin nombre',
+            telefono: c.telefono || 'Sin teléfono',
+            estado: c.estado || 'pendiente',
+            oculto: c.oculto || false,
+            fecha_vencimiento: c.fecha_vencimiento || null
+          });
+        }
+      });
 
-  return `
-    <div class="card">
-      <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
-        ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
-      </button>
-      <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
-      <div class="card-body">
-        <div class="card-title">
-          <span>${item.titulo || item.nombre}</span>
-          <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
-        </div>
-        <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
-          🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
-        </p>
-        <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
-        <span class="badge badge-category">${item.categoria || 'Menú'}</span>
-        
-        <!-- Filtrar por vendedor -->
-        <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
-          🏪 Ver más productos del vendedor
-        </button>
+      (perfiles || []).forEach(p => {
+        if (p.email) {
+          const mail = p.email.toLowerCase();
+          const existente = mapaSolicitudes.get(mail) || {};
+          mapaSolicitudes.set(mail, {
+            ...existente,
+            id: existente.id || p.id,
+            email: mail,
+            nombre_comercio: p.nombre_comercio || existente.nombre_comercio || 'Sin nombre',
+            telefono: p.telefono || existente.telefono || 'Sin teléfono',
+            estado: p.estado || existente.estado || 'pendiente',
+            oculto: existente.oculto || false,
+            fecha_vencimiento: p.fecha_vencimiento || existente.fecha_vencimiento || null
+          });
+        }
+      });
 
-        <!-- Calificar u opinar -->
-        <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
-          ⭐ Calificar u opinar
-        </button>
+      const todasLasSolicitudes = Array.from(mapaSolicitudes.values());
 
-        <!-- Pedido por WhatsApp -->
-        ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
-
-        <!-- Acciones exclusivas para Dueño o Admin -->
-        ${puedeGestionar ? `
-          <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
-            <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
-            <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
-          </div>
-        ` : ''}
-      </div>
-    </div>
-  `;
-}
-  
-// SISTEMA DE CALIFICACIONES Y RESEÑAS
-function abrirModalOpinion(idProducto, titulo) {
-  if (!usuarioActualEmail) {
-    alert("Debes iniciar sesión para opinar.");
-    if (typeof abrirModalComprador === 'function') abrirModalComprador();
-    return;
-  }
-  
-  const inputId = document.getElementById('opinionProdId');
-  const txtTitulo = document.getElementById('txtProductoAOpinar');
-  const modal = document.getElementById('modalOpinionProducto');
-
-  if (inputId) inputId.value = idProducto;
-  if (txtTitulo) txtTitulo.innerText = titulo;
-  if (modal) modal.classList.remove('hidden');
-}
-
-function cerrarModalOpinion() {
-  const modal = document.getElementById('modalOpinionProducto');
-  if (modal) modal.classList.add('hidden');
-}
-
-async function guardarOpinionProducto(e) {
-  e.preventDefault();
-  const id = document.getElementById('opinionProdId').value;
-  const estrellas = parseInt(document.getElementById('opinionEstrellas').value);
-  const texto = document.getElementById('opinionTexto').value.trim();
-
-  try {
-    const { data: prod, error: fetchErr } = await supabaseClient
-      .from('productos')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (fetchErr) throw fetchErr;
-
-    if (prod) {
-      const descActual = prod.descripcion || '';
-      const nuevaDesc = `${descActual} | Reseña (${usuarioActualEmail}): "${texto}" ⭐${estrellas}/5`;
-
-      const { error: updateErr } = await supabaseClient
-        .from('productos')
-        .update({
-          estrellas: estrellas,
-          descripcion: nuevaDesc
-        })
-        .eq('id', id);
-
-      if (updateErr) throw updateErr;
-
-      alert("✅ Gracias. Tu calificación ha sido registrada.");
-      cerrarModalOpinion();
-      
-      if (typeof cargarProductosSupabase === 'function') {
-        await cargarProductosSupabase();
+      if (todasLasSolicitudes.length === 0) {
+        contenedor.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">No hay solicitudes ni comercios registrados aún.</td></tr>';
+        return;
       }
+
+      const ahora = new Date();
+
+      contenedor.innerHTML = todasLasSolicitudes.map(sol => {
+        const estaVencido = sol.fecha_vencimiento && new Date(sol.fecha_vencimiento) < ahora;
+
+        return `
+          <tr style="border-bottom:1px solid #e2e8f0;">
+            <td style="padding:8px;">
+              <strong>${sol.nombre_comercio}</strong><br>
+              <small style="color:#64748b;">${sol.email}</small>
+            </td>
+            <td style="padding:8px;">${sol.telefono}</td>
+            <td style="padding:8px;">
+              <span class="badge ${sol.estado === 'aprobado' ? 'badge-aprobado' : 'badge-pendiente'}">
+                ${sol.estado.toUpperCase()}
+              </span>
+              ${sol.oculto ? '<br><span class="badge badge-suspendido" style="margin-top:4px;">OCULTO</span>' : ''}
+              ${estaVencido ? '<br><span class="badge badge-danger" style="margin-top:4px; background-color:#ef4444; color:white;">VENCIDO</span>' : ''}
+            </td>
+            <td style="padding:8px;">${sol.fecha_vencimiento ? sol.fecha_vencimiento.split('T')[0] : 'Sin fecha'}</td>
+            <td style="padding:8px; display:flex; gap:4px; flex-wrap:wrap;">
+              <button onclick="cambiarEstadoVendedor('${sol.email}', 'aprobado')" class="btn btn-primary" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Aprobar</button>
+              <button onclick="renovarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-success" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">+1 Mes</button>
+              <button onclick="quitarMembresiaMensual('${sol.id}', '${sol.fecha_vencimiento}')" class="btn btn-secondary" style="padding:4px 8px; font-size:11px; margin:0; width:auto; background-color:#64748b; color:white;">-1 Mes</button>
+              <button onclick="toggleOcultarComercio('${sol.id}', ${sol.oculto})" class="btn btn-warning" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">${sol.oculto ? '👁️ Mostrar' : '🙈 Ocultar'}</button>
+              <button onclick="cambiarEstadoVendedor('${sol.email}', 'rechazado')" class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin:0; width:auto;">Rechazar</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+    } catch (err) {
+      console.error("Error al cargar gestión de vendedores:", err);
+      contenedor.innerHTML = '<tr><td colspan="5" style="color:red; padding:20px; text-align:center;">Error al cargar las solicitudes.</td></tr>';
     }
-  } catch (err) {
-    alert("Error guardando calificación: " + err.message);
   }
-}
+
+  async function renovarMembresiaMensual(comercioId, fechaVencimientoActual) {
+    try {
+      const baseDate = fechaVencimientoActual && new Date(fechaVencimientoActual) > new Date()
+        ? new Date(fechaVencimientoActual)
+        : new Date();
+
+      baseDate.setMonth(baseDate.getMonth() + 1);
+
+      const { error } = await supabaseClient
+        .from('comercios')
+        .update({ 
+          fecha_vencimiento: baseDate.toISOString(),
+          estado: 'aprobado' 
+        })
+        .eq('id', comercioId);
+
+      if (error) throw error;
+
+      await cargarGestionVendedores();
+      await cargarProductosSupabase();
+    } catch (err) {
+      alert('Error al renovar la membresía: ' + err.message);
+    }
+  }
+
+  async function quitarMembresiaMensual(comercioId, fechaVencimientoActual) {
+    if (!fechaVencimientoActual || fechaVencimientoActual === 'null') {
+      alert("El comercio no tiene una fecha de vencimiento configurada.");
+      return;
+    }
+
+    try {
+      const baseDate = new Date(fechaVencimientoActual);
+      baseDate.setMonth(baseDate.getMonth() - 1);
+
+      const { error } = await supabaseClient
+        .from('comercios')
+        .update({ 
+          fecha_vencimiento: baseDate.toISOString()
+        })
+        .eq('id', comercioId);
+
+      if (error) throw error;
+
+      alert("✅ Se restó 1 mes a la membresía.");
+      await cargarGestionVendedores();
+      await cargarProductosSupabase();
+    } catch (err) {
+      alert('Error al restar la membresía: ' + err.message);
+    }
+  }  
+
+  function crearTarjetaHTML(item) {
+    const imgUrl = item.imagen || 'https://via.placeholder.com/240x140?text=Comida';
+    const estrellas = item.estrellas || 5;
+
+    const tituloLimpio = (item.titulo || item.nombre || '').replace(/'/g, "\\'");
+    const comercioLimpio = (item.comercio || '').replace(/'/g, "\\'");
+
+    const comercioNombre = (item.comercio || '').trim().toLowerCase();
+    const emailActual = (typeof usuarioActualEmail !== 'undefined' && usuarioActualEmail) ? usuarioActualEmail.trim().toLowerCase() : '';
+    const adminEmail = (typeof ADMIN_EMAIL !== 'undefined' && ADMIN_EMAIL) ? ADMIN_EMAIL.trim().toLowerCase() : '';
+    const miComercio = (typeof miComercioNombre !== 'undefined' && miComercioNombre) ? miComercioNombre.trim().toLowerCase() : '';
+
+    const esAdmin = emailActual !== '' && adminEmail !== '' && emailActual === adminEmail;
+    const esDuenio = emailActual !== '' && comercioNombre !== '' && miComercio !== '' && comercioNombre === miComercio;
+    const puedeGestionar = esAdmin || esDuenio;
+
+    return `
+      <div class="card">
+        <button class="btn-fav" onclick="toggleFavorito('${item.id}')">
+          ${idsFavoritos.includes(item.id.toString()) ? '❤️' : '🤍'}
+        </button>
+        <img src="${imgUrl}" alt="${item.titulo || item.nombre}">
+        <div class="card-body">
+          <div class="card-title">
+            <span>${item.titulo || item.nombre}</span>
+            <span class="price">$${Number(item.precio || 0).toLocaleString('es-AR')}</span>
+          </div>
+          <p style="font-size:12px; color:#64748b; margin-bottom:4px;">
+            🏪 ${item.comercio || 'Local'} | ⭐ ${estrellas}/5
+          </p>
+          <p style="font-size:13px; color:#475569; margin-bottom:8px;">${item.descripcion || ''}</p>
+          <span class="badge badge-category">${item.categoria || 'Menú'}</span>
+          
+          <button onclick="filtrarPorVendedor('${comercioLimpio}')" class="btn btn-outline" style="margin-top:6px; font-size:11px; padding:4px;">
+            🏪 Ver más productos del vendedor
+          </button>
+
+          <button onclick="abrirModalOpinion('${item.id}', '${tituloLimpio}')" class="btn btn-warning" style="margin-top:4px; font-size:11px; padding:4px;">
+            ⭐ Calificar u opinar
+          </button>
+
+          ${item.telefono ? `<a href="https://wa.me/549${item.telefono}?text=Hola,\%20quiero\%20pedir:\%20${encodeURIComponent(item.titulo || item.nombre)}" target="_blank" class="btn btn-primary" style="margin-top:6px;">📱 Pedir por WhatsApp</a>` : ''}
+
+          ${puedeGestionar ? `
+            <div style="display:flex; gap:4px; margin-top:8px; border-top:1px solid #e2e8f0; padding-top:6px;">
+              <button onclick="abrirModalEditar('${item.id}')" class="btn btn-warning" style="padding:4px; font-size:11px; flex:1;">✏ Editar</button>
+              <button onclick="eliminarProductoSupabase('${item.id}')" class="btn btn-danger" style="padding:4px; font-size:11px; flex:1;">🗑️ Borrar</button>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
   
-function renderizarProductos(lista) {
-  const grid = document.getElementById('contenedorProductos');
-  if (!grid) return;
-  
-  let aMostrar = lista || [];
-  const lblTitulo = document.getElementById('lblMenuTitulo');
-  const btnVerTodos = document.getElementById('btnVerTodos');
+  // SISTEMA DE CALIFICACIONES Y RESEÑAS
+  function abrirModalOpinion(idProducto, titulo) {
+    if (!usuarioActualEmail) {
+      alert("Debes iniciar sesión para opinar.");
+      if (typeof abrirModalComprador === 'function') abrirModalComprador();
+      return;
+    }
+    
+    const inputId = document.getElementById('opinionProdId');
+    const txtTitulo = document.getElementById('txtProductoAOpinar');
+    const modal = document.getElementById('modalOpinionProducto');
 
-  if (vendedorFiltroActual) {
-    aMostrar = aMostrar.filter(p => 
-      (p.comercio || '').toLowerCase() === vendedorFiltroActual.toLowerCase() || 
-      (p.email_vendedor || '').toLowerCase() === vendedorFiltroActual.toLowerCase()
-    );
-    if (lblTitulo) lblTitulo.innerText = `Productos de: ${vendedorFiltroActual}`;
-    if (btnVerTodos) btnVerTodos.classList.remove('hidden');
-  } else {
-    if (lblTitulo) lblTitulo.innerText = "Ofertas y Menú del Día";
-    if (btnVerTodos) btnVerTodos.classList.add('hidden');
+    if (inputId) inputId.value = idProducto;
+    if (txtTitulo) txtTitulo.innerText = titulo;
+    if (modal) modal.classList.remove('hidden');
   }
 
-  if (aMostrar.length === 0) {
-    grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron productos disponibles.</p>';
-    return;
+  function cerrarModalOpinion() {
+    const modal = document.getElementById('modalOpinionProducto');
+    if (modal) modal.classList.add('hidden');
   }
 
-  grid.innerHTML = aMostrar.map(crearTarjetaHTML).join('');
-}
-    function filtrarPorVendedor(nombreComercio) {
+  async function guardarOpinionProducto(e) {
+    e.preventDefault();
+    const id = document.getElementById('opinionProdId').value;
+    const estrellas = parseInt(document.getElementById('opinionEstrellas').value);
+    const texto = document.getElementById('opinionTexto').value.trim();
+
+    try {
+      const { data: prod, error: fetchErr } = await supabaseClient
+        .from('productos')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (fetchErr) throw fetchErr;
+
+      if (prod) {
+        const descActual = prod.descripcion || '';
+        const nuevaDesc = `${descActual} | Reseña (${usuarioActualEmail}): "${texto}" ⭐${estrellas}/5`;
+
+        const { error: updateErr } = await supabaseClient
+          .from('productos')
+          .update({
+            estrellas: estrellas,
+            descripcion: nuevaDesc
+          })
+          .eq('id', id);
+
+        if (updateErr) throw updateErr;
+
+        alert("✅ Gracias. Tu calificación ha sido registrada.");
+        cerrarModalOpinion();
+        
+        if (typeof cargarProductosSupabase === 'function') {
+          await cargarProductosSupabase();
+        }
+      }
+    } catch (err) {
+      alert("Error guardando calificación: " + err.message);
+    }
+  }
+    
+  function renderizarProductos(lista) {
+    const grid = document.getElementById('contenedorProductos');
+    if (!grid) return;
+    
+    let aMostrar = lista || [];
+    const lblTitulo = document.getElementById('lblMenuTitulo');
+    const btnVerTodos = document.getElementById('btnVerTodos');
+
+    if (vendedorFiltroActual) {
+      aMostrar = aMostrar.filter(p => 
+        (p.comercio || '').toLowerCase() === vendedorFiltroActual.toLowerCase() || 
+        (p.email_vendedor || '').toLowerCase() === vendedorFiltroActual.toLowerCase()
+      );
+      if (lblTitulo) lblTitulo.innerText = `Productos de: ${vendedorFiltroActual}`;
+      if (btnVerTodos) btnVerTodos.classList.remove('hidden');
+    } else {
+      if (lblTitulo) lblTitulo.innerText = "Ofertas y Menú del Día";
+      if (btnVerTodos) btnVerTodos.classList.add('hidden');
+    }
+
+    if (aMostrar.length === 0) {
+      grid.innerHTML = '<p style="color:#64748b; grid-column:1/-1; text-align:center; padding:20px;">No se encontraron productos disponibles.</p>';
+      return;
+    }
+
+    grid.innerHTML = aMostrar.map(crearTarjetaHTML).join('');
+  }
+
+  function filtrarPorVendedor(nombreComercio) {
     vendedorFiltroActual = nombreComercio;
     const btnNav = document.querySelectorAll('.nav-btn')[0];
     navegarA('secComprador', btnNav);
     renderizarProductos(productosGlobales);
   }
-    function mostrarTodosLosProductos() {
+
+  function mostrarTodosLosProductos() {
     vendedorFiltroActual = null;
     renderizarProductos(productosGlobales);
   }
 
-// Panel privado para el vendedor / administrador
-function renderizarMisProductos(misProdsInput = null) {
-  const grid = document.getElementById('gridMisProductos');
-  if (!grid) return;
+  // Panel privado para el vendedor
+  function renderizarMisProductos(misProdsInput = null) {
+    const grid = document.getElementById('gridMisProductos');
+    if (!grid) return;
 
-  const emailSesion = typeof usuarioActualEmail !== 'undefined' ? usuarioActualEmail.toLowerCase().trim() : '';
-  const esAdmin = emailSesion && typeof ADMIN_EMAIL !== 'undefined' && (emailSesion === ADMIN_EMAIL.toLowerCase());
+    const emailSesion = typeof usuarioActualEmail !== 'undefined' ? usuarioActualEmail.toLowerCase().trim() : '';
+    const esAdmin = emailSesion && typeof ADMIN_EMAIL !== 'undefined' && (emailSesion === ADMIN_EMAIL.toLowerCase());
 
-  // Resuelve el origen de los datos si no vienen por argumento
-  let misProds = [];
-  if (misProdsInput) {
-    misProds = misProdsInput;
-  } else if (esAdmin) {
-    misProds = (typeof productosGlobales !== 'undefined') ? productosGlobales : [];
-  } else {
-    misProds = (typeof productosGlobales !== 'undefined' ? productosGlobales : []).filter(p => 
-      p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailSesion
-    );
-  }
-
-  if (!misProds || misProds.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
-        <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
-        <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
-        <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
-          ➕ Publicar Producto Ahora
-        </button>
-      </div>
-    `;
-    return;
-  }
-
-  grid.innerHTML = misProds.map(p => {
-    // Definimos título y valores seguros escapando comillas simples
-    const tituloValido = (p.titulo || p.nombre || 'Sin título').replace(/'/g, "\\'");
-    const descValida = (p.descripcion || '').replace(/'/g, "\\'");
-    const catValida = (p.categoria || '').replace(/'/g, "\\'");
-    const imgValida = (p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen').replace(/'/g, "\\'");
-    const precioValido = Number(p.precio) || 0;
-
-    return `
-      <div style="background: white; border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <img src="${imgValida}" 
-             alt="${tituloValido}"
-             style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" 
-             onerror="this.src='https://via.placeholder.com/80?text=Error'" />
-
-        <div style="flex: 1; min-width: 0;">
-          <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${p.titulo || p.nombre || 'Sin título'}
-          </h4>
-          <p style="margin: 0; font-weight: bold; color: #d97706; font-size: 14px;">
-            $${precioValido.toLocaleString('es-AR')}
-          </p>
-          <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">⭐ ${p.estrellas || 5}/5</p>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
-          <button onclick="typeof abrirModalEditar === 'function' ? abrirModalEditar('${p.id}') : prepararEdicionProducto('${p.id}', '${tituloValido}', ${precioValido}, '${catValida}', '${descValida}', '${imgValida}')" 
-                  class="btn btn-primary" 
-                  style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto;">
-            ✏️ Editar
-          </button>
-          <button onclick="typeof eliminarProductoSupabase === 'function' ? eliminarProductoSupabase('${p.id}') : eliminarProducto('${p.id}')" 
-                  class="btn btn-danger" 
-                  style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
-            🗑️ Eliminar
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-  // 5. PUBLICACIÓN DE PRODUCTO
- async function publicarProducto(e) {
-  e.preventDefault();
-  
-  if (!usuarioActualEmail) {
-    alert("Debes iniciar sesión para publicar.");
-    return;
-  }
-
-  const btnSubmit = document.getElementById('btnPublicarProd');
-  const fileInput = document.getElementById('prodImagenFile');
-  const archivo = fileInput?.files[0];
-
-  if (!archivo) {
-    alert("Por favor, seleccioná una imagen para el producto.");
-    return;
-  }
-
-  try {
-    if (btnSubmit) {
-      btnSubmit.disabled = true;
-      btnSubmit.innerText = "Subiendo imagen...";
+    let misProds = [];
+    if (misProdsInput) {
+      misProds = misProdsInput;
+    } else if (esAdmin) {
+      misProds = (typeof productosGlobales !== 'undefined') ? productosGlobales : [];
+    } else {
+      misProds = (typeof productosGlobales !== 'undefined' ? productosGlobales : []).filter(p => 
+        p.email_vendedor && p.email_vendedor.toLowerCase().trim() === emailSesion
+      );
     }
 
-    // Nombre de archivo seguro e único
-    const fileExt = archivo.name.split('.').pop();
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    if (!misProds || misProds.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #64748b; background: white; border-radius: 12px; border: 1px solid var(--border);">
+          <p style="font-size:14px; font-weight:bold; margin-bottom: 6px;">No tenés productos publicados todavía.</p>
+          <p style="font-size:12px; margin-bottom: 12px;">Completá los datos de tu negocio y publicá tu primer plato u oferta.</p>
+          <button onclick="cambiarSubtabNegocio('subPublicarProducto', document.querySelectorAll('#secVendedor .subnav-btn')[1])" class="btn btn-primary" style="width: auto; padding: 8px 16px;">
+            ➕ Publicar Producto Ahora
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = misProds.map(p => {
+      const tituloValido = (p.titulo || p.nombre || 'Sin título').replace(/'/g, "\\'");
+      const descValida = (p.descripcion || '').replace(/'/g, "\\'");
+      const catValida = (p.categoria || '').replace(/'/g, "\\'");
+      const imgValida = (p.imagen || 'https://via.placeholder.com/80?text=Sin+Imagen').replace(/'/g, "\\'");
+      const precioValido = Number(p.precio) || 0;
+
+      return `
+        <div style="background: white; border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <img src="${imgValida}" 
+               alt="${tituloValido}"
+               style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; flex-shrink: 0;" 
+               onerror="this.src='https://via.placeholder.com/80?text=Error'" />
+
+          <div style="flex: 1; min-width: 0;">
+            <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${p.titulo || p.nombre || 'Sin título'}
+            </h4>
+            <p style="margin: 0; font-weight: bold; color: #d97706; font-size: 14px;">
+              $${precioValido.toLocaleString('es-AR')}
+            </p>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #64748b;">⭐ ${p.estrellas || 5}/5</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;">
+            <button onclick="abrirModalEditar('${p.id}')" 
+                    class="btn btn-primary" 
+                    style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto;">
+              ✏️ Editar
+            </button>
+            <button onclick="eliminarProductoSupabase('${p.id}')" 
+                    class="btn btn-danger" 
+                    style="padding: 5px 10px; font-size: 11px; margin: 0; width: auto; background-color: #ef4444; color: white;">
+              🗑️ Eliminar
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // PUBLICACIÓN DE PRODUCTO
+  async function publicarProducto(e) {
+    e.preventDefault();
     
-    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
-    if (uploadError) throw uploadError;
-
-    const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-
-    if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
-
-    const nuevo = {
-      email_vendedor: usuarioActualEmail,
-      comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
-      titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
-      categoria: document.getElementById('prodCategoria')?.value || "Menú",
-      precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
-      imagen: publicUrlData.publicUrl,
-      descripcion: (document.getElementById('prodDescripcion') || document.getElementById('prodDesc'))?.value.trim() || "",
-      direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
-      telefono: document.getElementById('vendTelefono')?.value.trim() || "",
-      delivery: document.getElementById('vendDelivery')?.value || "consultar",
-      estrellas: 5
-    };
-
-    const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
-    if (insertError) throw insertError;
-
-    alert("✅ Producto publicado con éxito.");
-    e.target.reset();
-
-    if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
-    if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
-
-    if (typeof cambiarSubtabNegocio === 'function') {
-      const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
-      cambiarSubtabNegocio('subMisProductos', btnMisProd);
+    if (!usuarioActualEmail) {
+      alert("Debes iniciar sesión para publicar.");
+      return;
     }
 
-  } catch (err) {
-    alert("Error al publicar el producto: " + err.message);
-  } finally {
-    if (btnSubmit) {
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = "Publicar en la Plataforma";
+    const btnSubmit = document.getElementById('btnPublicarProd');
+    const fileInput = document.getElementById('prodImagenFile');
+    const archivo = fileInput?.files[0];
+
+    if (!archivo) {
+      alert("Por favor, seleccioná una imagen para el producto.");
+      return;
     }
-  }
-}
 
-  // --- PREPARAR EDICIÓN EN EL FORMULARIO ---
-  function prepararEdicionProducto(idParam, param2, precio, categoria, descripcion, imagen) {
-  let prod = {};
-
-  // 1. Detectar si param2 viene como JSON codificado o como parámetros sueltos
-  if (typeof param2 === 'string' && (param2.startsWith('{') || param2.includes('%7B'))) {
     try {
-      prod = JSON.parse(decodeURIComponent(param2));
-    } catch (e) {
-      prod = { id: idParam, titulo: param2, precio, categoria, descripcion, imagen };
-    }
-  } else if (typeof param2 === 'object' && param2 !== null) {
-    prod = param2;
-  } else {
-    prod = {
-      id: idParam,
-      titulo: param2,
-      precio: precio,
-      categoria: categoria,
-      descripcion: descripcion,
-      imagen: imagen
-    };
-  }
-
-  // 2. Definir ID final asegurado
-  const idProducto = prod.id || idParam || '';
-
-  // 3. Función auxiliar interna para asignar valores a los campos
-  const setInputValue = (ids, value) => {
-    for (const elementId of ids) {
-      const el = document.getElementById(elementId);
-      if (el) {
-        el.value = value !== undefined && value !== null ? value : '';
-        break;
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Subiendo imagen...";
       }
-    }
-  };
 
-  // 4. Asignar los valores a los inputs del formulario
-  setInputValue(['txtProdId', 'editProdId'], idProducto);
-  setInputValue(['txtProdNombre', 'editProdTitulo', 'prodTitulo'], prod.titulo || prod.nombre || '');
-  setInputValue(['txtProdPrecio', 'editProdPrecio', 'prodPrecio'], prod.precio || 0);
-  setInputValue(['txtProdCategoria', 'editProdCategoria', 'prodCategoria'], prod.categoria || '');
-  setInputValue(['txtProdDesc', 'editProdDescripcion', 'prodDescripcion'], prod.descripcion || '');
-  setInputValue(['editProdImagenActual', 'txtProdImagen', 'editProdImagen', 'prodImagen'], prod.imagen || '');
-
-  // 5. Cambiar texto del botón si existe
-  const btnGuardar = document.getElementById('btnGuardarProducto');
-  if (btnGuardar) btnGuardar.innerText = '💾 Actualizar Producto';
-
-  // 6. Abrir modal o scroll al formulario
-  const modal = document.getElementById('modalEditarProducto');
-  if (modal) {
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-  } else {
-    const formSection = document.getElementById('secFormProducto');
-    if (formSection) {
-      formSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-}
-// --- ELIMINAR PRODUCTO DE SUPABASE ---
-async function eliminarProductoSupabase(idProducto) {
-  if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
-
-  try {
-    const { error } = await supabaseClient
-      .from('productos')
-      .delete()
-      .eq('id', idProducto);
-
-    if (error) throw error;
-
-    alert('✅ Producto eliminado correctamente.');
-
-    // Recargar el catálogo general
-    if (typeof cargarProductosSupabase === 'function') {
-      await cargarProductosSupabase();
-    }
-
-    // Recargar la lista del vendedor
-    if (typeof cargarMisProductosVendedor === 'function') {
-      await cargarMisProductosVendedor();
-    }
-
-  } catch (err) {
-    console.error('Error al eliminar producto:', err);
-    alert('Error al eliminar el producto: ' + err.message);
-  }
-}
-  // 6. NAVEGACIÓN Y SUBPESTAÑAS
-function navegarA(tabId, btn) {
-  // Manejo seguro del contenedor de selección de perfil
-  const secPerfil = document.getElementById('secSeleccionPerfil') || document.getElementById('roleSelectionSection');
-  if (secPerfil) secPerfil.style.display = 'none';
-
-  // Cambio visual de pestañas
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  
-  const tab = document.getElementById(tabId);
-  if (tab) tab.classList.add('active');
-  if (btn) btn.classList.add('active');
-
-  // Carga dinámica de contenido según la pestaña activa
-  if (tabId === 'secVendedor') {
-    if (typeof cargarMisProductosVendedor === 'function') {
-      cargarMisProductosVendedor();
-    } else if (typeof renderizarMisProductos === 'function') {
-      renderizarMisProductos();
-    }
-  } else if (tabId === 'secPerfiles') {
-    if (typeof cargarComerciosPerfiles === 'function') cargarComerciosPerfiles();
-  } else if (tabId === 'secAdmin') {
-    if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
-  }
-}
-
-function cambiarSubtabNegocio(subtabId, btn) {
-  document.querySelectorAll('.subtab-negocio-content').forEach(s => s.style.display = 'none');
-  document.querySelectorAll('#secVendedor .subnav-btn').forEach(b => b.classList.remove('active'));
-  
-  const targetSubtab = document.getElementById(subtabId);
-  if (targetSubtab) targetSubtab.style.display = 'block';
-  if (btn) btn.classList.add('active');
-
-  // Recarga de mis productos al hacer clic en la subpestaña
-  if (subtabId === 'subMisProductos') {
-    if (typeof cargarMisProductosVendedor === 'function') {
-      cargarMisProductosVendedor();
-    } else if (typeof renderizarMisProductos === 'function') {
-      renderizarMisProductos();
-    }
-  }
-}
-
-// 7. EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
-function abrirModalEditar(id) {
-  const prod = productosGlobales.find(p => p.id.toString() === id.toString());
-  if (!prod) return;
-  document.getElementById('editProdId').value = prod.id;
-  document.getElementById('editProdTitulo').value = prod.titulo || '';
-  document.getElementById('editProdCategoria').value = prod.categoria || 'plato_dia';
-  document.getElementById('editProdPrecio').value = prod.precio || 0;
-  document.getElementById('editProdDesc').value = prod.descripcion || '';
-  document.getElementById('editProdImagenActual').value = prod.imagen || '';
-  
-  // Limpia el input tipo file si existe
-  const fileInput = document.getElementById('editProdImagenFile');
-  if (fileInput) fileInput.value = '';
-
-  document.getElementById('modalEditarProducto').classList.remove('hidden');
-}
-
-function cerrarModalEditar() {
-  document.getElementById('modalEditarProducto').classList.add('hidden');
-}
-
-async function guardarEdicionProducto(e) {
-  e.preventDefault();
-  const id = document.getElementById('editProdId').value;
-  const btnGuardar = document.getElementById('btnGuardarEdit');
-  const archivo = document.getElementById('editProdImagenFile')?.files[0];
-  try {
-    btnGuardar.disabled = true;
-    btnGuardar.innerText = "Guardando...";
-    let imageUrl = document.getElementById('editProdImagenActual').value;
-    if (archivo) {
       const fileExt = archivo.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      
       const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
       if (uploadError) throw uploadError;
+
       const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
-      imageUrl = publicUrlData.publicUrl;
+
+      if (btnSubmit) btnSubmit.innerText = "Guardando producto...";
+
+      const nuevo = {
+        email_vendedor: usuarioActualEmail,
+        comercio: document.getElementById('vendNombre')?.value.trim() || miComercioNombre || "Mi Comercio",
+        titulo: document.getElementById('prodTitulo')?.value.trim() || "Producto sin título",
+        categoria: document.getElementById('prodCategoria')?.value || "Menú",
+        precio: parseFloat(document.getElementById('prodPrecio')?.value) || 0,
+        imagen: publicUrlData.publicUrl,
+        descripcion: document.getElementById('prodDesc')?.value.trim() || "",
+        direccion: document.getElementById('vendDireccion')?.value.trim() || "Bragado",
+        telefono: document.getElementById('vendTelefono')?.value.trim() || "",
+        delivery: document.getElementById('vendDelivery')?.value || "consultar",
+        estrellas: 5
+      };
+
+      const { error: insertError } = await supabaseClient.from('productos').insert([nuevo]);
+      if (insertError) throw insertError;
+
+      alert("✅ Producto publicado con éxito.");
+      e.target.reset();
+
+      if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
+      if (typeof cargarMisProductosVendedor === 'function') await cargarMisProductosVendedor();
+
+      if (typeof cambiarSubtabNegocio === 'function') {
+        const btnMisProd = document.querySelectorAll('#secVendedor .subnav-btn')[2];
+        cambiarSubtabNegocio('subMisProductos', btnMisProd);
+      }
+
+    } catch (err) {
+      alert("Error al publicar el producto: " + err.message);
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Publicar en la Plataforma";
+      }
     }
-    const updates = {
-      titulo: document.getElementById('editProdTitulo').value,
-      categoria: document.getElementById('editProdCategoria').value,
-      precio: parseFloat(document.getElementById('editProdPrecio').value),
-      descripcion: document.getElementById('editProdDesc').value,
-      imagen: imageUrl
-    };
-    const { error } = await supabaseClient.from('productos').update(updates).eq('id', id);
-    if (error) throw error;
-    alert("✅ Producto actualizado correctamente.");
-    cerrarModalEditar();
-    await cargarProductosSupabase();
-    await cargarMisProductosVendedor();
-  } catch (err) {
-    alert("Error al actualizar producto: " + err.message);
-  } finally {
-    btnGuardar.disabled = false;
-    btnGuardar.innerText = "Guardar Cambios";
   }
-}
 
-async function eliminarProductoSupabase(id) {
-  if (!confirm("¿Estás seguro de que querés eliminar este producto?")) return;
-  const { error } = await supabaseClient.from('productos').delete().eq('id', id);
-  if (error) {
-    alert("Error al eliminar producto: " + error.message);
-  } else {
-    alert("🗑️ Producto eliminado.");
-    await cargarProductosSupabase();
-    await cargarMisProductosVendedor();
-  }
-}
+  // NAVEGACIÓN Y SUBPESTAÑAS
+  function navegarA(tabId, btn) {
+    const secPerfil = document.getElementById('secSeleccionPerfil');
+    if (secPerfil) secPerfil.style.display = 'none';
 
-// 8. FAVORITOS Y FILTROS
-function toggleFavorito(id) {
-  const strId = id.toString();
-  idsFavoritos = idsFavoritos.includes(strId) 
-    ? idsFavoritos.filter(item => item !== strId) 
-    : [...idsFavoritos, strId];
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     
-  localStorage.setItem('sl_favoritos', JSON.stringify(idsFavoritos));
-  if (typeof renderizarProductos === 'function') {
-    renderizarProductos(typeof productosGlobales !== 'undefined' ? productosGlobales : []);
+    const tab = document.getElementById(tabId);
+    if (tab) tab.classList.add('active');
+    if (btn) btn.classList.add('active');
+
+    if (tabId === 'secVendedor') {
+      if (typeof cargarMisProductosVendedor === 'function') {
+        cargarMisProductosVendedor();
+      }
+    } else if (tabId === 'secPerfiles') {
+      if (typeof cargarComerciosPerfiles === 'function') cargarComerciosPerfiles();
+    } else if (tabId === 'secAdmin') {
+      if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
+    }
   }
-}
 
-function filtrarContenido() {
-  const inputBuscar = document.getElementById('inputBuscar');
-  const selectCat = document.getElementById('selectCatFiltro');
-  const selectOrden = document.getElementById('selectOrdenFiltro');
+  function cambiarSubtabNegocio(subtabId, btn) {
+    document.querySelectorAll('.subtab-negocio-content').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('#secVendedor .subnav-btn').forEach(b => b.classList.remove('active'));
+    
+    const targetSubtab = document.getElementById(subtabId);
+    if (targetSubtab) targetSubtab.style.display = 'block';
+    if (btn) btn.classList.add('active');
 
-  const busqueda = inputBuscar ? inputBuscar.value.toLowerCase().trim() : '';
-  const cat = selectCat ? selectCat.value : '';
-  const orden = selectOrden ? selectOrden.value : '';
+    if (subtabId === 'subMisProductos') {
+      if (typeof cargarMisProductosVendedor === 'function') {
+        cargarMisProductosVendedor();
+      }
+    }
+  }
 
-  const listaBase = typeof productosGlobales !== 'undefined' ? productosGlobales : [];
+  // EDICIÓN Y ELIMINACIÓN DE PRODUCTOS
+  function abrirModalEditar(id) {
+    const prod = productosGlobales.find(p => p.id.toString() === id.toString());
+    if (!prod) return;
+    document.getElementById('editProdId').value = prod.id;
+    document.getElementById('editProdTitulo').value = prod.titulo || prod.nombre || '';
+    document.getElementById('editProdCategoria').value = prod.categoria || 'plato_dia';
+    document.getElementById('editProdPrecio').value = prod.precio || 0;
+    document.getElementById('editProdDesc').value = prod.descripcion || '';
+    document.getElementById('editProdImagenActual').value = prod.imagen || '';
+    
+    const fileInput = document.getElementById('editProdImagenFile');
+    if (fileInput) fileInput.value = '';
 
-  let filtrados = listaBase.filter(p => {
-    const coincideTexto = (p.titulo && p.titulo.toLowerCase().includes(busqueda)) || 
-                          (p.nombre && p.nombre.toLowerCase().includes(busqueda)) ||
-                          (p.comercio && p.comercio.toLowerCase().includes(busqueda));
-    const coincideCat = !cat || p.categoria === cat;
-    return coincideTexto && coincideCat;
-  });
+    const modal = document.getElementById('modalEditarProducto');
+    if (modal) modal.classList.remove('hidden');
+  }
 
-  // Ordenamiento
-  if (orden === 'puntuados_prod') {
-    filtrados.sort((a, b) => (b.estrellas || 0) - (a.estrellas || 0));
-  } else if (orden === 'puntuados_com') {
-    const comercios = typeof comerciosGlobales !== 'undefined' ? comerciosGlobales : [];
-    filtrados.sort((a, b) => {
-      const comA = comercios.find(c => c.nombre === a.comercio);
-      const comB = comercios.find(c => c.nombre === b.comercio);
-      return ((comB?.estrellas || 0) - (comA?.estrellas || 0));
+  function cerrarModalEdicion() {
+    const modal = document.getElementById('modalEditarProducto');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  function cerrarModalEditar() {
+    cerrarModalEdicion();
+  }
+
+  async function guardarEdicionProducto(e) {
+    e.preventDefault();
+    const id = document.getElementById('editProdId').value;
+    const btnGuardar = document.getElementById('btnGuardarEdit');
+    const archivo = document.getElementById('editProdImagenFile')?.files[0];
+    try {
+      btnGuardar.disabled = true;
+      btnGuardar.innerText = "Guardando...";
+      let imageUrl = document.getElementById('editProdImagenActual').value;
+      if (archivo) {
+        const fileExt = archivo.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+        const { error: uploadError } = await supabaseClient.storage.from('productos').upload(fileName, archivo);
+        if (uploadError) throw uploadError;
+        const { data: publicUrlData } = supabaseClient.storage.from('productos').getPublicUrl(fileName);
+        imageUrl = publicUrlData.publicUrl;
+      }
+      const updates = {
+        titulo: document.getElementById('editProdTitulo').value,
+        categoria: document.getElementById('editProdCategoria').value,
+        precio: parseFloat(document.getElementById('editProdPrecio').value),
+        descripcion: document.getElementById('editProdDesc').value,
+        imagen: imageUrl
+      };
+      const { error } = await supabaseClient.from('productos').update(updates).eq('id', id);
+      if (error) throw error;
+      alert("✅ Producto actualizado correctamente.");
+      cerrarModalEdicion();
+      await cargarProductosSupabase();
+      await cargarMisProductosVendedor();
+    } catch (err) {
+      alert("Error al actualizar producto: " + err.message);
+    } finally {
+      btnGuardar.disabled = false;
+      btnGuardar.innerText = "Guardar Cambios";
+    }
+  }
+
+  async function eliminarProductoSupabase(id) {
+    if (!confirm("¿Estás seguro de que querés eliminar este producto?")) return;
+    const { error } = await supabaseClient.from('productos').delete().eq('id', id);
+    if (error) {
+      alert("Error al eliminar producto: " + error.message);
+    } else {
+      alert("🗑️ Producto eliminado.");
+      await cargarProductosSupabase();
+      await cargarMisProductosVendedor();
+    }
+  }
+
+  // FAVORITOS Y FILTROS
+  function toggleFavorito(id) {
+    const strId = id.toString();
+    idsFavoritos = idsFavoritos.includes(strId) 
+      ? idsFavoritos.filter(item => item !== strId) 
+      : [...idsFavoritos, strId];
+      
+    localStorage.setItem('sl_favoritos', JSON.stringify(idsFavoritos));
+    if (typeof renderizarProductos === 'function') {
+      renderizarProductos(typeof productosGlobales !== 'undefined' ? productosGlobales : []);
+    }
+  }
+
+  function filtrarContenido() {
+    const inputBuscar = document.getElementById('inputBuscar');
+    const selectCat = document.getElementById('selectCatFiltro');
+    const selectOrden = document.getElementById('selectOrdenFiltro');
+
+    const busqueda = inputBuscar ? inputBuscar.value.toLowerCase().trim() : '';
+    const cat = selectCat ? selectCat.value : '';
+    const orden = selectOrden ? selectOrden.value : '';
+
+    const listaBase = typeof productosGlobales !== 'undefined' ? productosGlobales : [];
+
+    let filtrados = listaBase.filter(p => {
+      const coincideTexto = (p.titulo && p.titulo.toLowerCase().includes(busqueda)) || 
+                            (p.nombre && p.nombre.toLowerCase().includes(busqueda)) ||
+                            (p.comercio && p.comercio.toLowerCase().includes(busqueda));
+      const coincideCat = !cat || p.categoria === cat;
+      return coincideTexto && coincideCat;
     });
+
+    if (orden === 'puntuados_prod') {
+      filtrados.sort((a, b) => (b.estrellas || 0) - (a.estrellas || 0));
+    } else if (orden === 'puntuados_com') {
+      const comercios = typeof comerciosGlobales !== 'undefined' ? comerciosGlobales : [];
+      filtrados.sort((a, b) => {
+        const comA = comercios.find(c => c.nombre === a.comercio);
+        const comB = comercios.find(c => c.nombre === b.comercio);
+        return ((comB?.estrellas || 0) - (comA?.estrellas || 0));
+      });
+    }
+
+    if (typeof renderizarProductos === 'function') {
+      renderizarProductos(filtrados);
+    }
   }
 
-  if (typeof renderizarProductos === 'function') {
-    renderizarProductos(filtrados);
+  // MODALES DE REGISTRO / AUTENTICACIÓN
+  function abrirModalComprador() { 
+    document.getElementById('modalAuthComprador').classList.remove('hidden'); 
   }
-}
-  // 9. MODALES DE REGISTRO / AUTENTICACIÓN
-function abrirModalComprador() { 
-  document.getElementById('modalAuthComprador').classList.remove('hidden'); 
-}
-function cerrarModalComprador() { 
-  document.getElementById('modalAuthComprador').classList.add('hidden'); 
-}
-function abrirModalVendedor() { 
-  document.getElementById('modalAuthVendedor').classList.remove('hidden'); 
-}
-function cerrarModalVendedor() { 
-  document.getElementById('modalAuthVendedor').classList.add('hidden'); 
-}
-
-function alternarModoAuthComprador(e) {
-  e.preventDefault();
-  esModoRegistroComprador = !esModoRegistroComprador;
-
-  document.getElementById('grupoNombreComprador').classList.toggle('hidden', !esModoRegistroComprador);
-  document.getElementById('btnSubmitComprador').textContent = esModoRegistroComprador ? 'Registrarse' : 'Ingresar';
-  document.getElementById('toggleAuthComprador').textContent = esModoRegistroComprador ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate';
-  
-  const authTitle = document.getElementById('authTitleComprador');
-  if (authTitle) {
-    authTitle.textContent = esModoRegistroComprador ? 'Crear Cuenta de Comprador' : 'Iniciar Sesión';
+  function cerrarModalComprador() { 
+    document.getElementById('modalAuthComprador').classList.add('hidden'); 
   }
-}
+  function abrirModalVendedor() { 
+    document.getElementById('modalAuthVendedor').classList.remove('hidden'); 
+  }
+  function cerrarModalVendedor() { 
+    document.getElementById('modalAuthVendedor').classList.add('hidden'); 
+  }
 
-async function procesarAuthComprador(e) {
-  e.preventDefault();
-  const email = document.getElementById('emailComprador').value;
-  const password = document.getElementById('passComprador').value;
-  const nombre = document.getElementById('nombreComprador').value;
+  function alternarModoAuthComprador(e) {
+    e.preventDefault();
+    esModoRegistroComprador = !esModoRegistroComprador;
 
-  try {
-    if (esModoRegistroComprador) {
-      const { error } = await supabaseClient.auth.signUp({
+    document.getElementById('grupoNombreComprador').classList.toggle('hidden', !esModoRegistroComprador);
+    document.getElementById('btnSubmitComprador').textContent = esModoRegistroComprador ? 'Registrarse' : 'Ingresar';
+    document.getElementById('toggleAuthComprador').textContent = esModoRegistroComprador ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate';
+    
+    const authTitle = document.getElementById('authTitleComprador');
+    if (authTitle) {
+      authTitle.textContent = esModoRegistroComprador ? 'Crear Cuenta de Comprador' : 'Iniciar Sesión';
+    }
+  }
+
+  async function procesarAuthComprador(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailComprador').value;
+    const password = document.getElementById('passComprador').value;
+    const nombre = document.getElementById('nombreComprador').value;
+
+    try {
+      if (esModoRegistroComprador) {
+        const { error } = await supabaseClient.auth.signUp({
+          email,
+          password,
+          options: { data: { nombre_completo: nombre, rol: 'comprador' } }
+        });
+        if (error) throw error;
+        alert('Registro exitoso. Si tienes activada la confirmación por correo, revisa tu casilla antes de ingresar.');
+        alternarModoAuthComprador(e);
+      } else {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        cerrarModalComprador();
+        if (typeof verificarSesionActiva === 'function') {
+          await verificarSesionActiva();
+        }
+        if (typeof seleccionarPerfil === 'function') {
+          seleccionarPerfil('comprador');
+        }
+      }
+    } catch (err) {
+      if (err.message && err.message.includes("Invalid login credentials")) {
+        alert("Email o contraseña incorrectos, o la cuenta no ha sido confirmada en tu correo.");
+      } else {
+        alert("Error: " + err.message);
+      }
+    }
+  }
+
+  async function procesarAuthVendedor(e) {
+    e.preventDefault();
+    const email = document.getElementById('emailVendedor').value.trim().toLowerCase();
+    const password = document.getElementById('passVendedor').value;
+    const nombreComercio = document.getElementById('nombreComercio').value.trim();
+    const telefono = document.getElementById('telefonoVendedor').value.trim();
+
+    try {
+      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email,
         password,
-        options: { data: { nombre_completo: nombre, rol: 'comprador' } }
+        options: { 
+          data: { 
+            rol: 'vendedor', 
+            nombre_comercio: nombreComercio 
+          } 
+        }
       });
-      if (error) throw error;
-      alert('Registro exitoso. Si tienes activada la confirmación por correo, revisa tu casilla antes de ingresar.');
-      alternarModoAuthComprador(e);
-    } else {
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      cerrarModalComprador();
-      if (typeof verificarSesionActiva === 'function') {
-        await verificarSesionActiva();
-      }
-      if (typeof seleccionarPerfil === 'function') {
-        seleccionarPerfil('comprador');
-      } else if (typeof seleccionarRol === 'function') {
-        seleccionarRol('comprador');
-      }
-    }
-  } catch (err) {
-    if (err.message && err.message.includes("Invalid login credentials")) {
-      alert("Email o contraseña incorrectos, o la cuenta no ha sido confirmada en tu correo.");
-    } else {
-      alert("Error: " + err.message);
-    }
-  }
-}
 
-async function procesarAuthVendedor(e) {
-  e.preventDefault();
-  const email = document.getElementById('emailVendedor').value.trim().toLowerCase();
-  const password = document.getElementById('passVendedor').value;
-  const nombreComercio = document.getElementById('nombreComercio').value.trim();
-  const telefono = document.getElementById('telefonoVendedor').value.trim();
+      if (authError) throw authError;
 
-  try {
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: { 
-        data: { 
-          rol: 'vendedor', 
-          nombre_comercio: nombreComercio 
-        } 
-      }
-    });
-
-    if (authError) throw authError;
-
-    const { error: dbPerfilError } = await supabaseClient
-      .from('perfiles')
-      .upsert([
-        {
-          id: authData.user ? authData.user.id : undefined,
-          email: email,
-          nombre_comercio: nombreComercio,
-          telefono: telefono,
-          rol: 'vendedor',
-          estado: 'pendiente',
-          created_at: new Date().toISOString()
-        }
-      ], { onConflict: 'email' });
-
-    if (dbPerfilError) throw dbPerfilError;
-
-    const { error: dbComercioError } = await supabaseClient
-      .from('comercios')
-      .upsert([
-        {
-          email: email,
-          nombre: nombreComercio,
-          telefono: telefono,
-          estado: 'pendiente'
-        }
-      ], { onConflict: 'email' });
-
-    if (dbComercioError) throw dbComercioError;
-
-    alert('⏳ Solicitud enviada correctamente. Un administrador debe autorizar tu cuenta antes de que tu comercio y productos sean visibles.');
-    
-    if (typeof cargarGestionVendedores === 'function') {
-      await cargarGestionVendedores();
-    }
-
-    cerrarModalVendedor();
-
-  } catch (err) {
-    if (err.message && err.message.includes("User already registered")) {
-      alert("Este correo ya está registrado en la plataforma.");
-    } else {
-      alert("Error al registrar vendedor: " + err.message);
-    }
-  }
-}
-async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
-  try {
-    const emailNormalizado = emailTarget.toLowerCase().trim();
-    const fechaVenc = new Date();
-    fechaVenc.setDate(fechaVenc.getDate() + 30);
-    const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
-
-    const { error: errComercios } = await supabaseClient
-      .from('comercios')
-      .update({ estado: nuevoEstado, fecha_vencimiento: fechaISO })
-      .ilike('email', emailNormalizado);
-
-    if (errComercios) console.error("Error al actualizar comercios:", errComercios);
-
-    const { error: errPerfiles } = await supabaseClient
-      .from('perfiles')
-      .update({ estado: nuevoEstado, fecha_vencimiento: fechaISO })
-      .ilike('email', emailNormalizado);
-
-    if (errPerfiles) console.error("Error al actualizar perfiles:", errPerfiles);
-
-    alert(`✅ Comercio ${emailNormalizado} actualizado a: ${nuevoEstado.toUpperCase()}`);
-
-    await cargarGestionVendedores();
-    if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
-
-  } catch (err) {
-    console.error("Error al cambiar estado:", err);
-    alert("Error al actualizar el estado: " + err.message);
-  }
-}
-
-function guardarConfigAdmin() {
-  const tit = document.getElementById('adminBannerTitulo').value;
-  const dest = document.getElementById('adminDestacadoNombre').value;
-  document.getElementById('txtBannerTitulo').innerText = tit;
-  document.getElementById('txtNombreDestacado').innerText = dest;
-  alert("✅ Cambios visuales actualizados.");
-}
-  // 1. Función para Alternar Visibilidad (Ocultar / Mostrar)
-async function toggleOcultarComercio(comercioId, estadoActualOculto) {
-  try {
-    const nuevoEstado = !estadoActualOculto;
-
-    // 1. Actualizar en la tabla comercios
-    const { data: comercio, error: errComercio } = await supabaseClient
-      .from('comercios')
-      .update({ oculto: nuevoEstado })
-      .eq('id', comercioId)
-      .select('email')
-      .single();
-
-    if (errComercio) throw errComercio;
-
-    // 2. Si el comercio tiene email, actualizar también en la tabla perfiles
-    if (comercio && comercio.email) {
-      await supabaseClient
+      const { error: dbPerfilError } = await supabaseClient
         .from('perfiles')
-        .update({ oculto: nuevoEstado })
-        .eq('email', comercio.email.toLowerCase());
+        .upsert([
+          {
+            id: authData.user ? authData.user.id : undefined,
+            email: email,
+            nombre_comercio: nombreComercio,
+            telefono: telefono,
+            rol: 'vendedor',
+            estado: 'pendiente',
+            created_at: new Date().toISOString()
+          }
+        ], { onConflict: 'email' });
+
+      if (dbPerfilError) throw dbPerfilError;
+
+      const { error: dbComercioError } = await supabaseClient
+        .from('comercios')
+        .upsert([
+          {
+            email: email,
+            nombre: nombreComercio,
+            telefono: telefono,
+            estado: 'pendiente'
+          }
+        ], { onConflict: 'email' });
+
+      if (dbComercioError) throw dbComercioError;
+
+      alert('⏳ Solicitud enviada correctamente. Un administrador debe autorizar tu cuenta antes de que tu comercio y productos sean visibles.');
+      
+      if (typeof cargarGestionVendedores === 'function') {
+        await cargarGestionVendedores();
+      }
+
+      cerrarModalVendedor();
+
+    } catch (err) {
+      if (err.message && err.message.includes("User already registered")) {
+        alert("Este correo ya está registrado en la plataforma.");
+      } else {
+        alert("Error al registrar vendedor: " + err.message);
+      }
     }
-
-    alert(`✅ Visibilidad actualizada: ${nuevoEstado ? 'Comercio Oculto' : 'Comercio Visible'}`);
-    
-    // Refrescar panel admin y la vista pública de productos
-    await cargarGestionVendedores(); 
-    await cargarProductosSupabase();
-
-  } catch (err) {
-    alert('Error al cambiar la visibilidad: ' + err.message);
   }
-}
 
-  // Función para verificar el estado actualizado del comercio en Supabase
-async function obtenerEstadoComercio(email) {
-  if (!email) return null;
-  try {
-    const emailClean = email.toLowerCase().trim();
-    
-    const { data, error } = await supabaseClient
-      .from('comercios')
-      .select('estado, oculto, fecha_vencimiento')
-      .ilike('email', emailClean)
-      .maybeSingle();
+  async function cambiarEstadoVendedor(emailTarget, nuevoEstado) {
+    try {
+      const emailNormalizado = emailTarget.toLowerCase().trim();
+      const fechaVenc = new Date();
+      fechaVenc.setDate(fechaVenc.getDate() + 30);
+      const fechaISO = nuevoEstado === 'aprobado' ? fechaVenc.toISOString() : null;
 
-    if (error) {
-      console.error("Error al obtener estado del comercio:", error);
+      const { error: errComercios } = await supabaseClient
+        .from('comercios')
+        .update({ estado: nuevoEstado, fecha_vencimiento: fechaISO })
+        .ilike('email', emailNormalizado);
+
+      if (errComercios) console.error("Error al actualizar comercios:", errComercios);
+
+      const { error: errPerfiles } = await supabaseClient
+        .from('perfiles')
+        .update({ estado: nuevoEstado, fecha_vencimiento: fechaISO })
+        .ilike('email', emailNormalizado);
+
+      if (errPerfiles) console.error("Error al actualizar perfiles:", errPerfiles);
+
+      alert(`✅ Comercio ${emailNormalizado} actualizado a: ${nuevoEstado.toUpperCase()}`);
+
+      await cargarGestionVendedores();
+      if (typeof cargarProductosSupabase === 'function') await cargarProductosSupabase();
+
+    } catch (err) {
+      console.error("Error al cambiar estado:", err);
+      alert("Error al actualizar el estado: " + err.message);
+    }
+  }
+
+  function guardarConfigAdmin() {
+    const tit = document.getElementById('adminBannerTitulo').value;
+    const dest = document.getElementById('adminDestacadoNombre').value;
+    document.getElementById('txtBannerTitulo').innerText = tit;
+    document.getElementById('txtNombreDestacado').innerText = dest;
+    alert("✅ Cambios visuales actualizados.");
+  }
+
+  async function toggleOcultarComercio(comercioId, estadoActualOculto) {
+    try {
+      const nuevoEstado = !estadoActualOculto;
+
+      const { data: comercio, error: errComercio } = await supabaseClient
+        .from('comercios')
+        .update({ oculto: nuevoEstado })
+        .eq('id', comercioId)
+        .select('email')
+        .single();
+
+      if (errComercio) throw errComercio;
+
+      if (comercio && comercio.email) {
+        await supabaseClient
+          .from('perfiles')
+          .update({ oculto: nuevoEstado })
+          .eq('email', comercio.email.toLowerCase());
+      }
+
+      alert(`✅ Visibilidad actualizada: ${nuevoEstado ? 'Comercio Oculto' : 'Comercio Visible'}`);
+      
+      await cargarGestionVendedores(); 
+      await cargarProductosSupabase();
+
+    } catch (err) {
+      alert('Error al cambiar la visibilidad: ' + err.message);
+    }
+  }
+
+  async function obtenerEstadoComercio(email) {
+    if (!email) return null;
+    try {
+      const emailClean = email.toLowerCase().trim();
+      
+      const { data, error } = await supabaseClient
+        .from('comercios')
+        .select('estado, oculto, fecha_vencimiento')
+        .ilike('email', emailClean)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error al obtener estado del comercio:", error);
+        return null;
+      }
+      return data;
+    } catch (err) {
+      console.error("Error de conexión al obtener estado:", err);
       return null;
     }
-    return data;
-  } catch (err) {
-    console.error("Error de conexión al obtener estado:", err);
-    return null;
   }
-}
-  // Ejemplo de uso al cargar el panel del comercio:
-  async function abrirPanelVendedor(emailVendedor) {
-    const infoComercio = await obtenerEstadoComercio(emailVendedor);
 
-    if (!infoComercio) {
-      alert("No se encontró la información de tu comercio.");
-      return;
+  // Event Listeners para cerrar modales
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('modalEditarProducto');
+    if (modal && event.target === modal) {
+      cerrarModalEdicion();
     }
+  });
 
-    if (infoComercio.estado !== 'aprobado') {
-      alert(`Tu cuenta está en estado: ${infoComercio.estado.toUpperCase()}. Por favor aguarda la aprobación del administrador.`);
-      return;
+  window.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      cerrarModalEdicion();
+      cerrarModalOpinion();
+      cerrarModalComprador();
+      cerrarModalVendedor();
     }
-
-    // Si está aprobado, cargamos sus productos propios
-    await cargarProductosSupabase(emailVendedor);
-  }
-  // Cierra el modal de edición
-function cerrarModalEdicion() {
-  const modal = document.getElementById('modalEditarProducto');
-  if (modal) {
-    modal.style.display = 'none';
-  }
-}
-
-// Cierra el modal al hacer clic en el fondo oscuro (fuera de la caja)
-window.addEventListener('click', function(event) {
-  const modal = document.getElementById('modalEditarProducto');
-  if (modal && event.target === modal) {
-    cerrarModalEdicion();
-  }
-});
-
-// Cierra el modal al presionar la tecla ESC
-window.addEventListener('keydown', function(event) {
-  if (event.key === 'Escape') {
-    cerrarModalEdicion();
-  }
-});
+  });
 </script>
 </body>
 </html>
