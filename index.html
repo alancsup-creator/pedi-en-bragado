@@ -1024,28 +1024,46 @@
   }
 
   // Alternar subpestañas del perfil
-  function cambiarSubTabPerfil(subtab, btn) {
-    document.querySelectorAll('.subtab-profile-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('#secMiPerfil .subnav-btn').forEach(b => b.classList.remove('active'));
+function cambiarSubTabPerfil(subtab, btn) {
+  // Ocultar todos los contenidos internos del perfil
+  document.querySelectorAll('.subtab-profile-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('#secMiPerfil .subnav-btn').forEach(b => b.classList.remove('active'));
 
-    if (btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
 
-    const tabFav = document.getElementById('subtab-favoritos');
-    const tabPunt = document.getElementById('subtab-puntuaciones');
-    const tabVal = document.getElementById('subtab-valoraciones');
-    
-    if (subtab === 'favoritos') {
-      if (tabFav) tabFav.style.display = 'block';
-      cargarMisFavoritos();
-    } else if (subtab === 'puntuaciones') {
-      if (tabPunt) tabPunt.style.display = 'block';
-      if (usuarioActualId) cargarMisPuntuaciones(usuarioActualId);
-    } else if (subtab === 'valoraciones') {
-      if (tabVal) tabVal.style.display = 'block';
-      if (usuarioActualId) cargarMisValoraciones(usuarioActualId);
-    }
+  const tabFav = document.getElementById('subtab-favoritos');
+  const tabPunt = document.getElementById('subtab-puntuaciones');
+  const tabVal = document.getElementById('subtab-valoraciones');
+  
+  if (subtab === 'favoritos') {
+    if (tabFav) tabFav.style.display = 'block';
+    cargarMisFavoritos();
+  } else if (subtab === 'puntuaciones') {
+    if (tabPunt) tabPunt.style.display = 'block';
+    if (usuarioActualId) cargarMisPuntuaciones(usuarioActualId);
+  } else if (subtab === 'valoraciones') {
+    if (tabVal) tabVal.style.display = 'block';
+    if (usuarioActualId) cargarMisValoraciones(usuarioActualId);
+  }
+}
+
+function cargarMisFavoritos() {
+  const container = document.getElementById('lista-favoritos-container');
+  if (!container) return;
+
+  if (!idsFavoritos || idsFavoritos.length === 0) {
+    container.innerHTML = '<p style="color:#64748b; font-size:13px; grid-column:1/-1;">No tenés productos o comercios guardados como favoritos.</p>';
+    return;
   }
 
+  const favs = productosGlobales.filter(p => idsFavoritos.includes(p.id.toString()));
+  if (favs.length === 0) {
+    container.innerHTML = '<p style="color:#64748b; font-size:13px; grid-column:1/-1;">No se encontraron tus favoritos guardados.</p>';
+    return;
+  }
+
+  container.innerHTML = favs.map(crearTarjetaHTML).join('');
+}
   // CÁLCULO DE OPINIONES Y ESTRELLAS (ANÓNIMO PARA EL VENDEDOR)
   function calcularPromedioOpiniones(misProductos) {
     if (!misProductos.length) return;
@@ -1557,30 +1575,38 @@
   }
 
   // NAVEGACIÓN Y SUBPESTAÑAS
-  function navegarA(tabId, btn) {
-    const secPerfil = document.getElementById('secSeleccionPerfil');
-    if (secPerfil) secPerfil.style.display = 'none';
+ function navegarA(tabId, btn) {
+  const secPerfil = document.getElementById('secSeleccionPerfil');
+  if (secPerfil) secPerfil.style.display = 'none';
 
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    const tab = document.getElementById(tabId);
-    if (tab) tab.classList.add('active');
-    if (btn) btn.classList.add('active');
-
-    if (tabId === 'secVendedor') {
-      if (typeof cargarMisProductosVendedor === 'function') {
-        cargarMisProductosVendedor();
-      }
-    } else if (tabId === 'secPerfiles') {
-      if (typeof cargarComerciosPerfiles === 'function') cargarComerciosPerfiles();
-    } else if (tabId === 'secMiPerfil') {
-      cambiarSubTabPerfil('favoritos', document.querySelectorAll('#secMiPerfil .subnav-btn')[0]);
-    } else if (tabId === 'secAdmin') {
-      if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
-    }
+  // Desactivar todas las secciones y botones de navegación
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.classList.remove('active');
+    t.style.display = 'none'; // Garantiza que no queden rastros ocultos
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  
+  // Activar la pestaña seleccionada
+  const tab = document.getElementById(tabId);
+  if (tab) {
+    tab.classList.add('active');
+    tab.style.display = 'block'; // Forzar visibilidad
   }
+  if (btn) btn.classList.add('active');
 
+  // Carga de contenido según la pestaña activa
+  if (tabId === 'secVendedor') {
+    if (typeof cargarMisProductosVendedor === 'function') cargarMisProductosVendedor();
+  } else if (tabId === 'secPerfiles') {
+    if (typeof cargarComerciosPerfiles === 'function') cargarComerciosPerfiles();
+  } else if (tabId === 'secMiPerfil') {
+    // DISPARA LA CARGA DE SUB-TAB FAVORITOS POR DEFECTO
+    const primerBtnSubnav = document.querySelector('#secMiPerfil .subnav-btn');
+    cambiarSubTabPerfil('favoritos', primerBtnSubnav);
+  } else if (tabId === 'secAdmin') {
+    if (typeof cargarGestionVendedores === 'function') cargarGestionVendedores();
+  }
+}
   function cambiarSubtabNegocio(subtabId, btn) {
     document.querySelectorAll('.subtab-negocio-content').forEach(s => s.style.display = 'none');
     document.querySelectorAll('#secVendedor .subnav-btn').forEach(b => b.classList.remove('active'));
